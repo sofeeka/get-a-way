@@ -1,9 +1,9 @@
 ﻿namespace get_a_way.Entities;
 
 [Serializable]
-public class Historical : AbstractEvent
+public class Historical : Attraction
 {
-    public string culturalPeriod { get;   set; }
+    public string CulturalPeriod { get; set; }
 
     public Historical()
     {
@@ -11,6 +11,6 @@ public class Historical : AbstractEvent
 
     public Historical(string culturalPeriod)
     {
-        this.culturalPeriod = culturalPeriod;
+        this.CulturalPeriod = culturalPeriod;
     }
 }

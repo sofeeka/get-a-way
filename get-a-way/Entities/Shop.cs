@@ -3,9 +3,8 @@
 [Serializable]
 public class Shop
 {
-    public bool onlineOrderAvailability { get;   set; }
-
-    public List<string> holidaySpecials { get;   set; }
+    public bool OnlineOrderAvailability { get; set; }
+    public List<string> HolidaySpecials { get; set; }
 
     public Shop()
     {
@@ -13,7 +12,7 @@ public class Shop
 
     public Shop(bool onlineOrderAvailability, List<string> holidaySpecials)
     {
-        this.onlineOrderAvailability = onlineOrderAvailability;
-        this.holidaySpecials = holidaySpecials;
+        this.OnlineOrderAvailability = onlineOrderAvailability;
+        this.HolidaySpecials = holidaySpecials;
     }
 }

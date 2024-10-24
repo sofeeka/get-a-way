@@ -2,5 +2,7 @@
 
 public enum BedType
 {
-    Bunk,Double,Single
+    Bunk,
+    Double,
+    Single
 }

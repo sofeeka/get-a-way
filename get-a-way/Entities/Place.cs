@@ -4,49 +4,47 @@ namespace get_a_way.Entities;
 
 [Serializable]
 [XmlInclude(typeof(Accommodation))]
-[XmlInclude(typeof(Eateries))]
+[XmlInclude(typeof(Eatery))]
 [XmlInclude(typeof(Attraction))]
 [XmlInclude(typeof(Shop))]
 public abstract class Place
 {
     public static List<Place> Extent = new List<Place>();
 
-    public long ID { get;   set; }
-    public string name { get;   set; }
-    public string location { get;   set; }
-    public DateTime openTime { get;   set; }
-    public DateTime closeTime { get;   set; }
-    public string priceCategory { get;   set; }
-    public bool petFriendly { get;   set; }
-    public bool nightAttraction { get;   set; }
-    public PlaceType placeType { get;   set; }
-    public List<Review> reviews { get;   set; }
-
-    public Accommodation accommodation { get;   set; }
-    public Eateries eateries { get;   set; }
-    public List<Attraction> attractions { get;   set; }
-    public List<Shop> shops { get;   set; }
+    public long ID { get; set; }
+    public string Name { get; set; }
+    public string Location { get; set; }
+    public DateTime OpenTime { get; set; }
+    public DateTime CloseTime { get; set; }
+    public string PriceCategory { get; set; }
+    public bool PetFriendly { get; set; }
+    public bool NightAttraction { get; set; }
+    public List<Review> Reviews { get; set; }
+    public Accommodation Accommodation { get; set; }
+    public Eatery Eatery { get; set; }
+    public List<Attraction> Attractions { get; set; }
+    public List<Shop> Shops { get; set; }
 
     public Place()
-    { }
+    {
+    }
 
     protected Place(long id, string name, string location, DateTime openTime, DateTime closeTime, string priceCategory,
-        bool petFriendly, bool nightAttraction, PlaceType placeType, List<Review> reviews, Accommodation accommodation,
-        Eateries eateries, List<Attraction> attractions, List<Shop> shops)
+        bool petFriendly, bool nightAttraction, List<Review> reviews, Accommodation accommodation,
+        Eatery eatery, List<Attraction> attractions, List<Shop> shops)
     {
         ID = id;
-        this.name = name;
-        this.location = location;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.priceCategory = priceCategory;
-        this.petFriendly = petFriendly;
-        this.nightAttraction = nightAttraction;
-        this.placeType = placeType;
-        this.reviews = reviews;
-        this.accommodation = accommodation;
-        this.eateries = eateries;
-        this.attractions = attractions;
-        this.shops = shops;
+        this.Name = name;
+        this.Location = location;
+        this.OpenTime = openTime;
+        this.CloseTime = closeTime;
+        this.PriceCategory = priceCategory;
+        this.PetFriendly = petFriendly;
+        this.NightAttraction = nightAttraction;
+        this.Reviews = reviews;
+        this.Accommodation = accommodation;
+        this.Eatery = eatery;
+        this.Attractions = attractions;
+        this.Shops = shops;
     }
 }

@@ -3,9 +3,9 @@
 [Serializable]
 public class Review
 {
-    public long ID { get;   set; }
-    public int rating { get;   set; }
-    public string comment { get;   set; }
+    public long ID { get; set; }
+    public int Rating { get; set; }
+    public string Comment { get; set; }
 
     public Review()
     {
@@ -14,7 +14,7 @@ public class Review
     public Review(long id, int rating, string comment)
     {
         ID = id;
-        this.rating = rating;
-        this.comment = comment;
+        this.Rating = rating;
+        this.Comment = comment;
     }
 }

@@ -8,10 +8,10 @@ public class International : Place
     }
 
     public International(long id, string name, string location, DateTime openTime, DateTime closeTime,
-        string priceCategory, bool petFriendly, bool nightAttraction, PlaceType placeType, List<Review> reviews,
-        Accommodation accommodation, Eateries eateries, List<Attraction> attractions, List<Shop> shops) : base(id,
-        name, location, openTime, closeTime, priceCategory, petFriendly, nightAttraction, placeType, reviews,
-        accommodation, eateries, attractions, shops)
+        string priceCategory, bool petFriendly, bool nightAttraction, List<Review> reviews,
+        Accommodation accommodation, Eatery eatery, List<Attraction> attractions, List<Shop> shops) : base(id,
+        name, location, openTime, closeTime, priceCategory, petFriendly, nightAttraction, reviews,
+        accommodation, eatery, attractions, shops)
     {
     }
 }

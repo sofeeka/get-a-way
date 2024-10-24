@@ -3,7 +3,7 @@
 [Serializable]
 public class NightLife : Attraction
 {
-    public string dressCode { get; set; }
+    public string DressCode { get; set; }
 
     public NightLife()
     {
@@ -11,6 +11,6 @@ public class NightLife : Attraction
 
     public NightLife(string dressCode)
     {
-        this.dressCode = dressCode;
+        this.DressCode = dressCode;
     }
 }

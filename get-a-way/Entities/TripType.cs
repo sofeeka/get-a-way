@@ -2,5 +2,8 @@
 
 public enum TripType
 {
-    Family,Couple,Solo,Friends
+    Family,
+    Couple,
+    Solo,
+    Friends
 }

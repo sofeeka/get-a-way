@@ -12,18 +12,20 @@ public abstract class Account
     public static List<Account> Extent = new List<Account>();
 
     // todo check values for exceptions, make visible public fields (look class diagram implementation p1 in assignment)
+    public long ID { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+    public string Email { get; set; }
+    public string? ProfilePictureUrl { get; set; }
+    public bool Verified { get; set; }
+    public double Rating { get; set; }
+    public List<string> Languages { get; set; }
+    public List<Account> Followings { get; set; }
 
-    public long ID { get;   set; }
-    public string Username { get;   set; }
-    public string Password { get;   set; }
-    public string Email { get;   set; }
-    public string? ProfilePictureUrl { get;   set; }
-    public bool Verified { get;   set; }
-    public double Rating { get;   set; }
-    public List<string> Languages { get;   set; }
-    public List<Account> Followings { get;   set; }
+    public Account() : this(0, "", "", "")
+    {
+    }
 
-    public Account() : this(0, "", "", "") { }
     protected Account(long id, string username, string password, string email)
     {
         ID = id;
@@ -91,7 +93,6 @@ public abstract class Account
     {
         return email.Contains("@") && email.Contains(".");
     }
-
 
     // Public method to add a language (since Languages is private)
     public void AddLanguage(string language)

@@ -1,23 +1,25 @@
 ﻿namespace get_a_way.Entities;
 
 [Serializable]
-public class Accommodation
+public class Accommodation : Place
 {
-    public List<string> amenities { get; private set; }
-    public bool parkingAvailable { get; private set; }
-    public int maxPeople { get; private set; }
+    public List<string> Amenities { get; set; }
+    public bool ParkingAvailable { get; set; }
+    public int MaxPeople { get; set; }
 
-    public BedType bedType { get; private set; }
+    public BedType BedType { get; set; }
 
-    public Accommodation()
+    public Accommodation() 
     {
     }
 
-    public Accommodation(List<string> amenities = null, bool parkingAvailable = false, int maxPeople = 0, BedType bedType = BedType.Single)
+    // TODO initialise class Place fields
+    public Accommodation(List<string> amenities = null, bool parkingAvailable = false, int maxPeople = 0,
+        BedType bedType = BedType.Single)
     {
-        this.amenities = amenities;
-        this.parkingAvailable = parkingAvailable;
-        this.maxPeople = maxPeople;
-        this.bedType = bedType;
+        this.Amenities = amenities;
+        this.ParkingAvailable = parkingAvailable;
+        this.MaxPeople = maxPeople;
+        this.BedType = bedType;
     }
 }

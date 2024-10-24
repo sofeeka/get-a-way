@@ -1,8 +1,9 @@
 ﻿namespace get_a_way.Entities;
+
 [Serializable]
-public class Active : AbstractEvent
+public class Active : Attraction
 {
-    public string activityType { get;   set; }
+    public string ActivityType { get; set; }
 
     public Active()
     {
@@ -10,6 +11,6 @@ public class Active : AbstractEvent
 
     public Active(string activityType)
     {
-        this.activityType = activityType;
+        this.ActivityType = activityType;
     }
 }
