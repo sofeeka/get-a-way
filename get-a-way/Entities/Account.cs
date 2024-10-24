@@ -11,35 +11,23 @@ abstract class Account : IExtent<Account>
     
     // todo check values for exceptions, make visible public fields (look class diagram implementation p1 in assignment)
     
-    [Key]
-    [Required]
-    private long ID { get; set; }
-    [Required]
-    [MaxLength(30)]
-    private string Username { get; set; }
-    [Required]
-    [MinLength(8)]
-    private string Password { get; set; }
-
-    [Required]
-    [EmailAddress]
-    private string Email { get; set; }
-    private string? ProfilePictureUrl { get; set; } // todo figure out how to store images, add a default picture
-    private bool Verified { get; set; }
-    
-    [Range(0.0, 10.0)]
-    private double Rating { get; set; }
-    private List<string> Languages { get; set; }
-
-    [ForeignKey("Account")] 
-    private List<Account> Followings { get; set; }
+    public long ID { get; private set; }
+    public string Username { get; private set; }
+    public string Password { get; private set; }
+    public string Email { get; private set; }
+    public string? ProfilePictureUrl { get; private set; }
+    public bool Verified { get; private set; }
+    public double Rating { get; private set; }
+    public List<string> Languages { get; private set; }
+    public List<Account> Followings { get; private set; }
     
     protected Account(long id, string username, string password, string email)
     {
         ID = id;
-        Username = username;
-        Password = password;
-        Email = email;
+        Username = ValidateUsername(username);
+        Password = ValidatePassword(password);
+        Email = ValidateEmail(email);
+        ProfilePictureUrl = "static/img/default_profile_img.jpg";
         Verified = false;
         Rating = 10.0;
         Languages = new List<string>();
@@ -48,6 +36,67 @@ abstract class Account : IExtent<Account>
         extent.Add(this);
     }
 
+    private string ValidateUsername(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username) || username.Length < 5 || username.Length > 30)
+        {
+            throw new InvalidAttributeException("Username must be between 5 and 30 characters long");
+        }
+
+        if (IsUsernameTaken(username))
+        {
+            throw new InvalidAttributeException($"Username '{username}' is already taken");
+        }
+
+        return username;
+    }
+    
+    private bool IsUsernameTaken(string username)
+    {
+        foreach (var account in extent)
+        {
+            if (account.Username.Equals(username, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private string ValidatePassword(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+        {
+            throw new InvalidAttributeException("Password must be at least 8 characters long");
+        }
+        return password;
+    }
+
+    private string ValidateEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
+        {
+            throw new InvalidAttributeException("Invalid email format");
+        }
+        return email;
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        return email.Contains("@") && email.Contains(".");
+    }
+    
+
+    // Public method to add a language (since Languages is private)
+    public void AddLanguage(string language)
+    {
+        if (!string.IsNullOrWhiteSpace(language))
+        {
+            Languages.Add(language);
+        }
+    }
+
+    
     public List<Account> GetExtentUnmodifiable()
     {
         // copy of the list to avoid unintentional changes
