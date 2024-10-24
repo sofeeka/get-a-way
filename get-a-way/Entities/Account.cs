@@ -5,12 +5,12 @@ using get_a_way.Services;
 
 namespace get_a_way.Entities;
 
-abstract class Account : IExtent<Account>
+public abstract class Account : IExtent<Account>
 {
     private static List<Account> extent = new List<Account>();
-    
+
     // todo check values for exceptions, make visible public fields (look class diagram implementation p1 in assignment)
-    
+
     public long ID { get; private set; }
     public string Username { get; private set; }
     public string Password { get; private set; }
@@ -20,7 +20,7 @@ abstract class Account : IExtent<Account>
     public double Rating { get; private set; }
     public List<string> Languages { get; private set; }
     public List<Account> Followings { get; private set; }
-    
+
     protected Account(long id, string username, string password, string email)
     {
         ID = id;
@@ -50,7 +50,7 @@ abstract class Account : IExtent<Account>
 
         return username;
     }
-    
+
     private bool IsUsernameTaken(string username)
     {
         foreach (var account in extent)
@@ -60,15 +60,17 @@ abstract class Account : IExtent<Account>
                 return true;
             }
         }
+
         return false;
     }
-    
+
     private string ValidatePassword(string password)
     {
         if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
         {
             throw new InvalidAttributeException("Password must be at least 8 characters long");
         }
+
         return password;
     }
 
@@ -78,6 +80,7 @@ abstract class Account : IExtent<Account>
         {
             throw new InvalidAttributeException("Invalid email format");
         }
+
         return email;
     }
 
@@ -85,7 +88,7 @@ abstract class Account : IExtent<Account>
     {
         return email.Contains("@") && email.Contains(".");
     }
-    
+
 
     // Public method to add a language (since Languages is private)
     public void AddLanguage(string language)
@@ -96,7 +99,7 @@ abstract class Account : IExtent<Account>
         }
     }
 
-    
+
     public List<Account> GetExtentUnmodifiable()
     {
         // copy of the list to avoid unintentional changes
