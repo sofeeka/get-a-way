@@ -1,8 +1,13 @@
-﻿namespace get_a_way.Entities;
+﻿using get_a_way.Services;
 
-public class Message
+namespace get_a_way.Entities;
+
+[Serializable]
+public class Message : IExtent<Message>
 {
-    public long ID { get; private set; }
-    public string text { get; private set; }
-    public DateTime timestamp { get; private set; }
+    public static List<Message> Extent = new List<Message>();
+    
+    public long ID { get;   set; }
+    public string text { get;   set; }
+    public DateTime timestamp { get;   set; }
 }

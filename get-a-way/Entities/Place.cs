@@ -1,26 +1,38 @@
-﻿namespace get_a_way.Entities;
+﻿using System.Xml.Serialization;
 
+namespace get_a_way.Entities;
+
+[Serializable]
+[XmlInclude(typeof(Accommodation))]
+[XmlInclude(typeof(Eateries))]
+[XmlInclude(typeof(Attraction))]
+[XmlInclude(typeof(Shop))]
 public abstract class Place
 {
-    public long ID { get; private set; }
-    public string name { get; private set; }
-    public string location { get; private set; }
-    public DateTime openTime { get; private set; }
-    public DateTime closeTime { get; private set; }
-    public string priceCategory { get; private set; }
-    public bool petFriendly { get; private set; }
-    public bool nightAttraction { get; private set; }
-    public PlaceType placeType { get; private set; }
-    public List<Review> reviews { get; private set; }
+    public static List<Place> Extent = new List<Place>();
 
-    public Accommodation accommodation { get; private set; }
-    public Eateries eateries { get; private set; }
-    public List<Attractions> attractions { get; private set; }
-    public List<Shop> shops { get; private set; }
+    public long ID { get;   set; }
+    public string name { get;   set; }
+    public string location { get;   set; }
+    public DateTime openTime { get;   set; }
+    public DateTime closeTime { get;   set; }
+    public string priceCategory { get;   set; }
+    public bool petFriendly { get;   set; }
+    public bool nightAttraction { get;   set; }
+    public PlaceType placeType { get;   set; }
+    public List<Review> reviews { get;   set; }
+
+    public Accommodation accommodation { get;   set; }
+    public Eateries eateries { get;   set; }
+    public List<Attraction> attractions { get;   set; }
+    public List<Shop> shops { get;   set; }
+
+    public Place()
+    { }
 
     protected Place(long id, string name, string location, DateTime openTime, DateTime closeTime, string priceCategory,
         bool petFriendly, bool nightAttraction, PlaceType placeType, List<Review> reviews, Accommodation accommodation,
-        Eateries eateries, List<Attractions> attractions, List<Shop> shops)
+        Eateries eateries, List<Attraction> attractions, List<Shop> shops)
     {
         ID = id;
         this.name = name;

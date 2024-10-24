@@ -1,10 +1,15 @@
 ﻿namespace get_a_way.Entities;
 
+[Serializable]
 public class Review
 {
-    public long ID { get; private set; }
-    public int rating { get; private set; }
-    public string comment { get; private set; }
+    public long ID { get;   set; }
+    public int rating { get;   set; }
+    public string comment { get;   set; }
+
+    public Review()
+    {
+    }
 
     public Review(long id, int rating, string comment)
     {

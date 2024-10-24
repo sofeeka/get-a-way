@@ -1,26 +1,29 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Serialization;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
 namespace get_a_way.Entities;
 
-public abstract class Account : IExtent<Account>
+[Serializable]
+[XmlInclude(typeof(OwnerAccount))]
+[XmlInclude(typeof(TravelerAccount))]
+public abstract class Account
 {
-    private static List<Account> extent = new List<Account>();
+    public static List<Account> Extent = new List<Account>();
 
     // todo check values for exceptions, make visible public fields (look class diagram implementation p1 in assignment)
 
-    public long ID { get; private set; }
-    public string Username { get; private set; }
-    public string Password { get; private set; }
-    public string Email { get; private set; }
-    public string? ProfilePictureUrl { get; private set; }
-    public bool Verified { get; private set; }
-    public double Rating { get; private set; }
-    public List<string> Languages { get; private set; }
-    public List<Account> Followings { get; private set; }
+    public long ID { get;   set; }
+    public string Username { get;   set; }
+    public string Password { get;   set; }
+    public string Email { get;   set; }
+    public string? ProfilePictureUrl { get;   set; }
+    public bool Verified { get;   set; }
+    public double Rating { get;   set; }
+    public List<string> Languages { get;   set; }
+    public List<Account> Followings { get;   set; }
 
+    public Account() : this(0, "", "", "") { }
     protected Account(long id, string username, string password, string email)
     {
         ID = id;
@@ -33,7 +36,7 @@ public abstract class Account : IExtent<Account>
         Languages = new List<string>();
         Followings = new List<Account>();
 
-        extent.Add(this);
+        Extent.Add(this);
     }
 
     private string ValidateUsername(string username)
@@ -53,7 +56,7 @@ public abstract class Account : IExtent<Account>
 
     private bool IsUsernameTaken(string username)
     {
-        foreach (var account in extent)
+        foreach (var account in Extent)
         {
             if (account.Username.Equals(username, StringComparison.OrdinalIgnoreCase))
             {
@@ -97,24 +100,5 @@ public abstract class Account : IExtent<Account>
         {
             Languages.Add(language);
         }
-    }
-
-
-    public List<Account> GetExtentUnmodifiable()
-    {
-        // copy of the list to avoid unintentional changes
-        return new List<Account>(extent);
-    }
-
-    public void AddInstanceToExtent(Account instance)
-    {
-        if (instance == null)
-            throw new AddingNullInstanceException();
-        extent.Add((instance));
-    }
-
-    public void RemoveInstanceFromExtent(Account instance)
-    {
-        extent.Remove(instance);
     }
 }

@@ -1,8 +1,13 @@
 ﻿namespace get_a_way.Entities;
 
-public class NightLife : AbstractEvent
+[Serializable]
+public class NightLife : Attraction
 {
-    public string dressCode { get; private set; }
+    public string dressCode { get; set; }
+
+    public NightLife()
+    {
+    }
 
     public NightLife(string dressCode)
     {

@@ -1,8 +1,11 @@
 ﻿namespace get_a_way.Entities;
 
+[Serializable]
 public class TravelerAccount : Account
 {
-    public TravelerAccount(long id, string username, string password, string email) : base(id, username, password, email)
+    public TravelerAccount() : this(0) { }
+
+    public TravelerAccount(long id, string username = "", string password = "", string email = "") : base(id, username, password, email)
     {
     }
 }

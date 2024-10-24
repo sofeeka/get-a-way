@@ -1,5 +1,6 @@
 ﻿namespace get_a_way.Entities;
 
+[Serializable]
 public class Accommodation
 {
     public List<string> amenities { get; private set; }
@@ -8,7 +9,11 @@ public class Accommodation
 
     public BedType bedType { get; private set; }
 
-    public Accommodation(List<string> amenities, bool parkingAvailable, int maxPeople, BedType bedType)
+    public Accommodation()
+    {
+    }
+
+    public Accommodation(List<string> amenities = null, bool parkingAvailable = false, int maxPeople = 0, BedType bedType = BedType.Single)
     {
         this.amenities = amenities;
         this.parkingAvailable = parkingAvailable;

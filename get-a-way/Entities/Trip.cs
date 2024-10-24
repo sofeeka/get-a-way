@@ -1,17 +1,26 @@
 ﻿namespace get_a_way.Entities;
 
-public class Trip : Account
+[Serializable]
+public class Trip
 {
-    public Trip(long id, string username, string password, string email, DateTime date, TripType tripType, List<string> pictures, string description) : base(id, username, password, email)
+    public static List<Trip> Extent = new List<Trip>();
+
+    public Trip()
     {
+    }
+
+    public Trip(Account account, DateTime date, TripType tripType, List<string> pictures, string description)
+    {
+        this.account = account;
         this.date = date;
         this.tripType = tripType;
         this.pictures = pictures;
         this.description = description;
     }
 
-    public DateTime date { get; private set; }
-    public TripType tripType { get; private set; }
-    public List<String> pictures { get; private set; }
-    public String description { get; private set; }
+    public Account account { get; set; }
+    public DateTime date { get; set; }
+    public TripType tripType { get;   set; }
+    public List<String> pictures { get;   set; }
+    public String description { get;   set; }
 }
