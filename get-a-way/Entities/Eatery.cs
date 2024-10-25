@@ -15,9 +15,9 @@ public class Eatery : Place
     // TODO initialise class Place fields
     public Eatery(bool cuisine, List<string> menu, List<string> dietaryOptions, bool reservationRequired)
     {
-        this.Cuisine = cuisine;
-        this.Menu = menu;
-        this.DietaryOptions = dietaryOptions;
-        this.ReservationRequired = reservationRequired;
+        Cuisine = cuisine;
+        Menu = menu;
+        DietaryOptions = dietaryOptions;
+        ReservationRequired = reservationRequired;
     }
 }

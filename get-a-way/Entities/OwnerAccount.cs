@@ -12,7 +12,7 @@ public class OwnerAccount : Account
     public OwnerAccount(long id, string username = "", string password = "", string email = "", double tax = 0.0) :
         base(id, username, password, email)
     {
-        this.Tax = tax;
+        Tax = tax;
     }
 
     public double Tax { get; set; }

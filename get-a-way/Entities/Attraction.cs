@@ -11,16 +11,16 @@ public abstract class Attraction : Place
 {
     public int EntryFee { get; set; }
     public int AgeRestrictions { get; set; }
-    public List<AbstractEvent> Events { get; set; }
+    public List<string> Events { get; set; }
 
-    public Attraction() : this(0, 0, new List<AbstractEvent>())
+    public Attraction() : this(0, 0, new List<string>())
     {
     }
 
-    protected Attraction(int entryFee, int ageRestrictions, List<AbstractEvent> events)
+    protected Attraction(int entryFee, int ageRestrictions, List<string> events)
     {
-        this.EntryFee = entryFee;
-        this.AgeRestrictions = ageRestrictions;
-        this.Events = events;
+        EntryFee = entryFee;
+        AgeRestrictions = ageRestrictions;
+        Events = events;
     }
 }

@@ -17,10 +17,10 @@ public class Trip
 
     public Trip(Account account, DateTime date, TripType tripType, List<string> pictures, string description)
     {
-        this.Account = account;
-        this.Date = date;
-        this.TripType = tripType;
-        this.Pictures = pictures;
-        this.Description = description;
+        Account = account;
+        Date = date;
+        TripType = tripType;
+        Pictures = pictures;
+        Description = description;
     }
 }

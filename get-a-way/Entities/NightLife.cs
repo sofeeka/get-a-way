@@ -11,6 +11,6 @@ public class NightLife : Attraction
 
     public NightLife(string dressCode)
     {
-        this.DressCode = dressCode;
+        DressCode = dressCode;
     }
 }

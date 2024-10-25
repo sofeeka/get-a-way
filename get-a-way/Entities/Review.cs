@@ -14,7 +14,7 @@ public class Review
     public Review(long id, int rating, string comment)
     {
         ID = id;
-        this.Rating = rating;
-        this.Comment = comment;
+        Rating = rating;
+        Comment = comment;
     }
 }

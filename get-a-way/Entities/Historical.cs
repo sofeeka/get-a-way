@@ -11,6 +11,6 @@ public class Historical : Attraction
 
     public Historical(string culturalPeriod)
     {
-        this.CulturalPeriod = culturalPeriod;
+        CulturalPeriod = culturalPeriod;
     }
 }
