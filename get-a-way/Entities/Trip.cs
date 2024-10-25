@@ -1,7 +1,10 @@
-﻿namespace get_a_way.Entities;
+﻿using get_a_way.Exceptions;
+using get_a_way.Services;
+
+namespace get_a_way.Entities;
 
 [Serializable]
-public class Trip
+public class Trip : IExtent<Trip>
 {
     public static List<Trip> Extent = new List<Trip>();
 
@@ -22,5 +25,22 @@ public class Trip
         TripType = tripType;
         Pictures = pictures;
         Description = description;
+    }
+
+    public List<Trip> GetExtentCopy()
+    {
+        return new List<Trip>(Extent);
+    }
+
+    public void AddInstanceToExtent(Trip instance)
+    {
+        if (instance == null)
+            throw new AddingNullInstanceException();
+        Extent.Add((instance));
+    }
+
+    public void RemoveInstanceFromExtent(Trip instance)
+    {
+        Extent.Remove(instance);
     }
 }

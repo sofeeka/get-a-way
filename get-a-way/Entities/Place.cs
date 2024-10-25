@@ -1,4 +1,6 @@
 ﻿using System.Xml.Serialization;
+using get_a_way.Exceptions;
+using get_a_way.Services;
 
 namespace get_a_way.Entities;
 
@@ -7,7 +9,7 @@ namespace get_a_way.Entities;
 [XmlInclude(typeof(Eatery))]
 [XmlInclude(typeof(Attraction))]
 [XmlInclude(typeof(Shop))]
-public abstract class Place
+public abstract class Place : IExtent<Place>
 {
     public static List<Place> Extent = new List<Place>();
 
@@ -26,7 +28,8 @@ public abstract class Place
     {
     }
 
-    protected Place(long id, string name, string location, string type, DateTime openTime, DateTime closeTime, string priceCategory,
+    protected Place(long id, string name, string location, string type, DateTime openTime, DateTime closeTime,
+        string priceCategory,
         bool petFriendly, bool nightAttraction, List<Review> reviews)
     {
         ID = id;
@@ -39,5 +42,22 @@ public abstract class Place
         PetFriendly = petFriendly;
         NightAttraction = nightAttraction;
         Reviews = reviews;
+    }
+
+    public List<Place> GetExtentCopy()
+    {
+        return new List<Place>(Extent);
+    }
+
+    public void AddInstanceToExtent(Place instance)
+    {
+        if (instance == null)
+            throw new AddingNullInstanceException();
+        Extent.Add((instance));
+    }
+
+    public void RemoveInstanceFromExtent(Place instance)
+    {
+        Extent.Remove(instance);
     }
 }

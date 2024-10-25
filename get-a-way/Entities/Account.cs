@@ -7,7 +7,7 @@ namespace get_a_way.Entities;
 [Serializable]
 [XmlInclude(typeof(OwnerAccount))]
 [XmlInclude(typeof(TravelerAccount))]
-public abstract class Account
+public abstract class Account : IExtent<Account>
 {
     public static List<Account> Extent = new List<Account>();
 
@@ -22,7 +22,7 @@ public abstract class Account
     public List<string> Languages { get; set; }
     public List<Account> Followings { get; set; }
 
-    public Account() : this(0, "", "", "")
+    public Account()
     {
     }
 
@@ -101,5 +101,23 @@ public abstract class Account
         {
             Languages.Add(language);
         }
+    }
+
+
+    public List<Account> GetExtentCopy()
+    {
+        return new List<Account>(Extent);
+    }
+
+    public void AddInstanceToExtent(Account instance)
+    {
+        if (instance == null)
+            throw new AddingNullInstanceException();
+        Extent.Add((instance));
+    }
+
+    public void RemoveInstanceFromExtent(Account instance)
+    {
+        Extent.Remove(instance);
     }
 }

@@ -1,7 +1,10 @@
-﻿namespace get_a_way.Entities;
+﻿using get_a_way.Exceptions;
+using get_a_way.Services;
+
+namespace get_a_way.Entities;
 
 [Serializable]
-public class ChatRoom
+public class ChatRoom : IExtent<ChatRoom>
 {
     public static List<ChatRoom> Extent = new List<ChatRoom>();
 
@@ -20,5 +23,22 @@ public class ChatRoom
         Name = name;
         PhotoUrl = photoUrl;
         Accounts = accounts;
+    }
+
+    public List<ChatRoom> GetExtentCopy()
+    {
+        return new List<ChatRoom>(Extent);
+    }
+
+    public void AddInstanceToExtent(ChatRoom instance)
+    {
+        if (instance == null)
+            throw new AddingNullInstanceException();
+        Extent.Add((instance));
+    }
+
+    public void RemoveInstanceFromExtent(ChatRoom instance)
+    {
+        Extent.Remove(instance);
     }
 }
