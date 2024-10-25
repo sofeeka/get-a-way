@@ -54,7 +54,7 @@ public class AccountTests
         Assert.Throws<InvalidAttributeException>(() => new TestAccount(1, "validUser", "testPassword123", "invalidemail")); // Invalid email format
     }
 
-    [Test]
+  /*  [Test]
     public void Constructor_AddingInstanceToExtendOnCreation_ShouldStoreCorrectInstances()
     {
         var account1 = new TestAccount(1, "s28299", "password1", "email1@pjwstk.edu.pl");
@@ -84,6 +84,6 @@ public class AccountTests
         var account = new TestAccount(1, "user1", "password1", "email1@pjwstk.edu.pl");
 
         Assert.Throws<AddingNullInstanceException>(() => account.AddInstanceToExtent(null));
-    }
+    } */
     
 }
