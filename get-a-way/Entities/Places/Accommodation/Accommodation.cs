@@ -3,6 +3,7 @@
 [Serializable]
 public class Accommodation : Place
 {
+    public AccommodationType Type { get; set; }
     public HashSet<Amenity> Amenities { get; set; }
     public int MaxPeople { get; set; }
     public Dictionary<BedType, int> Beds { get; set; }
@@ -12,8 +13,9 @@ public class Accommodation : Place
     }
 
     // TODO initialise class Place fields
-    public Accommodation(int maxPeople)
+    public Accommodation(AccommodationType type, int maxPeople)
     {
+        Type = type;
         Amenities = new HashSet<Amenity>();
         MaxPeople = maxPeople;
         Beds = new Dictionary<BedType, int>();
