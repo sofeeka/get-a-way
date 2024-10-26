@@ -17,12 +17,12 @@ public class ChatRoom : IExtent<ChatRoom>
     {
     }
 
-    public ChatRoom(long id, string name, string photoUrl, List<Account> accounts)
+    public ChatRoom(long id, string name, string photoUrl)
     {
         ID = id;
         Name = name;
         PhotoUrl = photoUrl;
-        Accounts = accounts;
+        Accounts = new List<Account>();
     }
 
     public List<ChatRoom> GetExtentCopy()
