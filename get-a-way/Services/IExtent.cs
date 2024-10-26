@@ -1,5 +1,3 @@
-using get_a_way.Exceptions;
-
 namespace get_a_way.Services;
 
 public interface IExtent<T>

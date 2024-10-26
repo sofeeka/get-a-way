@@ -1,4 +1,4 @@
-namespace get_a_way.Entities;
+namespace get_a_way.Entities.Places;
 
 [Serializable]
 public class LocalPlace : Place

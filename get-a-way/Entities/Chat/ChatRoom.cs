@@ -1,7 +1,8 @@
-﻿using get_a_way.Exceptions;
+﻿using get_a_way.Entities.Accounts;
+using get_a_way.Exceptions;
 using get_a_way.Services;
 
-namespace get_a_way.Entities;
+namespace get_a_way.Entities.Chat;
 
 [Serializable]
 public class ChatRoom : IExtent<ChatRoom>

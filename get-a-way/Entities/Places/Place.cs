@@ -1,16 +1,15 @@
 ﻿using System.Xml.Serialization;
-using get_a_way.Entities.Places.Accommodation;
-using get_a_way.Entities.Places.Eatery;
+using get_a_way.Entities.Places.Attractions;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
-namespace get_a_way.Entities;
+namespace get_a_way.Entities.Places;
 
 [Serializable]
-[XmlInclude(typeof(Accommodation))]
-[XmlInclude(typeof(Eatery))]
+[XmlInclude(typeof(Accommodation.Accommodation))]
+[XmlInclude(typeof(Eatery.Eatery))]
 [XmlInclude(typeof(Attraction))]
-[XmlInclude(typeof(Shop))]
+[XmlInclude(typeof(Shop.Shop))]
 public abstract class Place : IExtent<Place>
 {
     public static List<Place> Extent = new List<Place>();
@@ -23,7 +22,7 @@ public abstract class Place : IExtent<Place>
     public string PriceCategory { get; set; }
     public bool PetFriendly { get; set; }
     public bool NightAttraction { get; set; }  //idk if this needed
-    public List<Review> Reviews { get; set; }
+    public List<Review.Review> Reviews { get; set; }
 
     public Place()
     {
@@ -40,7 +39,7 @@ public abstract class Place : IExtent<Place>
         PriceCategory = priceCategory;
         PetFriendly = petFriendly;
         NightAttraction = nightAttraction;
-        Reviews = new List<Review>();
+        Reviews = new List<Review.Review>();
     }
 
     public List<Place> GetExtentCopy()

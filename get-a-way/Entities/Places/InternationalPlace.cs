@@ -1,7 +1,4 @@
-﻿using get_a_way.Entities.Places.Accommodation;
-using get_a_way.Entities.Places.Eatery;
-
-namespace get_a_way.Entities;
+﻿namespace get_a_way.Entities.Places;
 
 [Serializable]
 public class InternationalPlace : Place

@@ -1,4 +1,4 @@
-﻿namespace get_a_way.Entities;
+﻿namespace get_a_way.Entities.Review;
 
 [Serializable]
 public class Review

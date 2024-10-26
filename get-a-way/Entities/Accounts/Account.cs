@@ -2,7 +2,7 @@ using System.Xml.Serialization;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
-namespace get_a_way.Entities;
+namespace get_a_way.Entities.Accounts;
 
 [Serializable]
 [XmlInclude(typeof(OwnerAccount))]

@@ -1,7 +1,7 @@
-using System.Data;
-using System.Xml;
-using System.Xml.Serialization;
-using get_a_way.Entities;
+using get_a_way.Entities.Accounts;
+using get_a_way.Entities.Chat;
+using get_a_way.Entities.Places;
+using get_a_way.Entities.Trip;
 
 namespace get_a_way;
 
