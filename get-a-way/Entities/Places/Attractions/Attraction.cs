@@ -3,9 +3,9 @@
 namespace get_a_way.Entities;
 
 [Serializable]
-[XmlInclude(typeof(Historical))]
-[XmlInclude(typeof(Active))]
-[XmlInclude(typeof(NightLife))]
+[XmlInclude(typeof(HistoricalAttraction))]
+[XmlInclude(typeof(ActiveAttraction))]
+[XmlInclude(typeof(NightLifeAttraction))]
     
 public abstract class Attraction : Place
 {
@@ -13,14 +13,14 @@ public abstract class Attraction : Place
     public int AgeRestrictions { get; set; }
     public List<string> Events { get; set; }
 
-    public Attraction() : this(0, 0, new List<string>())
+    public Attraction() : this(0, 0)
     {
     }
 
-    protected Attraction(int entryFee, int ageRestrictions, List<string> events)
+    protected Attraction(int entryFee, int ageRestrictions)
     {
         EntryFee = entryFee;
         AgeRestrictions = ageRestrictions;
-        Events = events;
+        Events = new List<string>();
     }
 }

@@ -10,9 +10,9 @@ public class Shop : Place
     {
     }
 
-    public Shop(bool onlineOrderAvailability, List<string> holidaySpecials)
+    public Shop(bool onlineOrderAvailability)
     {
         OnlineOrderAvailability = onlineOrderAvailability;
-        HolidaySpecials = holidaySpecials;
+        HolidaySpecials = new List<string>();
     }
 }

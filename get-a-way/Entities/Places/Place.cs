@@ -1,4 +1,6 @@
 ﻿using System.Xml.Serialization;
+using get_a_way.Entities.Places.Accommodation;
+using get_a_way.Entities.Places.Eatery;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
@@ -16,32 +18,29 @@ public abstract class Place : IExtent<Place>
     public long ID { get; set; }
     public string Name { get; set; }
     public string Location { get; set; }
-    public string Type { get; set; }
     public DateTime OpenTime { get; set; }
     public DateTime CloseTime { get; set; }
     public string PriceCategory { get; set; }
     public bool PetFriendly { get; set; }
-    public bool NightAttraction { get; set; }
+    public bool NightAttraction { get; set; }  //idk if this needed
     public List<Review> Reviews { get; set; }
 
     public Place()
     {
     }
 
-    protected Place(long id, string name, string location, string type, DateTime openTime, DateTime closeTime,
-        string priceCategory,
-        bool petFriendly, bool nightAttraction, List<Review> reviews)
+    protected Place(long id, string name, string location, DateTime openTime, DateTime closeTime,
+        string priceCategory, bool petFriendly, bool nightAttraction)
     {
         ID = id;
         Name = name;
         Location = location;
-        Type = type;
         OpenTime = openTime;
         CloseTime = closeTime;
         PriceCategory = priceCategory;
         PetFriendly = petFriendly;
         NightAttraction = nightAttraction;
-        Reviews = reviews;
+        Reviews = new List<Review>();
     }
 
     public List<Place> GetExtentCopy()

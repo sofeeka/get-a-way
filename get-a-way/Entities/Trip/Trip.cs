@@ -18,12 +18,12 @@ public class Trip : IExtent<Trip>
     {
     }
 
-    public Trip(Account account, DateTime date, TripType tripType, List<string> pictures, string description)
+    public Trip(Account account, DateTime date, TripType tripType, string description)
     {
         Account = account;
         Date = date;
         TripType = tripType;
-        Pictures = pictures;
+        Pictures = new List<string>();
         Description = description;
     }
 

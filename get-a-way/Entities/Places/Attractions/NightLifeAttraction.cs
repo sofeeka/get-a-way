@@ -1,15 +1,15 @@
 ﻿namespace get_a_way.Entities;
 
 [Serializable]
-public class NightLife : Attraction
+public class NightLifeAttraction : Attraction
 {
     public string DressCode { get; set; }
 
-    public NightLife()
+    public NightLifeAttraction()
     {
     }
 
-    public NightLife(string dressCode)
+    public NightLifeAttraction(string dressCode)
     {
         DressCode = dressCode;
     }

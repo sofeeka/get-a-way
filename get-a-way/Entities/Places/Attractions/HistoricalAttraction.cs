@@ -1,15 +1,15 @@
 ﻿namespace get_a_way.Entities;
 
 [Serializable]
-public class Historical : Attraction
+public class HistoricalAttraction : Attraction
 {
     public string CulturalPeriod { get; set; }
 
-    public Historical()
+    public HistoricalAttraction()
     {
     }
 
-    public Historical(string culturalPeriod)
+    public HistoricalAttraction(string culturalPeriod)
     {
         CulturalPeriod = culturalPeriod;
     }
