@@ -7,9 +7,9 @@ public class InternationalPlace : Place
     {
     }
 
-    public InternationalPlace(long id, string name, string location, DateTime openTime, DateTime closeTime,
-        string priceCategory, bool petFriendly, bool nightAttraction) : base(id,
-        name, location, openTime, closeTime, priceCategory, petFriendly, nightAttraction)
+    public InternationalPlace(string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly) 
+        : base(name, location, openTime, closeTime, priceCategory, petFriendly)
     {
     }
 }

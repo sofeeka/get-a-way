@@ -8,7 +8,8 @@ namespace get_a_way.Entities.Chat;
 public class ChatRoom : IExtent<ChatRoom>
 {
     public static List<ChatRoom> Extent = new List<ChatRoom>();
-
+    
+    private static long IdCounter = 0;
     public long ID { get; set; }
     public string Name { get; set; }
     public string PhotoUrl { get; set; }
@@ -18,9 +19,9 @@ public class ChatRoom : IExtent<ChatRoom>
     {
     }
 
-    public ChatRoom(long id, string name, string photoUrl)
+    public ChatRoom(string name, string photoUrl)
     {
-        ID = id;
+        ID = ++IdCounter;
         Name = name;
         PhotoUrl = photoUrl;
         Accounts = new List<Account>();

@@ -3,11 +3,11 @@
 [Serializable]
 public class TravelerAccount : Account
 {
-    public TravelerAccount() : this(0)
+    public TravelerAccount()
     {
     }
 
-    public TravelerAccount(long id, string username = "", string password = "", string email = "") : base(id, username,
+    public TravelerAccount(string username = "", string password = "", string email = "") : base(username,
         password, email)
     {
     }

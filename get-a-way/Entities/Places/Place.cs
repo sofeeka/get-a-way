@@ -14,32 +14,47 @@ public abstract class Place : IExtent<Place>
 {
     public static List<Place> Extent = new List<Place>();
 
+    private static long IdCounter = 0;
     public long ID { get; set; }
     public string Name { get; set; }
     public string Location { get; set; }
     public DateTime OpenTime { get; set; }
     public DateTime CloseTime { get; set; }
-    public string PriceCategory { get; set; }
+    public PriceCategory PriceCategory { get; set; }
     public bool PetFriendly { get; set; }
-    public bool NightAttraction { get; set; }  //idk if this needed
+    public bool OpenedAtNight { get; set; }  //todo derive from open/close time
     public List<Review.Review> Reviews { get; set; }
 
     public Place()
     {
     }
 
-    protected Place(long id, string name, string location, DateTime openTime, DateTime closeTime,
-        string priceCategory, bool petFriendly, bool nightAttraction)
+    protected Place(string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly)
     {
-        ID = id;
+        ID = ++IdCounter;
         Name = name;
         Location = location;
         OpenTime = openTime;
         CloseTime = closeTime;
         PriceCategory = priceCategory;
         PetFriendly = petFriendly;
-        NightAttraction = nightAttraction;
         Reviews = new List<Review.Review>();
+        SetOpenedAtNight();
+    }
+    
+    private void SetOpenedAtNight()
+    {
+        TimeSpan nightStart = new TimeSpan(20, 0, 0); 
+        TimeSpan nightEnd = new TimeSpan(6, 0, 0);    
+
+        TimeSpan openTime = OpenTime.TimeOfDay;
+        TimeSpan closeTime = CloseTime.TimeOfDay;
+
+        bool opensDuringNight = (openTime <= nightEnd || openTime >= nightStart);
+        bool closesDuringNight = (closeTime >= nightStart || closeTime <= nightEnd);
+
+        OpenedAtNight = opensDuringNight || closesDuringNight;
     }
 
     public List<Place> GetExtentCopy()

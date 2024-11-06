@@ -12,6 +12,7 @@ public abstract class Account : IExtent<Account>
     public static List<Account> Extent = new List<Account>();
 
     // todo check values for exceptions, make visible public fields (look class diagram implementation p1 in assignment)
+    private static long IdCounter = 0;
     public long ID { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
@@ -26,9 +27,9 @@ public abstract class Account : IExtent<Account>
     {
     }
 
-    protected Account(long id, string username, string password, string email)
+    protected Account(string username, string password, string email)
     {
-        ID = id;
+        ID = ++IdCounter;
         Username = ValidateUsername(username);
         Password = ValidatePassword(password);
         Email = ValidateEmail(email);

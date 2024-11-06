@@ -13,8 +13,9 @@ public class Eatery : Place
     {
     }
 
-    // TODO initialise class Place fields
-    public Eatery(EateryType type, Cuisine cuisine, bool reservationRequired)
+    public Eatery(string name, string location, DateTime openTime, DateTime closeTime, PriceCategory priceCategory, 
+        bool petFriendly, EateryType type, Cuisine cuisine, bool reservationRequired)
+        : base( name, location, openTime, closeTime, priceCategory, petFriendly)
     {
         Type = type;
         Cuisine = cuisine;

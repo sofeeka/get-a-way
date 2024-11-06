@@ -7,9 +7,8 @@ public class LocalPlace : Place
     {
     }
 
-    public LocalPlace(long id, string name, string location, DateTime openTime, DateTime closeTime, string priceCategory,
-        bool petFriendly, bool nightAttraction) : base(id, name, location, openTime,
-        closeTime, priceCategory, petFriendly, nightAttraction)
+    public LocalPlace(string name, string location, DateTime openTime, DateTime closeTime, PriceCategory priceCategory,
+        bool petFriendly) : base(name, location, openTime, closeTime, priceCategory, petFriendly)
     {
     }
 }

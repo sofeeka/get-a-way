@@ -12,8 +12,9 @@ public class Accommodation : Place
     {
     }
 
-    // TODO initialise class Place fields
-    public Accommodation(AccommodationType type, int maxPeople)
+    public Accommodation(string name, string location, DateTime openTime, DateTime closeTime, PriceCategory priceCategory, 
+        bool petFriendly, AccommodationType type, int maxPeople)
+        : base( name, location, openTime, closeTime, priceCategory, petFriendly)
     {
         Type = type;
         Amenities = new HashSet<Amenity>();

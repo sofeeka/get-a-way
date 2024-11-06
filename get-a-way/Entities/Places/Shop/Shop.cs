@@ -11,7 +11,9 @@ public class Shop : Place
     {
     }
 
-    public Shop(ShopType type, bool onlineOrderAvailability)
+    public Shop(string name, string location, DateTime openTime, DateTime closeTime, PriceCategory priceCategory, 
+        bool petFriendly, ShopType type, bool onlineOrderAvailability) 
+        : base( name, location, openTime, closeTime, priceCategory, petFriendly)
     {
         Type = type;
         OnlineOrderAvailability = onlineOrderAvailability;
