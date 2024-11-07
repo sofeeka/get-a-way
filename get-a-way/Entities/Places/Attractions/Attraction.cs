@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Places.Attractions;
 
@@ -9,10 +10,34 @@ namespace get_a_way.Entities.Places.Attractions;
     
 public abstract class Attraction : Place
 {
-    public int EntryFee { get; set; }
-    public int MinimalAge { get; set; }
-    public List<string> Events { get; set; }
-    public string Description { get; set; }
+    private int _entryFee;
+    private int _minimalAge;
+    private List<string> _events;
+    private string _description;
+
+    public int EntryFee
+    {
+        get => _entryFee;
+        set => _entryFee = ValidateEntryFee(value);
+    }
+
+    public int MinimalAge
+    {
+        get => _minimalAge;
+        set => _minimalAge = ValidateMinimalAge(value);
+    }
+
+    public List<string> Events
+    {
+        get => _events;
+        set => _events = ValidateEvents(value);
+    }
+
+    public string Description
+    {
+        get => _description;
+        set => _description = ValidateDescription(value);
+    }
 
     public Attraction() 
     {
@@ -26,5 +51,38 @@ public abstract class Attraction : Place
         MinimalAge = minimalAge;
         Description = description;
         Events = new List<string>();
+    }
+    
+    private int ValidateEntryFee(int value)
+    {
+        if (value < 0)
+            throw new InvalidAttributeException("Entry fee can not be negative value.");
+        return value;
+    }
+    
+    private int ValidateMinimalAge(int value)
+    {
+        if (value is < 0 or > 120)
+            throw new InvalidAttributeException("Minimal age should be between 0 and 120.");
+        return value;
+    }
+    
+    private List<string> ValidateEvents(List<string> values)
+    {
+        if (values.Equals(null))
+            throw new InvalidAttributeException("Event list can not be null.");
+        foreach (var value in values)
+            if (string.IsNullOrEmpty(value))
+                throw new InvalidAttributeException("Event cannot be null.");
+        return values;
+    }
+    
+    private string ValidateDescription(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            throw new InvalidAttributeException("Description can not be empty.");
+        if (value.Length is < 10 or > 500)
+            throw new InvalidAttributeException("Description length must be between 10 and 500 characters.");
+        return value;
     }
 }
