@@ -7,7 +7,7 @@ public class TravelerAccount : Account
     {
     }
 
-    public TravelerAccount(string username = "", string password = "", string email = "") : base(username,
+    public TravelerAccount(string username, string password, string email) : base(username,
         password, email)
     {
     }

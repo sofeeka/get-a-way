@@ -3,12 +3,12 @@
 using System.Xml;
 using System.Xml.Serialization;
 using get_a_way;
+using get_a_way.Entities.Accounts;
+using get_a_way.Entities.Chat;
 
-Console.WriteLine("Hello, World!");
+Console.WriteLine("-");
 
-Database db = new Database();
-
-void saveDB(string path = "get-a-way-db.xml")
+void saveDB(Database db, string path = "get-a-way-db.xml")
 {
     StreamWriter file = File.CreateText(path);
     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Database));
@@ -18,8 +18,9 @@ void saveDB(string path = "get-a-way-db.xml")
     }
 }
 
-bool loadDB(string path = "get-a-way-db.xml")
+Database loadDB(string path = "get-a-way-db.xml")
 {
+    Database db;
     StreamReader file;
     try
     {
@@ -27,7 +28,7 @@ bool loadDB(string path = "get-a-way-db.xml")
     }
     catch (FileNotFoundException)
     {
-        return false;
+        return new Database();
     }
 
     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Database));
@@ -39,13 +40,39 @@ bool loadDB(string path = "get-a-way-db.xml")
         }
         catch (InvalidCastException)
         {
-            return false;
+            db = new Database();
         }
     }
-    return true;
+    return db;
 }
 
-if (!loadDB())
-    db = new Database();
+Database createInitialDatabase()
+{
+    Database db = new Database();
 
-saveDB();
+    OwnerAccount owner = new OwnerAccount("username1", "password", "email1@gmail.com");
+    TravelerAccount traveler = new TravelerAccount("username2", "password", "email2@gmail.com");
+
+    ChatRoom chatRoom1 = new ChatRoom("chatroom1", "photo url");
+    ChatRoom chatRoom2 = new ChatRoom("chatroom2", "photo url");
+
+    saveDB(db);
+    return db;
+}
+
+// Database db = createInitialDatabase();
+Database db = loadDB();
+
+foreach (var account in db.Accounts)
+{
+    Console.WriteLine();
+    Console.WriteLine(account);
+}
+
+foreach (var chat in db.ChatRooms)
+{
+    Console.WriteLine();
+    Console.WriteLine(chat.Name);
+}
+
+Console.WriteLine("-");

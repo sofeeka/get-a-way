@@ -1,5 +1,4 @@
 ﻿using System.Xml.Serialization;
-using get_a_way.Entities.Places.Attractions;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
@@ -8,7 +7,7 @@ namespace get_a_way.Entities.Places;
 [Serializable]
 [XmlInclude(typeof(Accommodation.Accommodation))]
 [XmlInclude(typeof(Eatery.Eatery))]
-[XmlInclude(typeof(Attraction))]
+[XmlInclude(typeof(Attractions.Attraction))]
 [XmlInclude(typeof(Shop.Shop))]
 public abstract class Place : IExtent<Place>
 {
@@ -22,7 +21,7 @@ public abstract class Place : IExtent<Place>
     public DateTime CloseTime { get; set; }
     public PriceCategory PriceCategory { get; set; }
     public bool PetFriendly { get; set; }
-    public bool OpenedAtNight { get; set; }  //todo derive from open/close time
+    public bool OpenedAtNight { get; set; }
     public List<Review.Review> Reviews { get; set; }
 
     public Place()
@@ -41,6 +40,8 @@ public abstract class Place : IExtent<Place>
         PetFriendly = petFriendly;
         Reviews = new List<Review.Review>();
         SetOpenedAtNight();
+        
+        AddInstanceToExtent(this);
     }
     
     private void SetOpenedAtNight()

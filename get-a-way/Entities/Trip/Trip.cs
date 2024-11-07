@@ -29,6 +29,8 @@ public class Trip : IExtent<Trip>
         TripType = tripType;
         Pictures = new List<string>();
         Description = description;
+        
+        AddInstanceToExtent(this);
     }
 
     public List<Trip> GetExtentCopy()

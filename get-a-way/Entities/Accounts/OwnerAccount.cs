@@ -1,12 +1,27 @@
-﻿using get_a_way.Exceptions;
+﻿using System.Xml.Serialization;
+using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Accounts;
 
 [Serializable]
 public class OwnerAccount : Account
 {
-    public static double Tax { get; set; } = 15;
-    
+    private static double _tax = 15;
+
+    public static double Tax
+    {
+        get => _tax;
+        set => _tax = ValidateTax(value);
+    }
+
+    private static double ValidateTax(double value)
+    {
+        if (value is < 0.0 or > 100.0)
+            throw new InvalidAttributeException($"Invalid tax '{value}'. Tax has to be in between 0.0 % and 100.0 %");
+
+        return value;
+    }
+
     public OwnerAccount()
     {
     }
@@ -15,14 +30,4 @@ public class OwnerAccount : Account
         base(username, password, email)
     {
     }
-    
-    public static void SetTax(double newTax)
-    {
-        if (newTax < 0)
-        {
-            throw new InvalidAttributeException("Tax value cannot be negative.");
-        }
-        Tax = newTax;
-    }
-
 }
