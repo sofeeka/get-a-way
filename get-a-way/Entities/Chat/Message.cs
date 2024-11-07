@@ -1,4 +1,5 @@
-﻿using get_a_way.Exceptions;
+﻿using System.Collections.ObjectModel;
+using get_a_way.Exceptions;
 using get_a_way.Services;
 
 namespace get_a_way.Entities.Chat;
@@ -78,8 +79,8 @@ public class Message : IExtent<Message>
         _extent.Remove(instance);
     }
 
-    public static List<Message> GetExtent()
+    public static ReadOnlyCollection<Message> GetExtent()
     {
-        return _extent;
+        return _extent.AsReadOnly();
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Chat;
 using get_a_way.Entities.Places;
@@ -8,25 +9,25 @@ namespace get_a_way;
 [Serializable]
 public class Database
 {
-    private List<Account> _accounts;
-    private List<ChatRoom> _chatRooms;
-    private List<Message> _messages;
+    private ReadOnlyCollection<Account> _accounts;
+    private ReadOnlyCollection<ChatRoom> _chatRooms;
+    private ReadOnlyCollection<Message> _messages;
     private List<Place> _places;
     private List<Trip> _trips;
 
-    public List<Account> Accounts
+    public ReadOnlyCollection<Account> Accounts
     {
         get => _accounts;
         set => _accounts = value;
     }
 
-    public List<ChatRoom> ChatRooms
+    public ReadOnlyCollection<ChatRoom> ChatRooms
     {
         get => _chatRooms;
         set => _chatRooms = value;
     }
 
-    public List<Message> Messages
+    public ReadOnlyCollection<Message> Messages
     {
         get => _messages;
         set => _messages = value;

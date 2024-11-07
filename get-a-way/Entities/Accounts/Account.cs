@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Xml.Serialization;
 using get_a_way.Exceptions;
@@ -162,9 +163,9 @@ public abstract class Account : IExtent<Account>
         _extent.Remove(instance);
     }
 
-    public static List<Account> GetExtent()
+    public static ReadOnlyCollection<Account> GetExtent()
     {
-        return _extent;
+        return _extent.AsReadOnly();
     }
 
     public override string ToString()

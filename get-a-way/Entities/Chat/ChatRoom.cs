@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.ObjectModel;
+using System.Xml.Serialization;
 using get_a_way.Entities.Accounts;
 using get_a_way.Exceptions;
 using get_a_way.Services;
@@ -78,8 +79,8 @@ public class ChatRoom : IExtent<ChatRoom>
         _extent.Remove(instance);
     }
 
-    public static List<ChatRoom> GetExtent()
+    public static ReadOnlyCollection<ChatRoom> GetExtent()
     {
-        return _extent;
+        return _extent.AsReadOnly();
     }
 }
