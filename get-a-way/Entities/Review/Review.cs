@@ -6,12 +6,32 @@ namespace get_a_way.Entities.Review;
 [Serializable]
 public class Review : IExtent<Review>
 {
-    public static List<Review> Extent = new List<Review>();
+    private static List<Review> _extent = new List<Review>();
     
     private static long IdCounter = 0;
-    public long ID { get; set; }
-    public int Rating { get; set; }
-    public string Comment { get; set; }
+
+    private long _id;
+
+    private double _rating;
+    private string _comment;
+
+    public long ID
+    {
+        get => _id; 
+        set => _id = value;
+    }
+
+    public double Rating
+    {
+        get => _rating; 
+        set => _rating = ValidateRating(value);
+    }
+
+    public string Comment
+    {
+        get => _comment; 
+        set => _comment = ValidateComment(value);
+    }
 
     public Review()
     {
@@ -23,21 +43,35 @@ public class Review : IExtent<Review>
         Rating = rating;
         Comment = comment;
     }
+    
+    private double ValidateRating(double value)
+    {
+        value = Math.Max(value, 0.0);
+        value = Math.Min(value, 10.0);
+        return value;
+    }
+    
+    private string ValidateComment(string value)
+    {
+        if (value.Length > 500)
+            throw new InvalidAttributeException("Comment length must be between 10 and 500 characters.");
+        return value;
+    }
 
     public List<Review> GetExtentCopy()
     {
-        return new List<Review>(Extent);
+        return new List<Review>(_extent);
     }
 
     public void AddInstanceToExtent(Review instance)
     {
         if (instance == null)
             throw new AddingNullInstanceException();
-        Extent.Add((instance));
+        _extent.Add((instance));
     }
 
     public void RemoveInstanceFromExtent(Review instance)
     {
-        Extent.Remove(instance);
+        _extent.Remove(instance);
     }
 }
