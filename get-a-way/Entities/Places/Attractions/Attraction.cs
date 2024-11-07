@@ -10,18 +10,20 @@ namespace get_a_way.Entities.Places.Attractions;
 public abstract class Attraction : Place
 {
     public int EntryFee { get; set; }
-    public int AgeRestrictions { get; set; }
+    public int MinimalAge { get; set; }
     public List<string> Events { get; set; }
     public string Description { get; set; }
 
-    public Attraction() : this(0, 0, "default")
+    public Attraction() 
     {
     }
 
-    protected Attraction(int entryFee, int ageRestrictions, string description)
+    protected Attraction(string name, string location, DateTime openTime, DateTime closeTime, PriceCategory priceCategory, 
+        bool petFriendly, int entryFee, int minimalAge, string description)
+        : base( name, location, openTime, closeTime, priceCategory, petFriendly)
     {
         EntryFee = entryFee;
-        AgeRestrictions = ageRestrictions;
+        MinimalAge = minimalAge;
         Description = description;
         Events = new List<string>();
     }

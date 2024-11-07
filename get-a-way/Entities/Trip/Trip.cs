@@ -9,6 +9,8 @@ public class Trip : IExtent<Trip>
 {
     public static List<Trip> Extent = new List<Trip>();
 
+    private static long IdCounter = 0;
+    public long ID { get; set; }
     public Account Account { get; set; }
     public DateTime Date { get; set; }
     public TripType TripType { get; set; }
@@ -21,11 +23,14 @@ public class Trip : IExtent<Trip>
 
     public Trip(Account account, DateTime date, TripType tripType, string description)
     {
+        ID = ++IdCounter;
         Account = account;
         Date = date;
         TripType = tripType;
         Pictures = new List<string>();
         Description = description;
+        
+        AddInstanceToExtent(this);
     }
 
     public List<Trip> GetExtentCopy()
