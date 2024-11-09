@@ -66,4 +66,33 @@ public class Accommodation : Place
         MaxPeople = maxPeople;
         BedEntries = new List<BedEntry>();
     }
+
+    public override string ToString()
+    {
+        return base.ToString() +
+               $"Accommodation Type: {Type}\n" +
+               $"Max People: {MaxPeople}\n" +
+               $"Amenities: {GetAmenities()}\n" +
+               $"Bed Entries: {GetBedEntries()}\n";
+    }
+
+    private string GetAmenities()
+    {
+        if (Amenities.Count == 0)
+            return "No amenities available";
+        return string.Join(", ", Amenities);
+    }
+
+    private string GetBedEntries()
+    {
+        if (_beds.Count == 0)
+            return "No beds available";
+        var bedEntries = new List<string>();
+        foreach (var kvp in _beds)
+        {
+            bedEntries.Add($"{kvp.Key} x {kvp.Value}");
+        }
+
+        return string.Join(", ", bedEntries);
+    }
 }

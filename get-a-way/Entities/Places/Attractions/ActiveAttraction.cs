@@ -29,4 +29,10 @@ public class ActiveAttraction : Attraction
 
         return value;
     }
+
+    public override string ToString()
+    {
+        return base.ToString() +
+               $"Activity Type: {ActivityType}\n";
+    }
 }

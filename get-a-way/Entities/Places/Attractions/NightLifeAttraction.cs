@@ -29,4 +29,10 @@ public class NightLifeAttraction : Attraction
 
         return value;
     }
+
+    public override string ToString()
+    {
+        return base.ToString() +
+               $"Dress Code: {DressCode}\n";
+    }
 }

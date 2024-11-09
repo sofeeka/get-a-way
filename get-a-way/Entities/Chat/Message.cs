@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using get_a_way.Exceptions;
+﻿using get_a_way.Exceptions;
 using get_a_way.Services;
 
 namespace get_a_way.Entities.Chat;
@@ -49,7 +48,7 @@ public class Message : IExtent<Message>
     private string ValidateText(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new InvalidAttributeException("Text of a message cannot be empty");
+            throw new InvalidAttributeException("Text of a message cannot be empty.");
 
         return value;
     }
@@ -57,24 +56,24 @@ public class Message : IExtent<Message>
     private DateTime ValidateTimestamp(DateTime value)
     {
         if (value > DateTime.Now)
-            throw new InvalidAttributeException("Message cannot be sent in the future");
+            throw new InvalidAttributeException("Message Timestamp cannot be in the future.");
 
         return value;
     }
 
-    public List<Message> GetExtentCopy()
+    public static List<Message> GetExtentCopy()
     {
         return new List<Message>(_extent);
     }
 
-    public void AddInstanceToExtent(Message instance)
+    public static void AddInstanceToExtent(Message instance)
     {
         if (instance == null)
             throw new AddingNullInstanceException();
         _extent.Add(instance);
     }
 
-    public void RemoveInstanceFromExtent(Message instance)
+    public static void RemoveInstanceFromExtent(Message instance)
     {
         _extent.Remove(instance);
     }
@@ -82,5 +81,18 @@ public class Message : IExtent<Message>
     public static List<Message> GetExtent()
     {
         return _extent;
+    }
+
+    public static void Reset()
+    {
+        _extent.Clear();
+        IdCounter = 0;
+    }
+
+    public override string ToString()
+    {
+        return $"Message ID: {ID}\n" +
+               $"Text: {Text}\n" +
+               $"Timestamp: {Timestamp:yyyy-MM-dd HH:mm:ss}\n";
     }
 }

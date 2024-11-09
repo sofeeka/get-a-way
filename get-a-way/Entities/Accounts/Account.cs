@@ -1,5 +1,4 @@
-using System.Collections.ObjectModel;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using get_a_way.Exceptions;
 using get_a_way.Services;
@@ -52,7 +51,10 @@ public abstract class Account : IExtent<Account>
     public string? ProfilePictureUrl
     {
         get => _profilePictureUrl;
-        set => _profilePictureUrl = value;
+        set
+        {
+            if (value != null) _profilePictureUrl = ValidateProfilePictureUrl(value);
+        }
     }
 
     public bool Verified
@@ -140,25 +142,36 @@ public abstract class Account : IExtent<Account>
         return value;
     }
 
+    private string ValidateProfilePictureUrl(string value)
+    {
+        var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
+        bool valid = Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
+
+        if (string.IsNullOrWhiteSpace(value) || !valid)
+            throw new InvalidAttributeException($"Invalid picture URL: '{value}'.");
+
+        return value;
+    }
+
     public void AddLanguage(string language)
     {
         if (!string.IsNullOrWhiteSpace(language))
             Languages.Add(language);
     }
 
-    public List<Account> GetExtentCopy()
+    public static List<Account> GetExtentCopy()
     {
         return new List<Account>(_extent);
     }
 
-    public void AddInstanceToExtent(Account instance)
+    public static void AddInstanceToExtent(Account instance)
     {
         if (instance == null)
             throw new AddingNullInstanceException();
         _extent.Add(instance);
     }
 
-    public void RemoveInstanceFromExtent(Account instance)
+    public static void RemoveInstanceFromExtent(Account instance)
     {
         _extent.Remove(instance);
     }
@@ -168,18 +181,36 @@ public abstract class Account : IExtent<Account>
         return _extent;
     }
 
+    public static void Reset()
+    {
+        _extent.Clear();
+        IdCounter = 0;
+    }
+
     public override string ToString()
     {
-        var sb = new StringBuilder();
+        return $"Account Details:\n" +
+               $"ID: {ID}\n" +
+               $"Username: {Username}\n" +
+               $"Email: {Email}\n" +
+               $"Profile Picture URL: {(ProfilePictureUrl ?? "No profile picture available")}\n" +
+               $"Verified: {(Verified ? "Yes" : "No")}\n" +
+               $"Rating: {Rating:F1}\n" +
+               $"Languages: {GetLanguages()}\n" +
+               $"Following: {GetFollowings()}\n";
+    }
 
-        sb.AppendLine("ID: " + ID);
-        sb.AppendLine("Username: " + Username);
-        sb.AppendLine("Password: " + Password);
-        sb.AppendLine("Email: " + Email);
-        sb.AppendLine("Profile Picture URL: " + (ProfilePictureUrl ?? "None"));
-        sb.AppendLine("Verified: " + Verified);
-        sb.AppendLine("Rating: " + Rating);
+    private string GetLanguages()
+    {
+        if (Languages.Count == 0)
+            return "None";
+        return string.Join(", ", Languages);
+    }
 
-        return sb.ToString();
+    private string GetFollowings()
+    {
+        if (Followings.Count == 0)
+            return "None";
+        return string.Join(", ", Followings.ConvertAll(f => f.Username));
     }
 }

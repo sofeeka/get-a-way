@@ -8,8 +8,13 @@ public class InternationalPlace : Place
     }
 
     public InternationalPlace(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory, bool petFriendly) 
+        PriceCategory priceCategory, bool petFriendly)
         : base(name, location, openTime, closeTime, priceCategory, petFriendly)
     {
+    }
+
+    public override string ToString()
+    {
+        return base.ToString();
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using get_a_way.Entities.Accounts;
 using get_a_way.Exceptions;
@@ -15,7 +15,7 @@ public class ChatRoom : IExtent<ChatRoom>
 
     private long _id;
     private string _name;
-    private string _photoUrl;
+    private string? _photoUrl;
 
     public long ID
     {
@@ -29,10 +29,13 @@ public class ChatRoom : IExtent<ChatRoom>
         set => _name = ValidateName(value);
     }
 
-    public string PhotoUrl
+    public string? PhotoUrl
     {
         get => _photoUrl;
-        set => _photoUrl = value;
+        set
+        {
+            if (value != null) _photoUrl = ValidatePhotoUrl(value);
+        }
     }
 
     [XmlArray("Members")]
@@ -53,28 +56,38 @@ public class ChatRoom : IExtent<ChatRoom>
         AddInstanceToExtent(this);
     }
 
-
     private string ValidateName(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new InvalidAttributeException("Name of a group cannot be empty");
+            throw new InvalidAttributeException("Name of a group cannot be empty.");
 
         return value;
     }
 
-    public List<ChatRoom> GetExtentCopy()
+    private string ValidatePhotoUrl(string value)
+    {
+        var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
+        bool valid = Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
+
+        if (string.IsNullOrWhiteSpace(value) || !valid)
+            throw new InvalidAttributeException($"Invalid picture URL: '{value}'.");
+
+        return value;
+    }
+
+    public static List<ChatRoom> GetExtentCopy()
     {
         return new List<ChatRoom>(_extent);
     }
 
-    public void AddInstanceToExtent(ChatRoom instance)
+    public static void AddInstanceToExtent(ChatRoom instance)
     {
         if (instance == null)
             throw new AddingNullInstanceException();
         _extent.Add((instance));
     }
 
-    public void RemoveInstanceFromExtent(ChatRoom instance)
+    public static void RemoveInstanceFromExtent(ChatRoom instance)
     {
         _extent.Remove(instance);
     }
@@ -82,5 +95,29 @@ public class ChatRoom : IExtent<ChatRoom>
     public static List<ChatRoom> GetExtent()
     {
         return _extent;
+    }
+
+    public static void Reset()
+    {
+        _extent.Clear();
+        IdCounter = 0;
+    }
+
+    public override string ToString()
+    {
+        return $"Chat Room Details:\n" +
+               $"ID: {ID}\n" +
+               $"Name: {Name}\n" +
+               $"Photo URL: {(PhotoUrl ?? "No photo available")}\n" +
+               $"Number of Members: {Members?.Count ?? 0}\n" +
+               $"Members: {GetMemberNames()}\n";
+    }
+
+    private string GetMemberNames()
+    {
+        if (Members.Count == 0)
+            return "No members";
+
+        return string.Join(", ", Members.ConvertAll(member => member.Username));
     }
 }

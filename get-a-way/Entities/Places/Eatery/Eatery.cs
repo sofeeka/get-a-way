@@ -64,4 +64,28 @@ public class Eatery : Place
 
         return values;
     }
+
+    public override string ToString()
+    {
+        return base.ToString() +
+               $"Eatery Type: {Type}\n" +
+               $"Cuisine: {Cuisine}\n" +
+               $"Menu: {GetMenuItems()}\n" +
+               $"Dietary Options: {GetDietaryOptions()}\n" +
+               $"Reservation Required: {(ReservationRequired ? "Yes" : "No")}\n";
+    }
+
+    private string GetMenuItems()
+    {
+        if (Menu.Count == 0)
+            return "No menu available";
+        return string.Join(", ", Menu);
+    }
+
+    private string GetDietaryOptions()
+    {
+        if (DietaryOptions.Count == 0)
+            return "None";
+        return string.Join(", ", DietaryOptions);
+    }
 }

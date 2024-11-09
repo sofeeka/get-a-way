@@ -7,7 +7,7 @@ namespace get_a_way.Entities.Review;
 public class Review : IExtent<Review>
 {
     private static List<Review> _extent = new List<Review>();
-    
+
     private static long IdCounter = 0;
 
     private long _id;
@@ -17,19 +17,19 @@ public class Review : IExtent<Review>
 
     public long ID
     {
-        get => _id; 
+        get => _id;
         set => _id = value;
     }
 
     public double Rating
     {
-        get => _rating; 
+        get => _rating;
         set => _rating = ValidateRating(value);
     }
 
     public string Comment
     {
-        get => _comment; 
+        get => _comment;
         set => _comment = ValidateComment(value);
     }
 
@@ -43,35 +43,53 @@ public class Review : IExtent<Review>
         Rating = rating;
         Comment = comment;
     }
-    
+
     private double ValidateRating(double value)
     {
         value = Math.Max(value, 0.0);
         value = Math.Min(value, 10.0);
         return value;
     }
-    
+
     private string ValidateComment(string value)
     {
-        if (value.Length > 500)
-            throw new InvalidAttributeException("Comment length must be between 10 and 500 characters.");
+        if (value.Length > 1000)
+            throw new InvalidAttributeException("Comment length cannot exceed 1000 characters.");
         return value;
     }
 
-    public List<Review> GetExtentCopy()
+    public static List<Review> GetExtentCopy()
     {
         return new List<Review>(_extent);
     }
 
-    public void AddInstanceToExtent(Review instance)
+    public static void AddInstanceToExtent(Review instance)
     {
         if (instance == null)
             throw new AddingNullInstanceException();
         _extent.Add((instance));
     }
 
-    public void RemoveInstanceFromExtent(Review instance)
+    public static void RemoveInstanceFromExtent(Review instance)
     {
         _extent.Remove(instance);
+    }
+
+    public static List<Review> GetExtent()
+    {
+        return _extent;
+    }
+
+    public static void Reset()
+    {
+        _extent.Clear();
+        IdCounter = 0;
+    }
+
+    public override string ToString()
+    {
+        return $"Review ID: {ID}\n" +
+               $"Rating: {Rating:F1}/10\n" +
+               $"Comment: {(string.IsNullOrWhiteSpace(Comment) ? "No comment provided" : Comment)}\n";
     }
 }

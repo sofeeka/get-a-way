@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Chat;
 using get_a_way.Entities.Places;
@@ -14,6 +13,7 @@ public class Database
     private List<Message> _messages;
     private List<Place> _places;
     private List<Trip> _trips;
+    // todo add review extent
 
     public List<Account> Accounts
     {
@@ -50,7 +50,40 @@ public class Database
         Accounts = Account.GetExtent();
         ChatRooms = ChatRoom.GetExtent();
         Messages = Message.GetExtent();
-        Places = Place.Extent;
-        Trips = Trip.Extent;
+        Places = Place.GetExtent();
+        Trips = Trip.GetExtent();
+    }
+
+    public void Represent()
+    {
+        foreach (var value in Accounts)
+        {
+            Console.WriteLine();
+            Console.WriteLine(value);
+        }
+
+        foreach (var value in ChatRooms)
+        {
+            Console.WriteLine();
+            Console.WriteLine(value);
+        }
+
+        foreach (var value in Messages)
+        {
+            Console.WriteLine();
+            Console.WriteLine(value);
+        }
+
+        foreach (var value in Places)
+        {
+            Console.WriteLine();
+            Console.WriteLine(value);
+        }
+
+        foreach (var value in Trips)
+        {
+            Console.WriteLine();
+            Console.WriteLine(value);
+        }
     }
 }
