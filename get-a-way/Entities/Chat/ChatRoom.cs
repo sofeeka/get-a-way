@@ -79,8 +79,8 @@ public class ChatRoom : IExtent<ChatRoom>
         _extent.Remove(instance);
     }
 
-    public static ReadOnlyCollection<ChatRoom> GetExtent()
+    public static List<ChatRoom> GetExtent()
     {
-        return _extent.AsReadOnly();
+        return _extent;
     }
 }

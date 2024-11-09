@@ -43,6 +43,7 @@ Database loadDB(string path = "get-a-way-db.xml")
             db = new Database();
         }
     }
+
     return db;
 }
 

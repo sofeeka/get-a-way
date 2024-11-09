@@ -9,25 +9,25 @@ namespace get_a_way;
 [Serializable]
 public class Database
 {
-    private ReadOnlyCollection<Account> _accounts;
-    private ReadOnlyCollection<ChatRoom> _chatRooms;
-    private ReadOnlyCollection<Message> _messages;
+    private List<Account> _accounts;
+    private List<ChatRoom> _chatRooms;
+    private List<Message> _messages;
     private List<Place> _places;
     private List<Trip> _trips;
 
-    public ReadOnlyCollection<Account> Accounts
+    public List<Account> Accounts
     {
         get => _accounts;
         set => _accounts = value;
     }
 
-    public ReadOnlyCollection<ChatRoom> ChatRooms
+    public List<ChatRoom> ChatRooms
     {
         get => _chatRooms;
         set => _chatRooms = value;
     }
 
-    public ReadOnlyCollection<Message> Messages
+    public List<Message> Messages
     {
         get => _messages;
         set => _messages = value;

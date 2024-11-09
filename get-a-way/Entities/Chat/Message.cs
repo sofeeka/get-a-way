@@ -79,8 +79,8 @@ public class Message : IExtent<Message>
         _extent.Remove(instance);
     }
 
-    public static ReadOnlyCollection<Message> GetExtent()
+    public static List<Message> GetExtent()
     {
-        return _extent.AsReadOnly();
+        return _extent;
     }
 }
