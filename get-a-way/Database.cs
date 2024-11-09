@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Chat;
 using get_a_way.Entities.Places;

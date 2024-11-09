@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Xml.Serialization;
 using get_a_way.Exceptions;
@@ -19,7 +20,7 @@ public abstract class Account : IExtent<Account>
     private string _username;
     private string _password;
     private string _email;
-    
+
     private string? _profilePictureUrl;
     private bool _verified;
     private double _rating;
@@ -50,19 +51,19 @@ public abstract class Account : IExtent<Account>
 
     public string? ProfilePictureUrl
     {
-        get => _profilePictureUrl; 
+        get => _profilePictureUrl;
         set => _profilePictureUrl = value;
     }
 
     public bool Verified
     {
-        get => _verified; 
+        get => _verified;
         set => _verified = value;
     }
 
     public double Rating
     {
-        get => _rating; 
+        get => _rating;
         set => _rating = ValidateRating(value);
     }
 
@@ -170,7 +171,7 @@ public abstract class Account : IExtent<Account>
     public override string ToString()
     {
         var sb = new StringBuilder();
-    
+
         sb.AppendLine("ID: " + ID);
         sb.AppendLine("Username: " + Username);
         sb.AppendLine("Password: " + Password);

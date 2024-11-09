@@ -1,4 +1,5 @@
-﻿using get_a_way.Exceptions;
+﻿using System.Collections.ObjectModel;
+using get_a_way.Exceptions;
 using get_a_way.Services;
 
 namespace get_a_way.Entities.Chat;
