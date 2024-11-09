@@ -11,4 +11,9 @@ public class TravelerAccount : Account
         password, email)
     {
     }
+
+    public override string ToString()
+    {
+        return base.ToString();
+    }
 }

@@ -11,4 +11,9 @@ public class LocalPlace : Place
         bool petFriendly) : base(name, location, openTime, closeTime, priceCategory, petFriendly)
     {
     }
+
+    public override string ToString()
+    {
+        return base.ToString();
+    }
 }

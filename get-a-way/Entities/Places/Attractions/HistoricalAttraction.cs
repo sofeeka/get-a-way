@@ -29,4 +29,10 @@ public class HistoricalAttraction : Attraction
 
         return value;
     }
+
+    public override string ToString()
+    {
+        return base.ToString() +
+               $"Cultural Period: {CulturalPeriod}\n";
+    }
 }

@@ -1,5 +1,4 @@
-﻿using System.Xml.Serialization;
-using get_a_way.Exceptions;
+﻿using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Places.Shop;
 
@@ -48,5 +47,20 @@ public class Shop : Place
                 throw new InvalidAttributeException("Holiday specials items cannot be empty");
 
         return values;
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() +
+               $"Shop Type: {Type}\n" +
+               $"Online Order Available: {(OnlineOrderAvailability ? "Yes" : "No")}\n" +
+               $"Holiday Specials: {GetHolidaySpecials()}\n";
+    }
+
+    private string GetHolidaySpecials()
+    {
+        if (HolidaySpecials.Count == 0)
+            return "None";
+        return string.Join(", ", HolidaySpecials);
     }
 }

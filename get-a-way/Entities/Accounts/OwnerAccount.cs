@@ -1,5 +1,4 @@
-﻿using System.Xml.Serialization;
-using get_a_way.Exceptions;
+﻿using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Accounts;
 
@@ -29,5 +28,10 @@ public class OwnerAccount : Account
     public OwnerAccount(string username, string password, string email) :
         base(username, password, email)
     {
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() + $"Tax: {Tax}\n";
     }
 }

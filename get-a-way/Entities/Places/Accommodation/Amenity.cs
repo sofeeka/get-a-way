@@ -31,9 +31,9 @@ public enum Amenity
     Stove,
     CoffeeMaker,
     Microwave,
-    CookingBasics, 
+    CookingBasics,
     DishesAndSilverware,
-    DedicatedWorkspace, 
+    DedicatedWorkspace,
     SelfCheckIn,
     LuggageDropOffAllowed
 }

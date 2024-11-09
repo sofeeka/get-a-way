@@ -11,17 +11,69 @@ namespace get_a_way.Entities.Places;
 [XmlInclude(typeof(Shop.Shop))]
 public abstract class Place : IExtent<Place>
 {
-    public static List<Place> Extent = new List<Place>();
+    private static List<Place> _extent = new List<Place>();
 
     private static long IdCounter = 0;
-    public long ID { get; set; }
-    public string Name { get; set; }
-    public string Location { get; set; }
-    public DateTime OpenTime { get; set; }
-    public DateTime CloseTime { get; set; }
-    public PriceCategory PriceCategory { get; set; }
-    public bool PetFriendly { get; set; }
-    public bool OpenedAtNight { get; set; }
+
+    private long _id;
+    private string _name;
+    private string _location;
+    private DateTime _openTime;
+    private DateTime _closeTime;
+    private PriceCategory _priceCategory;
+    private bool _petFriendly;
+    private bool _openedAtNight;
+
+    public long ID
+    {
+        get => _id;
+        set => _id = value;
+    }
+
+    public string Name
+    {
+        get => _name;
+        set => _name = ValidateName(value);
+    }
+
+    public string Location
+    {
+        get => _location;
+        set => _location = ValidateLocation(value);
+    }
+
+    public DateTime OpenTime
+    {
+        get => _openTime;
+        set => _openTime = value;
+    }
+
+    public DateTime CloseTime
+    {
+        get => _closeTime;
+        set => _closeTime = value;
+    }
+
+    public PriceCategory PriceCategory
+    {
+        get => _priceCategory;
+        set => _priceCategory = value;
+    }
+
+    public bool PetFriendly
+    {
+        get => _petFriendly;
+        set => _petFriendly = value;
+    }
+
+    public bool OpenedAtNight
+    {
+        get => _openedAtNight;
+        set => _openedAtNight = value;
+    }
+
+    [XmlArray("Reviews")]
+    [XmlArrayItem("Review")]
     public List<Review.Review> Reviews { get; set; }
 
     public Place()
@@ -40,14 +92,14 @@ public abstract class Place : IExtent<Place>
         PetFriendly = petFriendly;
         Reviews = new List<Review.Review>();
         SetOpenedAtNight();
-        
+
         AddInstanceToExtent(this);
     }
-    
+
     private void SetOpenedAtNight()
     {
-        TimeSpan nightStart = new TimeSpan(20, 0, 0); 
-        TimeSpan nightEnd = new TimeSpan(6, 0, 0);    
+        TimeSpan nightStart = new TimeSpan(20, 0, 0);
+        TimeSpan nightEnd = new TimeSpan(6, 0, 0);
 
         TimeSpan openTime = OpenTime.TimeOfDay;
         TimeSpan closeTime = CloseTime.TimeOfDay;
@@ -58,20 +110,59 @@ public abstract class Place : IExtent<Place>
         OpenedAtNight = opensDuringNight || closesDuringNight;
     }
 
+    private string ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 3)
+            throw new InvalidAttributeException("Name must be at least 3 characters long.");
+        return name;
+    }
+
+    private string ValidateLocation(string location)
+    {
+        if (string.IsNullOrWhiteSpace(location))
+            throw new InvalidAttributeException("Location must be at least 3 characters long.");
+        return location;
+    }
+
     public List<Place> GetExtentCopy()
     {
-        return new List<Place>(Extent);
+        return new List<Place>(_extent);
     }
 
     public void AddInstanceToExtent(Place instance)
     {
         if (instance == null)
             throw new AddingNullInstanceException();
-        Extent.Add((instance));
+        _extent.Add((instance));
     }
 
     public void RemoveInstanceFromExtent(Place instance)
     {
-        Extent.Remove(instance);
+        _extent.Remove(instance);
+    }
+
+    public static List<Place> GetExtent()
+    {
+        return _extent;
+    }
+
+    public static void Reset()
+    {
+        _extent.Clear();
+        IdCounter = 0;
+    }
+
+    public override string ToString()
+    {
+        return $"Place Details:\n" +
+               $"ID: {ID}\n" +
+               $"Name: {Name}\n" +
+               $"Location: {Location}\n" +
+               $"Open Time: {OpenTime:HH:mm}\n" +
+               $"Close Time: {CloseTime:HH:mm}\n" +
+               $"Price Category: {PriceCategory}\n" +
+               $"Pet Friendly: {(PetFriendly ? "Yes" : "No")}\n" +
+               $"Opened At Night: {(OpenedAtNight ? "Yes" : "No")}\n" +
+               $"Number of Reviews: {Reviews?.Count ?? 0}\n";
     }
 }

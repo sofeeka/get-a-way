@@ -5,18 +5,12 @@ using System.Xml.Serialization;
 using get_a_way;
 using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Chat;
+using get_a_way.Services;
 
 Console.WriteLine("-");
 
-void saveDB(Database db, string path = "get-a-way-db.xml")
-{
-    StreamWriter file = File.CreateText(path);
-    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Database));
-    using (XmlTextWriter writer = new XmlTextWriter(file))
-    {
-        xmlSerializer.Serialize(writer, db);
-    }
-}
+// Database db = DummyDataGenerator.CreateInitialDatabase();
+Database db = Serialisation.loadDB();
 
 Database loadDB(string path = "get-a-way-db.xml")
 {
@@ -57,12 +51,12 @@ Database createInitialDatabase()
     ChatRoom chatRoom1 = new ChatRoom("chatroom1", "photo url");
     ChatRoom chatRoom2 = new ChatRoom("chatroom2", "photo url");
 
-    saveDB(db);
+    //saveDB(db);
     return db;
 }
 
 // Database db = createInitialDatabase();
-Database db = loadDB();
+//Database db = loadDB();
 
 foreach (var account in db.Accounts)
 {
@@ -75,5 +69,6 @@ foreach (var chat in db.ChatRooms)
     Console.WriteLine();
     Console.WriteLine(chat.Name);
 }
+db.Represent();
 
 Console.WriteLine("-");
