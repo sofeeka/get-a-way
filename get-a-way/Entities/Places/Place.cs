@@ -124,19 +124,19 @@ public abstract class Place : IExtent<Place>
         return location;
     }
 
-    public List<Place> GetExtentCopy()
+    public static List<Place> GetExtentCopy()
     {
         return new List<Place>(_extent);
     }
 
-    public void AddInstanceToExtent(Place instance)
+    public static void AddInstanceToExtent(Place instance)
     {
         if (instance == null)
             throw new AddingNullInstanceException();
         _extent.Add((instance));
     }
 
-    public void RemoveInstanceFromExtent(Place instance)
+    public static void RemoveInstanceFromExtent(Place instance)
     {
         _extent.Remove(instance);
     }
