@@ -122,7 +122,7 @@ public abstract class Account : IExtent<Account>
 
     private string ValidatePassword(string password)
     {
-        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 8 || password.Length > 40)
             throw new InvalidAttributeException("Password must be at least 8 characters long");
         
         if (!password.Any(char.IsUpper))
