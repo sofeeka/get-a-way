@@ -7,25 +7,36 @@ public class AccountTests
 {
     private class TestAccount(string username, string password, string email) : Account(username, password, email);
 
-    private TestAccount _valid = new TestAccount(ValidUserName, ValidPassword, ValidEmail);
+    private TestAccount _valid;
 
+    // cant have 2 accounts with same username
     private const string ValidUserName = "ValidUserName";
+    private const string AnotherValidUserName = "AnotherValidUserName";
     private const string ValidPassword = "ValidPassword";
     private const string ValidEmail = "validemail@pjwstk.edu.pl";
+
+    [SetUp]
+    public void SetUpEnvironment()
+    {
+        Account.Reset();
+        _valid = new TestAccount(ValidUserName, ValidPassword, ValidEmail);
+    }
 
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
         // todo
         // do not use ValidUserName, will throw DuplicateUsernameException
-        var traveler = new TestAccount("NewValidUserName", ValidPassword, ValidEmail);
+        var traveler = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
 
-        Assert.That(traveler.Username, Is.EqualTo("NewValidUserName"));
+        Assert.That(traveler.Username, Is.EqualTo(AnotherValidUserName));
         Assert.That(traveler.Password, Is.EqualTo(ValidPassword));
         Assert.That(traveler.Email, Is.EqualTo(ValidEmail));
 
         // todo add placeholder for empty pfp
         Assert.That(traveler.ProfilePictureUrl, Is.EqualTo("static/img/default_profile_img.jpg"));
+
+        Assert.That(traveler.ID, Is.EqualTo(2));
 
         Assert.That(traveler.Verified, Is.False);
         Assert.That(traveler.Rating, Is.EqualTo(10.0));
@@ -43,8 +54,8 @@ public class AccountTests
     [Test]
     public void Setter_ValidUsername_SetsUsername()
     {
-        _valid.Username = "NewUsername";
-        Assert.That(_valid.Username, Is.EqualTo("NewUsername"));
+        _valid.Username = AnotherValidUserName;
+        Assert.That(_valid.Username, Is.EqualTo(AnotherValidUserName));
     }
 
     [Test]
@@ -68,9 +79,8 @@ public class AccountTests
     public void Constructor_DuplicateUsername_ThrowsInvalidAttributeException()
     {
         // todo create exception
-        var owner1 = new TestAccount("UniqueName", "Password123", "traveler1@pjwstk.edu.pl");
         Assert.That(() =>
-                new TestAccount("UniqueName", "AnotherPassword", "traveler2@pjwstk.edu.pl"),
+                new TestAccount(ValidUserName, ValidPassword, ValidEmail),
             Throws.TypeOf<InvalidAttributeException>());
     }
 
@@ -98,17 +108,48 @@ public class AccountTests
         // todo move to separate tests
         // Assert.That(() => _valid.Username = "inv", Throws.TypeOf<InvalidAttributeException>());
         // Assert.That(_valid.Username, Is.EqualTo("ValidName"));
+        //
+        // Assert.That(() => _valid.Password = "inv", Throws.TypeOf<InvalidAttributeException>());
+        // Assert.That(_valid.Password, Is.EqualTo("Password123"));
+        //
+        // Assert.That(() => _valid.Email = "inv", Throws.TypeOf<InvalidAttributeException>());
+        // Assert.That(_valid.Email, Is.EqualTo("traveler@example.com"));
+        //
+        // _valid.Rating = -2;
+        // Assert.That(_valid.Rating, Is.EqualTo(0));
+        //
+        // _valid.Rating = 100;
+        // Assert.That(_valid.Rating, Is.EqualTo(10));
+    }
 
-        Assert.That(() => _valid.Password = "inv", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(_valid.Password, Is.EqualTo("Password123"));
+    [Test]
+    public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
+    {
+        int count = Account.GetExtentCopy().Count;
+        // AddInstanceToExtent is called in constructor
+        var newTestAccount = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+        Assert.That(Account.GetExtentCopy().Count, Is.EqualTo(count + 1));
+    }
 
-        Assert.That(() => _valid.Email = "inv", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(_valid.Email, Is.EqualTo("traveler@example.com"));
-
-        _valid.Rating = -2;
-        Assert.That(_valid.Rating, Is.EqualTo(0));
-
-        _valid.Rating = 100;
-        Assert.That(_valid.Rating, Is.EqualTo(10));
+    [Test]
+    public void RemoveInstanceFromExtent_OnRemovalOfInstance_DecreasesExtentCount()
+    {
+        int count = Account.GetExtentCopy().Count;
+        Account.RemoveInstanceFromExtent(_valid);
+        Assert.That(Account.GetExtentCopy().Count, Is.EqualTo(count - 1));
+    }
+    
+    [Test]
+    public void GetExtentCopy_DoesNotReturnActualExtent()
+    {
+        // addresses are different
+        Assert.True(Account.GetExtentCopy() != Account.GetExtent());
+    }
+    
+    [Test]
+    public void ResetExtent_ClearsExtent()
+    {
+        Account.Reset();
+        Assert.That(Account.GetExtent().Count, Is.EqualTo(0));
     }
 }
