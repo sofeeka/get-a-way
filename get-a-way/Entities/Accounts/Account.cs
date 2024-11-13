@@ -122,17 +122,25 @@ public abstract class Account : IExtent<Account>
 
     private string ValidatePassword(string password)
     {
-        if (string.IsNullOrWhiteSpace(password) || password.Length < 8 || password.Length > 40)
-            throw new InvalidAttributeException("Password must be at least 8 characters long");
+        var errorMessages = new List<string>();
+        
+        if (string.IsNullOrWhiteSpace(password))
+            errorMessages.Add("Password cannot be empty or whitespace.");
+
+        if (password.Length < 8 || password.Length > 40)
+            errorMessages.Add("Password must be at least 8 characters long.");
         
         if (!password.Any(char.IsUpper))
-            throw new InvalidAttributeException("Password must contain at least one uppercase letter");
+            errorMessages.Add("Password must contain at least one uppercase letter.");
 
         if (!password.Any(char.IsLower))
-            throw new InvalidAttributeException("Password must contain at least one lowercase letter");
+            errorMessages.Add("Password must contain at least one lowercase letter.");
 
         if (!password.Any(char.IsDigit))
-            throw new InvalidAttributeException("Password must contain at least one digit");
+            errorMessages.Add("Password must contain at least one digit.");
+        
+        if (errorMessages.Any())
+            throw new InvalidPasswordException(string.Join(" ", errorMessages));
         
         return password;
     }
