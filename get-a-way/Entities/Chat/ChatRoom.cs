@@ -98,7 +98,7 @@ public class ChatRoom : IExtent<ChatRoom>
         return _extent;
     }
 
-    public static void Reset()
+    public static void ResetExtent()
     {
         _extent.Clear();
         IdCounter = 0;

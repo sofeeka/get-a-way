@@ -18,7 +18,7 @@ public class AccountTests
     [SetUp]
     public void SetUpEnvironment()
     {
-        Account.Reset();
+        Account.ResetExtent();
         _valid = new TestAccount(ValidUserName, ValidPassword, ValidEmail);
     }
 
@@ -149,7 +149,7 @@ public class AccountTests
     [Test]
     public void ResetExtent_ClearsExtent()
     {
-        Account.Reset();
+        Account.ResetExtent();
         Assert.That(Account.GetExtent().Count, Is.EqualTo(0));
     }
 }

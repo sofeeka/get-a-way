@@ -84,7 +84,7 @@ public class Message : IExtent<Message>
         return _extent;
     }
 
-    public static void Reset()
+    public static void ResetExtent()
     {
         _extent.Clear();
         IdCounter = 0;

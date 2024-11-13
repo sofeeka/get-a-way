@@ -6,6 +6,5 @@ public interface IExtent<T>
     public static abstract void RemoveInstanceFromExtent(T instance);
     public static abstract List<T> GetExtentCopy();
     public static abstract List<T> GetExtent();
-    // todo rename to ResetExtent
-    static abstract void Reset();
+    static abstract void ResetExtent();
 }
