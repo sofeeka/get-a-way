@@ -7,20 +7,25 @@ public class AccountTests
 {
     private class TestAccount(string username, string password, string email) : Account(username, password, email);
 
+    private TestAccount _valid = new TestAccount(ValidUserName, ValidPassword, ValidEmail);
+
+    private const string ValidUserName = "ValidUserName";
+    private const string ValidPassword = "ValidPassword";
+    private const string ValidEmail = "validemail@pjwstk.edu.pl";
+
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        var traveler = new TestAccount("Username", "Password", "traveler@pjwstk.edu.pl");
+        // todo
+        // do not use ValidUserName, will throw DuplicateUsernameException
+        var traveler = new TestAccount("NewValidUserName", ValidPassword, ValidEmail);
 
-        //todo come up with a way to check correct id assignment
-        //Assert.That(owner.ID, Is.EqualTo(1));
-
-        Assert.That(traveler.Username, Is.EqualTo("Username"));
-        Assert.That(traveler.Password, Is.EqualTo("Password"));
-        Assert.That(traveler.Email, Is.EqualTo("traveler@pjwstk.edu.pl"));
+        Assert.That(traveler.Username, Is.EqualTo("NewValidUserName"));
+        Assert.That(traveler.Password, Is.EqualTo(ValidPassword));
+        Assert.That(traveler.Email, Is.EqualTo(ValidEmail));
 
         // todo add placeholder for empty pfp
-        // Assert.That(traveler.ProfilePictureUrl, Is.EqualTo("static/img/default_profile_img.jpg"));
+        Assert.That(traveler.ProfilePictureUrl, Is.EqualTo("static/img/default_profile_img.jpg"));
 
         Assert.That(traveler.Verified, Is.False);
         Assert.That(traveler.Rating, Is.EqualTo(10.0));
@@ -36,22 +41,33 @@ public class AccountTests
     }
 
     [Test]
-    public void Constructor_InvalidUsername_ThrowsInvalidAttributeException()
+    public void Setter_ValidUsername_SetsUsername()
     {
-        Assert.That(() =>
-                new TestAccount("N", "Password123", "traveler@pjwstk.edu.pl"),
+        _valid.Username = "NewUsername";
+        Assert.That(_valid.Username, Is.EqualTo("NewUsername"));
+    }
+
+    [Test]
+    public void Setter_InvalidUsername_ThrowsInvalidAttributeException()
+    {
+        Assert.That(() => _valid.Username = "inv", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
+
+        Assert.That(() => _valid.Username = "", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
+
+        Assert.That(() => _valid.Username = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
+
+        Assert.That(() => _valid.Username = "tooLongOfUsernameToBeValidAndSomeMore",
             Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() =>
-                new TestAccount("", "Password123", "traveler@pjwstk.edu.pl"),
-            Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() =>
-                new TestAccount(null, "Password123", "traveler@pjwstk.edu.pl"),
-            Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
     }
 
     [Test]
     public void Constructor_DuplicateUsername_ThrowsInvalidAttributeException()
     {
+        // todo create exception
         var owner1 = new TestAccount("UniqueName", "Password123", "traveler1@pjwstk.edu.pl");
         Assert.That(() =>
                 new TestAccount("UniqueName", "AnotherPassword", "traveler2@pjwstk.edu.pl"),
@@ -79,21 +95,20 @@ public class AccountTests
     [Test]
     public void Setter_InvalidAttributes_ThrowsInvalidAttributeException()
     {
-        var valid = new TestAccount("ValidName", "Password123", "traveler@example.com");
+        // todo move to separate tests
+        // Assert.That(() => _valid.Username = "inv", Throws.TypeOf<InvalidAttributeException>());
+        // Assert.That(_valid.Username, Is.EqualTo("ValidName"));
 
-        Assert.That(() => valid.Username = "inv", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(valid.Username, Is.EqualTo("ValidName"));
+        Assert.That(() => _valid.Password = "inv", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_valid.Password, Is.EqualTo("Password123"));
 
-        Assert.That(() => valid.Password = "inv", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(valid.Password, Is.EqualTo("Password123"));
-        
-        Assert.That(() => valid.Email = "inv", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(valid.Email, Is.EqualTo("traveler@example.com"));
+        Assert.That(() => _valid.Email = "inv", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_valid.Email, Is.EqualTo("traveler@example.com"));
 
-        valid.Rating = -2;
-        Assert.That(valid.Rating, Is.EqualTo(0));
+        _valid.Rating = -2;
+        Assert.That(_valid.Rating, Is.EqualTo(0));
 
-        valid.Rating = 100;
-        Assert.That(valid.Rating, Is.EqualTo(10));
+        _valid.Rating = 100;
+        Assert.That(_valid.Rating, Is.EqualTo(10));
     }
 }
