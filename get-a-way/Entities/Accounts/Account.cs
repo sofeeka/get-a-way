@@ -1,3 +1,4 @@
+using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using get_a_way.Exceptions;
@@ -105,7 +106,7 @@ public abstract class Account : IExtent<Account>
             throw new InvalidAttributeException("Username must be between 5 and 30 characters long");
 
         if (IsUsernameTaken(username))
-            throw new InvalidAttributeException($"Username '{username}' is already taken");
+            throw new DuplicateUsernameException();
 
         return username;
     }
