@@ -124,7 +124,16 @@ public abstract class Account : IExtent<Account>
     {
         if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
             throw new InvalidAttributeException("Password must be at least 8 characters long");
+        
+        if (!password.Any(char.IsUpper))
+            throw new InvalidAttributeException("Password must contain at least one uppercase letter");
 
+        if (!password.Any(char.IsLower))
+            throw new InvalidAttributeException("Password must contain at least one lowercase letter");
+
+        if (!password.Any(char.IsDigit))
+            throw new InvalidAttributeException("Password must contain at least one digit");
+        
         return password;
     }
 
