@@ -42,6 +42,8 @@ public class Review : IExtent<Review>
         ID = ++IdCounter;
         Rating = rating;
         Comment = comment;
+
+        AddInstanceToExtent(this);
     }
 
     private double ValidateRating(double value)
