@@ -58,9 +58,12 @@ public class Eatery : Place
 
     private List<string> ValidateMenu(List<string> values)
     {
+        if (values == null)
+            throw new InvalidAttributeException("Menu cannot be null.");
+
         foreach (var value in values)
             if (string.IsNullOrEmpty(value))
-                throw new InvalidAttributeException("Menu items cannot be empty");
+                throw new InvalidMenuItemException("Menu items cannot be empty");
 
         return values;
     }

@@ -14,6 +14,8 @@ public class TripTests
     private static readonly DateTime Now = DateTime.Now;
     private static readonly DateTime ValidDate = new DateTime(Now.Year - 1, Now.Month, Now.Day);
     private const string ValidDescription = "Valid Description";
+    private const string ValidPictureUrl = "https://valid/image.png";
+    private List<string> _validPictureUrls = new List<string>();
 
     [SetUp]
     public void SetUpEnvironment()
@@ -21,6 +23,12 @@ public class TripTests
         Trip.ResetExtent();
         Account.ResetExtent();
         _valid = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
+
+        _validPictureUrls = new List<string>();
+        _validPictureUrls.Add(ValidPictureUrl);
+        _validPictureUrls.Add(ValidPictureUrl);
+
+        _valid.PictureUrls = _validPictureUrls;
     }
 
     [Test]
@@ -28,7 +36,7 @@ public class TripTests
     {
         var trip = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
 
-        // ID is 2 because _valid.ID == 1
+        // ID == 2 because _valid.ID == 1
         Assert.That(trip.ID, Is.EqualTo(2));
 
         Assert.That(trip.Date, Is.EqualTo(ValidDate));
@@ -63,17 +71,56 @@ public class TripTests
     }
 
     [Test]
-    public void Setter_ValidPictures_SetsPictures()
+    public void Setter_ValidPictureUrls_SetsPictureUrls()
     {
-        // todo
+        _valid.PictureUrls = _validPictureUrls;
+        Assert.That(_valid.PictureUrls, Is.EqualTo(_validPictureUrls));
     }
 
     [Test]
-    public void Setter_InvalidPicture_ThrowsInvalidAttributeException()
+    public void Setter_InvalidPictureUrlsList_ThrowsInvalidAttributeException()
     {
-        // todo
+        Assert.That(() => _valid.PictureUrls = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+
+        List<string> urls = new List<string>();
+
+        for (int i = 0; i < 12; i++)
+            urls.Add(ValidPictureUrl);
+
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
     }
 
+    [Test]
+    public void Setter_InvalidPictureUrl_ThrowsInvalidAttributeException()
+    {
+        List<string> urls = new List<string>();
+
+        urls.Add(null);
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+
+        urls.Clear();
+        urls.Add("");
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+
+        urls.Clear();
+        urls.Add(" ");
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+
+        urls.Clear();
+        urls.Add("invalid path");
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+
+        urls.Clear();
+        urls.Add("https://not/image/extention");
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+    }
 
     [Test]
     public void Setter_ValidDescription_SetsDescription()
@@ -92,6 +139,25 @@ public class TripTests
         Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
 
         Assert.That(() => _valid.Description = " ", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+
+        string hugeDescription = """
+                                 Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula
+                                 eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
+                                 montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,
+                                 pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel,
+                                 aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis
+                                 vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras
+                                 dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo
+                                 ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in,
+                                 viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet.
+                                 Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper
+                                 ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum
+                                 rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc,
+                                 blandit vel, luctus pulvinar, hendre
+                                 """;
+
+        Assert.That(() => _valid.Description = hugeDescription, Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
     }
 
