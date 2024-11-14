@@ -83,7 +83,6 @@ public class ChatRoomTests
         // todo
     }
 
-
     [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
     {
