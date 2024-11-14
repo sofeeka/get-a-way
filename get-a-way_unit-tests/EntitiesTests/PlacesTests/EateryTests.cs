@@ -54,4 +54,11 @@ public class EateryTests
         _valid.Type = EateryType.Bar;
         Assert.That(_valid.Type, Is.EqualTo(EateryType.Bar));
     }
+
+    [Test]
+    public void Setter_ValidCuisine_SetsCuisine()
+    {
+        _valid.Cuisine = Cuisine.Ukrainian;
+        Assert.That(_valid.Cuisine, Is.EqualTo(Cuisine.Ukrainian));
+    }
 }
