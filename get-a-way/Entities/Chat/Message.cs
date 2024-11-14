@@ -30,18 +30,24 @@ public class Message : IExtent<Message>
     public DateTime Timestamp
     {
         get => _timestamp;
-        set => _timestamp = ValidateTimestamp(value);
+        set
+        {
+            if (value != _timestamp)
+            {
+                throw new InvalidOperationException("Message timestamp can not be changed.");
+            }
+        }
     }
 
     public Message()
     {
     }
 
-    public Message(string text, DateTime timestamp)
+    public Message(string text)
     {
         ID = ++IdCounter;
         Text = text;
-        Timestamp = timestamp;
+        _timestamp = DateTime.Now;
 
         AddInstanceToExtent(this);
     }
@@ -51,17 +57,12 @@ public class Message : IExtent<Message>
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("Text of a message cannot be empty.");
 
-        return value;
-    }
-
-    private DateTime ValidateTimestamp(DateTime value)
-    {
-        if (value > DateTime.Now)
-            throw new InvalidAttributeException("Message Timestamp cannot be in the future.");
+        if (value.Length > 10000)
+            throw new InvalidAttributeException("Message text can not exceed 10000 characters");
 
         return value;
     }
-
+    
     public static List<Message> GetExtentCopy()
     {
         return new List<Message>(_extent);
