@@ -33,7 +33,7 @@ public class TripTests
 
         Assert.That(trip.Date, Is.EqualTo(ValidDate));
         Assert.That(trip.TripType, Is.EqualTo(TripType.Friends));
-        Assert.That(trip.Pictures, Is.Empty);
+        Assert.That(trip.PictureUrls, Is.Empty);
         Assert.That(trip.Description, Is.EqualTo(ValidDescription));
     }
 
