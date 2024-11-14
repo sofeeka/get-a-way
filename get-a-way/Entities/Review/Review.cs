@@ -55,7 +55,7 @@ public class Review : IExtent<Review>
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("Comment cannot be empty.");
-        
+
         if (value.Length > 1000)
             throw new InvalidAttributeException("Comment length cannot exceed 1000 characters.");
         return value;
