@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-
 using System.Xml.Serialization;
 using get_a_way.Entities.Accounts;
 using get_a_way.Exceptions;
