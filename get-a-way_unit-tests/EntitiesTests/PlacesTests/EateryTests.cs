@@ -20,7 +20,7 @@ public class EateryTests
     private static EateryType eateryType = EateryType.Cafe;
     private static Cuisine cusine = Cuisine.Italian;
     private static List<string> _validMenu;
-    private static HashSet<DietaryOptions> _dietaryOptions;
+    private static HashSet<DietaryOptions> _validDietaryOptions;
     private bool _reservationRequired = true;
 
     [SetUp]
@@ -29,8 +29,12 @@ public class EateryTests
         Place.ResetExtent();
         _valid = new Eatery(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             priceCategory, petFriendly, eateryType, cusine, _reservationRequired);
+
         _validMenu = new List<string>();
         _validMenu.Add("New Valid Menu Item");
+
+        _validDietaryOptions = new HashSet<DietaryOptions>();
+        _validDietaryOptions.Add(DietaryOptions.Vegan);
     }
 
     [Test]
@@ -100,7 +104,32 @@ public class EateryTests
         Assert.That(() => _valid.Menu = menu, Throws.TypeOf<InvalidMenuItemException>());
         Assert.That(() => _valid.Menu, Is.EqualTo(_validMenu));
     }
-    
+
+    [Test]
+    public void Setter_ValidDietaryOptions_SetsDietaryOptions()
+    {
+        _valid.DietaryOptions = _validDietaryOptions;
+        Assert.That(_valid.DietaryOptions, Is.EqualTo(_validDietaryOptions));
+    }
+
+    [Test]
+    public void Setter_InvalidDietaryOptions_ThrowsInvalidAttributeException()
+    {
+        _valid.DietaryOptions = _validDietaryOptions;
+
+        Assert.That(() => _valid.DietaryOptions = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.DietaryOptions, Is.EqualTo(_validDietaryOptions));
+    }
+
+    [Test]
+    public void Setter_DuplicateDietaryOptionsItem_DoesNotChangeSizeOfDietaryOptionsSet()
+    {
+        _valid.DietaryOptions.Add(DietaryOptions.Keto);
+        int count = _valid.DietaryOptions.Count;
+        _valid.DietaryOptions.Add(DietaryOptions.Keto);
+        Assert.That(() => _valid.DietaryOptions.Count, Is.EqualTo(count));
+    }
+
     [Test]
     public void Setter_ValidReservationRequired_SetsReservationRequired()
     {
