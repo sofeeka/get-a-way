@@ -49,16 +49,18 @@ public class DatabaseSerializationTests
         Assert.That(loadedDatabase.Trips.Count, Is.EqualTo(tripCopyExtent.Count));
         Assert.That(loadedDatabase.Reviews.Count, Is.EqualTo(reviewCopyExtent.Count));
         
-        // Assert.That(loadedDatabase.Accounts[0].Username, Is.EqualTo(_originalDatabase.Accounts[0].Username));
-        // Assert.That(loadedDatabase.Messages[0].Text, Is.EqualTo(_originalDatabase.Messages[0].Text));
+        Assert.That(loadedDatabase.Accounts[0].Username, Is.EqualTo(accountCopyExtent[0].Username));
+        Assert.That(loadedDatabase.ChatRooms[0].Name, Is.EqualTo(chatRoomCopyExtent[0].Name));
+        Assert.That(loadedDatabase.Messages[0].Text, Is.EqualTo(messageCopyExtent[0].Text));
+        Assert.That(loadedDatabase.Places[0].Name, Is.EqualTo(placeCopyExtent[0].Name));
+        Assert.That(loadedDatabase.Trips[0].TripType, Is.EqualTo(tripCopyExtent[0].TripType));
+        Assert.That(loadedDatabase.Reviews[0].Rating, Is.EqualTo(reviewCopyExtent[0].Rating));
     }
 
     [TearDown]
     public void Cleanup()
     {
         if (File.Exists(TestFilePath))
-        {
             File.Delete(TestFilePath);
-        }
     }
 }
