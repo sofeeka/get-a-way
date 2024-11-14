@@ -102,7 +102,7 @@ public class Database
         }
     }
 
-    public void Reset()
+    public static void Reset()
     {
         Account.ResetExtent();
         ChatRoom.ResetExtent();

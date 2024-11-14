@@ -12,12 +12,12 @@ public class DatabaseSerializationTests
     public void SetUp()
     {
         _originalDatabase = new Database();
-        _originalDatabase.Reset();
-        //todo initialize db
+        Database.Reset();
+        DummyDataGenerator.GenerateData();
     }
     
     [Test]
-    public void Serialization_StoresDataCorrectly()
+    public void SerializationSaveDB_CreatesFile()
     {
         Serialisation.saveDB(_originalDatabase, TestFilePath);
         Assert.That(File.Exists(TestFilePath), Is.True);

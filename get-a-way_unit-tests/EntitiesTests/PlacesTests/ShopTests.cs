@@ -1,3 +1,4 @@
+using get_a_way;
 using get_a_way.Entities.Places;
 using get_a_way.Entities.Places.Shop;
 using get_a_way.Exceptions;
@@ -24,7 +25,7 @@ public class ShopTests
     [SetUp]
     public void SetUpEnvironment()
     {
-        Place.ResetExtent();
+        Database.Reset();
         _valid = new Shop(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             priceCategory, petFriendly, shopType, onlineOrderAvailability);
         _validHolidaySpecials = new List<string>();
