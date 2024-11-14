@@ -62,11 +62,15 @@ public class ChatRoom : IExtent<ChatRoom>
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("Name of a group cannot be empty.");
 
+        if (value.Length > 50)
+            throw new InvalidAttributeException("Name of a group cannot be longer than 30 characters.");
+
         return value;
     }
 
     private string ValidatePhotoUrl(string value)
     {
+        // todo change like in Account
         var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
         bool valid = Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
 
