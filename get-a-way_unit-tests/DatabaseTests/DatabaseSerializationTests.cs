@@ -1,10 +1,4 @@
 using get_a_way;
-using get_a_way.Entities.Accounts;
-using get_a_way.Entities.Chat;
-using get_a_way.Entities.Places;
-using get_a_way.Entities.Places.Accommodation;
-using get_a_way.Entities.Review;
-using get_a_way.Entities.Trip;
 using get_a_way.Services;
 
 namespace get_a_way_unit_tests.DatabaseTests;
