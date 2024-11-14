@@ -43,13 +43,13 @@ public class ChatRoomTests
     {
         _valid.Name = "AnotherValidName";
         Assert.That(_valid.Name, Is.EqualTo("AnotherValidName"));
-        
+
         _valid.Name = "v";
         Assert.That(_valid.Name, Is.EqualTo("v"));
-        
+
         _valid.Name = "50";
         Assert.That(_valid.Name, Is.EqualTo("50"));
-        
+
         _valid.Name = "_";
         Assert.That(_valid.Name, Is.EqualTo("_"));
     }
@@ -70,7 +70,7 @@ public class ChatRoomTests
             Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Name, Is.EqualTo(ValidName));
     }
-    
+
     [Test]
     public void Setter_ValidUrl_SetsUrl()
     {
@@ -82,16 +82,14 @@ public class ChatRoomTests
     {
         // todo
     }
-    
-    
+
+
     [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
     {
         int count = ChatRoom.GetExtentCopy().Count;
-        
         // AddInstanceToExtent is called in constructor
         var newTestInstance = new ChatRoom(ValidName, ValidUrl);
-        
         Assert.That(ChatRoom.GetExtentCopy().Count, Is.EqualTo(count + 1));
     }
 
@@ -102,14 +100,14 @@ public class ChatRoomTests
         ChatRoom.RemoveInstanceFromExtent(_valid);
         Assert.That(ChatRoom.GetExtentCopy().Count, Is.EqualTo(count - 1));
     }
-    
+
     [Test]
     public void GetExtentCopy_DoesNotReturnActualExtent()
     {
         // addresses are different
         Assert.True(ChatRoom.GetExtentCopy() != ChatRoom.GetExtent());
     }
-    
+
     [Test]
     public void ResetExtent_ClearsExtent()
     {
