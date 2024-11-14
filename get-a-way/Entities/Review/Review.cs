@@ -37,7 +37,7 @@ public class Review : IExtent<Review>
     {
     }
 
-    public Review(int rating, string comment)
+    public Review(double rating, string comment)
     {
         ID = ++IdCounter;
         Rating = rating;
