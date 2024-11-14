@@ -1,3 +1,4 @@
+using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using get_a_way.Exceptions;
@@ -72,11 +73,13 @@ public abstract class Account : IExtent<Account>
     // todo make sure lists are saved properly, maybe change to protected
     [XmlArray("Languages")]
     [XmlArrayItem("Language")]
-    protected List<string> Languages { get; set; }
+    protected List<Language> Languages { get; set; }
 
     [XmlArray("Followings")]
     [XmlArrayItem("Following")]
     protected List<Account> Followings { get; set; }
+
+    private static string _defaultImage = "static/img/default_profile_img.jpg";
 
     public Account()
     {
@@ -90,10 +93,10 @@ public abstract class Account : IExtent<Account>
         Password = password;
         Email = email;
 
-        ProfilePictureUrl = "static/img/default_profile_img.jpg";
+        ProfilePictureUrl = _defaultImage;
         Verified = false;
         Rating = 10.0;
-        Languages = new List<string>();
+        Languages = new List<Language>();
         Followings = new List<Account>();
 
         AddInstanceToExtent(this);
@@ -105,7 +108,7 @@ public abstract class Account : IExtent<Account>
             throw new InvalidAttributeException("Username must be between 5 and 30 characters long");
 
         if (IsUsernameTaken(username))
-            throw new InvalidAttributeException($"Username '{username}' is already taken");
+            throw new DuplicateUsernameException();
 
         return username;
     }
@@ -121,9 +124,26 @@ public abstract class Account : IExtent<Account>
 
     private string ValidatePassword(string password)
     {
-        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
-            throw new InvalidAttributeException("Password must be at least 8 characters long");
+        var errorMessages = new List<string>();
+        
+        if (string.IsNullOrWhiteSpace(password))
+            errorMessages.Add("Password cannot be empty or whitespace.");
 
+        if (password.Length < 8 || password.Length > 40)
+            errorMessages.Add("Password must be at least 8 characters long.");
+        
+        if (!password.Any(char.IsUpper))
+            errorMessages.Add("Password must contain at least one uppercase letter.");
+
+        if (!password.Any(char.IsLower))
+            errorMessages.Add("Password must contain at least one lowercase letter.");
+
+        if (!password.Any(char.IsDigit))
+            errorMessages.Add("Password must contain at least one digit.");
+        
+        if (errorMessages.Any())
+            throw new InvalidPasswordException(string.Join(" ", errorMessages));
+        
         return password;
     }
 
@@ -144,27 +164,25 @@ public abstract class Account : IExtent<Account>
 
     private string ValidateProfilePictureUrl(string value)
     {
-        // todo create exception for invalid url
         var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
         bool valid = Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
 
         try
         {
             if (string.IsNullOrWhiteSpace(value) || !valid)
-                throw new InvalidAttributeException($"Invalid picture URL: '{value}'.");
+                throw new InvalidPictureUrlException();
         }
-        catch (InvalidAttributeException e)
+        catch (InvalidPictureUrlException e)
         {
-            value = "static/img/default_profile_img.jpg";
+            value = _defaultImage;
         }
 
         return value;
     }
 
-    public void AddLanguage(string language)
+    public void AddLanguage(Language language)
     {
-        if (!string.IsNullOrWhiteSpace(language))
-            Languages.Add(language);
+        Languages.Add(language);
     }
 
     public static List<Account> GetExtentCopy()

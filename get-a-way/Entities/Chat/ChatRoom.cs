@@ -74,7 +74,7 @@ public class ChatRoom : IExtent<ChatRoom>
         bool valid = Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
 
         if (string.IsNullOrWhiteSpace(value) || !valid)
-            throw new InvalidAttributeException($"Invalid picture URL: '{value}'.");
+            throw new InvalidPictureUrlException();
 
         return value;
     }
