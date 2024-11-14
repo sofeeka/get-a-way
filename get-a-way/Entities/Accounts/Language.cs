@@ -7,7 +7,6 @@ public enum Language
     Mandarin,
     French,
     German,
-    Russian,
     Portuguese,
     Arabic,
     Japanese,
