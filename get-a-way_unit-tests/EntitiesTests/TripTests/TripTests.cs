@@ -94,4 +94,35 @@ public class TripTests
         Assert.That(() => _valid.Description = " ", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
     }
+    
+    [Test]
+    public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
+    {
+        int count = Trip.GetExtentCopy().Count;
+        // AddInstanceToExtent is called in constructor
+        var newTestInstance = new Trip(ValidAccount, ValidDate, TripType.Family, ValidDescription);
+        Assert.That(Trip.GetExtentCopy().Count, Is.EqualTo(count + 1));
+    }
+
+    [Test]
+    public void RemoveInstanceFromExtent_OnRemovalOfInstance_DecreasesExtentCount()
+    {
+        int count = Trip.GetExtentCopy().Count;
+        Trip.RemoveInstanceFromExtent(_valid);
+        Assert.That(Trip.GetExtentCopy().Count, Is.EqualTo(count - 1));
+    }
+
+    [Test]
+    public void GetExtentCopy_DoesNotReturnActualExtent()
+    {
+        // addresses are different
+        Assert.True(Trip.GetExtentCopy() != Trip.GetExtent());
+    }
+
+    [Test]
+    public void ResetExtent_ClearsExtent()
+    {
+        Trip.ResetExtent();
+        Assert.That(Trip.GetExtent().Count, Is.EqualTo(0));
+    }
 }
