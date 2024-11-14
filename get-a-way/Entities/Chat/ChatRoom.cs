@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using get_a_way.Entities.Accounts;
 using get_a_way.Exceptions;
@@ -61,16 +61,20 @@ public class ChatRoom : IExtent<ChatRoom>
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("Name of a group cannot be empty.");
 
+        if (value.Length > 50)
+            throw new InvalidAttributeException("Name of a group cannot be longer than 30 characters.");
+
         return value;
     }
 
     private string ValidatePhotoUrl(string value)
     {
+        // todo change like in Account
         var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
         bool valid = Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
 
         if (string.IsNullOrWhiteSpace(value) || !valid)
-            throw new InvalidAttributeException($"Invalid picture URL: '{value}'.");
+            throw new InvalidPictureUrlException();
 
         return value;
     }
@@ -97,7 +101,7 @@ public class ChatRoom : IExtent<ChatRoom>
         return _extent;
     }
 
-    public static void Reset()
+    public static void ResetExtent()
     {
         _extent.Clear();
         IdCounter = 0;

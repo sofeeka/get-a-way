@@ -1,6 +1,8 @@
+using System.Collections.ObjectModel;
 using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Chat;
 using get_a_way.Entities.Places;
+using get_a_way.Entities.Review;
 using get_a_way.Entities.Trip;
 
 namespace get_a_way;
@@ -13,7 +15,7 @@ public class Database
     private List<Message> _messages;
     private List<Place> _places;
     private List<Trip> _trips;
-    // todo add review extent
+    private List<Review> _review;
 
     public List<Account> Accounts
     {
@@ -45,6 +47,12 @@ public class Database
         set => _trips = value;
     }
 
+    public List<Review> Reviews
+    {
+        get => _review;
+        set => _review = value;
+    }
+
     public Database()
     {
         Accounts = Account.GetExtent();
@@ -52,6 +60,7 @@ public class Database
         Messages = Message.GetExtent();
         Places = Place.GetExtent();
         Trips = Trip.GetExtent();
+        Reviews = Review.GetExtent();
     }
 
     public void Represent()
@@ -85,5 +94,21 @@ public class Database
             Console.WriteLine();
             Console.WriteLine(value);
         }
+
+        foreach (var value in Reviews)
+        {
+            Console.WriteLine();
+            Console.WriteLine(value);
+        }
+    }
+
+    public static void Reset()
+    {
+        Account.ResetExtent();
+        ChatRoom.ResetExtent();
+        Message.ResetExtent();
+        Place.ResetExtent();
+        Review.ResetExtent();
+        Trip.ResetExtent();
     }
 }

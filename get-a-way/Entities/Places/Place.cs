@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
@@ -18,6 +19,7 @@ public abstract class Place : IExtent<Place>
     private long _id;
     private string _name;
     private string _location;
+    private List<String> _pictureUrls; // todo addPicture()
     private DateTime _openTime;
     private DateTime _closeTime;
     private PriceCategory _priceCategory;
@@ -42,16 +44,30 @@ public abstract class Place : IExtent<Place>
         set => _location = ValidateLocation(value);
     }
 
+    public List<String> PictureUrls
+    {
+        get => _pictureUrls;
+        set => _pictureUrls = ValidatePictureUrls(value);
+    }
+
     public DateTime OpenTime
     {
         get => _openTime;
-        set => _openTime = value;
+        set
+        {
+            _openTime = value;
+            SetOpenedAtNight(); // recalculate when OpenTime is updated
+        }
     }
 
     public DateTime CloseTime
     {
         get => _closeTime;
-        set => _closeTime = value;
+        set
+        {
+            _closeTime = value;
+            SetOpenedAtNight(); // recalculate when CloseTime is updated
+        }
     }
 
     public PriceCategory PriceCategory
@@ -98,30 +114,53 @@ public abstract class Place : IExtent<Place>
 
     private void SetOpenedAtNight()
     {
-        TimeSpan nightStart = new TimeSpan(20, 0, 0);
+        TimeSpan nightStart = new TimeSpan(22, 0, 0);
         TimeSpan nightEnd = new TimeSpan(6, 0, 0);
 
         TimeSpan openTime = OpenTime.TimeOfDay;
         TimeSpan closeTime = CloseTime.TimeOfDay;
 
-        bool opensDuringNight = (openTime <= nightEnd || openTime >= nightStart);
-        bool closesDuringNight = (closeTime >= nightStart || closeTime <= nightEnd);
+        bool opensDuringNight = (openTime < nightEnd || openTime > nightStart);
+        bool closesDuringNight = (closeTime > nightStart || closeTime < nightEnd);
 
         OpenedAtNight = opensDuringNight || closesDuringNight;
     }
 
     private string ValidateName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name) || name.Length < 3)
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 3 || name.Length > 40)
             throw new InvalidAttributeException("Name must be at least 3 characters long.");
         return name;
     }
 
+    //todo validate through API
     private string ValidateLocation(string location)
     {
         if (string.IsNullOrWhiteSpace(location))
-            throw new InvalidAttributeException("Location must be at least 3 characters long.");
+            throw new InvalidAttributeException("Location must not be null or white space");
         return location;
+    }
+
+    private List<string> ValidatePictureUrls(List<string> urls)
+    {
+        if (urls == null)
+            throw new InvalidAttributeException("Pictures list cannot be null.");
+
+        if (urls.Count > 10)
+            throw new InvalidAttributeException("Pictures list cannot contain more than 10 images.");
+
+        if (urls.Any(url => string.IsNullOrWhiteSpace(url) || !IsValidImageUrl(url)))
+        {
+            throw new InvalidPictureUrlException();
+        }
+
+        return urls;
+    }
+
+    private bool IsValidImageUrl(string url)
+    {
+        var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
+        return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
     }
 
     public static List<Place> GetExtentCopy()
@@ -146,7 +185,7 @@ public abstract class Place : IExtent<Place>
         return _extent;
     }
 
-    public static void Reset()
+    public static void ResetExtent()
     {
         _extent.Clear();
         IdCounter = 0;
@@ -158,11 +197,19 @@ public abstract class Place : IExtent<Place>
                $"ID: {ID}\n" +
                $"Name: {Name}\n" +
                $"Location: {Location}\n" +
+               $"Pictures: {GetPictureUrls()}\n" +
                $"Open Time: {OpenTime:HH:mm}\n" +
                $"Close Time: {CloseTime:HH:mm}\n" +
                $"Price Category: {PriceCategory}\n" +
                $"Pet Friendly: {(PetFriendly ? "Yes" : "No")}\n" +
                $"Opened At Night: {(OpenedAtNight ? "Yes" : "No")}\n" +
                $"Number of Reviews: {Reviews?.Count ?? 0}\n";
+    }
+
+    private string GetPictureUrls()
+    {
+        if (PictureUrls == null || PictureUrls.Count == 0)
+            return "No pictures available";
+        return string.Join(", ", PictureUrls);
     }
 }

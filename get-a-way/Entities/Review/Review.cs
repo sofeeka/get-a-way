@@ -37,11 +37,13 @@ public class Review : IExtent<Review>
     {
     }
 
-    public Review(int rating, string comment)
+    public Review(double rating, string comment)
     {
         ID = ++IdCounter;
         Rating = rating;
         Comment = comment;
+
+        AddInstanceToExtent(this);
     }
 
     private double ValidateRating(double value)
@@ -53,6 +55,9 @@ public class Review : IExtent<Review>
 
     private string ValidateComment(string value)
     {
+        if (string.IsNullOrWhiteSpace(value))
+            throw new InvalidAttributeException("Comment cannot be empty.");
+
         if (value.Length > 1000)
             throw new InvalidAttributeException("Comment length cannot exceed 1000 characters.");
         return value;
@@ -80,7 +85,7 @@ public class Review : IExtent<Review>
         return _extent;
     }
 
-    public static void Reset()
+    public static void ResetExtent()
     {
         _extent.Clear();
         IdCounter = 0;

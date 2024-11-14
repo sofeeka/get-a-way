@@ -42,9 +42,14 @@ public class Shop : Place
 
     private List<string> ValidateHolidaySpecials(List<string> values)
     {
-        foreach (var value in values)
-            if (string.IsNullOrEmpty(value))
-                throw new InvalidAttributeException("Holiday specials items cannot be empty");
+        if (values == null)
+            throw new InvalidAttributeException("Holiday specials list cannot be null.");
+
+        if (values.Count > 100)
+            throw new InvalidAttributeException("Holiday specials list cannot contain more than 100 elements.");
+
+        if (values.Any(string.IsNullOrWhiteSpace))
+            throw new InvalidHolidaySpecialException("Holiday specials list element cannot be null or empty.");
 
         return values;
     }
