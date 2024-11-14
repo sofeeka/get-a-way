@@ -41,8 +41,8 @@ public class ReviewTests
     [Test]
     public void Setter_ValidRating_SetsRating()
     {
-        _valid.Comment = "Another valid comment";
-        Assert.That(_valid.Comment, Is.EqualTo("Another valid comment"));
+        _valid.Rating = 8.0;
+        Assert.That(_valid.Rating, Is.EqualTo(8.0));
     }
 
     [Test]
