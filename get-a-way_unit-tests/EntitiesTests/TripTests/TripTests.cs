@@ -94,7 +94,7 @@ public class TripTests
         Assert.That(() => _valid.Description = " ", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
     }
-    
+
     [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
     {
