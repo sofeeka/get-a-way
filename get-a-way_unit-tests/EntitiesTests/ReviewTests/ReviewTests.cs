@@ -1,5 +1,5 @@
-using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Review;
+using get_a_way.Exceptions;
 
 namespace get_a_way_unit_tests.EntitiesTests.ReviewTests;
 
@@ -13,7 +13,7 @@ public class ReviewTests
     [SetUp]
     public void SetUpEnvironment()
     {
-        Account.ResetExtent();
+        Review.ResetExtent();
         _valid = new Review(ValidRating, ValidComment);
     }
 
@@ -36,5 +36,62 @@ public class ReviewTests
         var test2 = new Review(ValidRating, ValidComment);
 
         Assert.That(test2.ID - test1.ID, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Setter_ValidRating_SetsRating()
+    {
+        _valid.Comment = "Another valid comment";
+        Assert.That(_valid.Comment, Is.EqualTo("Another valid comment"));
+    }
+
+    [Test]
+    public void Setter_InvalidRating_DoesNotChangeRating()
+    {
+        _valid.Rating = -5.0;
+        Assert.That(() => _valid.Rating, Is.EqualTo(0.0));
+
+        _valid.Rating = 100500;
+        Assert.That(() => _valid.Rating, Is.EqualTo(10.0));
+    }
+
+    [Test]
+    public void Setter_ValidComment_SetsComment()
+    {
+        _valid.Comment = "Another valid comment";
+        Assert.That(_valid.Comment, Is.EqualTo("Another valid comment"));
+    }
+
+    [Test]
+    public void Setter_InvalidComment_ThrowsInvalidAttributeException()
+    {
+        Assert.That(() => _valid.Comment = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Comment, Is.EqualTo(ValidComment));
+
+        Assert.That(() => _valid.Comment = "", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Comment, Is.EqualTo(ValidComment));
+
+        Assert.That(() => _valid.Comment = " ", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Comment, Is.EqualTo(ValidComment));
+
+        string hugeComment = """
+                             Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula
+                             eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
+                             montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,
+                             pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel,
+                             aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis
+                             vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras
+                             dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo
+                             ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in,
+                             viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet.
+                             Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper
+                             ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum
+                             rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc,
+                             blandit vel, luctus pulvinar, hendre
+                             """;
+
+        Assert.That(() => _valid.Comment = hugeComment,
+            Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Comment, Is.EqualTo(ValidComment));
     }
 }
