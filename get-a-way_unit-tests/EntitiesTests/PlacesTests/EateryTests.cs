@@ -47,4 +47,11 @@ public class EateryTests
         Assert.That(eatery.DietaryOptions, Is.Empty);
         Assert.That(eatery.ReservationRequired, Is.EqualTo(_reservationRequired));
     }
+
+    [Test]
+    public void Setter_ValidEateryType_SetsEateryType()
+    {
+        _valid.Type = EateryType.Bar;
+        Assert.That(_valid.Type, Is.EqualTo(EateryType.Bar));
+    }
 }
