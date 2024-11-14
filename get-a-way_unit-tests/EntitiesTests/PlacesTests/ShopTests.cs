@@ -24,7 +24,7 @@ public class ShopTests
     [SetUp]
     public void SetUpEnvironment()
     {
-        Shop.ResetExtent();
+        Place.ResetExtent();
         _valid = new Shop(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             priceCategory, petFriendly, shopType, onlineOrderAvailability);
         _validHolidaySpecials = new List<string>();
