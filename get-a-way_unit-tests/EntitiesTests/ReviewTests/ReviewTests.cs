@@ -94,4 +94,35 @@ public class ReviewTests
             Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Comment, Is.EqualTo(ValidComment));
     }
+
+    [Test]
+    public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
+    {
+        int count = Review.GetExtentCopy().Count;
+        // AddInstanceToExtent is called in constructor
+        var newTestReview = new Review(ValidRating, ValidComment);
+        Assert.That(Review.GetExtentCopy().Count, Is.EqualTo(count + 1));
+    }
+
+    [Test]
+    public void RemoveInstanceFromExtent_OnRemovalOfInstance_DecreasesExtentCount()
+    {
+        int count = Review.GetExtentCopy().Count;
+        Review.RemoveInstanceFromExtent(_valid);
+        Assert.That(Review.GetExtentCopy().Count, Is.EqualTo(count - 1));
+    }
+
+    [Test]
+    public void GetExtentCopy_DoesNotReturnActualExtent()
+    {
+        // addresses are different
+        Assert.True(Review.GetExtentCopy() != Review.GetExtent());
+    }
+
+    [Test]
+    public void ResetExtent_ClearsExtent()
+    {
+        Review.ResetExtent();
+        Assert.That(Review.GetExtent().Count, Is.EqualTo(0));
+    }
 }
