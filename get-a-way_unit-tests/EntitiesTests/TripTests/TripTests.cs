@@ -141,7 +141,7 @@ public class TripTests
         Assert.That(() => _valid.Description = " ", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
 
-        string hugeComment = """
+        string hugeDescription = """
                              Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula
                              eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
                              montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,
@@ -157,7 +157,7 @@ public class TripTests
                              blandit vel, luctus pulvinar, hendre
                              """;
 
-        Assert.That(() => _valid.Description = hugeComment, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Description = hugeDescription, Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
     }
 
