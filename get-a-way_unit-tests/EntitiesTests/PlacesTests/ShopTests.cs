@@ -66,12 +66,14 @@ public class ShopTests
         newValidHolidaySpecials.Add("New Valid Holiday Special");
 
         _valid.HolidaySpecials = newValidHolidaySpecials;
-        Assert.That(_valid.PictureUrls, Is.EqualTo(newValidHolidaySpecials));
+        Assert.That(_valid.HolidaySpecials, Is.EqualTo(newValidHolidaySpecials));
     }
 
     [Test]
     public void Setter_InvalidHolidaySpecialsList_ThrowsInvalidAttributeException()
     {
+        _valid.HolidaySpecials = _validHolidaySpecials;
+
         Assert.That(() => _valid.HolidaySpecials = null, Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.HolidaySpecials, Is.EqualTo(_validHolidaySpecials));
 
@@ -87,6 +89,8 @@ public class ShopTests
     [Test]
     public void Setter_InvalidHolidaySpecial_ThrowsInvalidHolidaySpecialException()
     {
+        _valid.HolidaySpecials = _validHolidaySpecials;
+
         List<string> holidaySpecials = new List<string>();
         holidaySpecials.Add(null);
         Assert.That(() => _valid.HolidaySpecials = holidaySpecials, Throws.TypeOf<InvalidHolidaySpecialException>());
@@ -99,16 +103,6 @@ public class ShopTests
 
         holidaySpecials.Clear();
         holidaySpecials.Add(" ");
-        Assert.That(() => _valid.HolidaySpecials = holidaySpecials, Throws.TypeOf<InvalidHolidaySpecialException>());
-        Assert.That(() => _valid.HolidaySpecials, Is.EqualTo(_validHolidaySpecials));
-
-        holidaySpecials.Clear();
-        holidaySpecials.Add("invalid path");
-        Assert.That(() => _valid.HolidaySpecials = holidaySpecials, Throws.TypeOf<InvalidHolidaySpecialException>());
-        Assert.That(() => _valid.HolidaySpecials, Is.EqualTo(_validHolidaySpecials));
-
-        holidaySpecials.Clear();
-        holidaySpecials.Add("https://not/image/extention");
         Assert.That(() => _valid.HolidaySpecials = holidaySpecials, Throws.TypeOf<InvalidHolidaySpecialException>());
         Assert.That(() => _valid.HolidaySpecials, Is.EqualTo(_validHolidaySpecials));
     }
