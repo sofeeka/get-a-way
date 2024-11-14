@@ -15,7 +15,7 @@ public class Trip : IExtent<Trip>
     private Account _account;
     private DateTime _date;
     private TripType _tripType;
-    private List<String> _pictures;
+    private List<String> _pictures; // todo addPicture() and validate
     private String _description;
 
     public long ID

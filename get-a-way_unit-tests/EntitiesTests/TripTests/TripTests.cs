@@ -13,19 +13,20 @@ public class TripTests
 
     private static readonly DateTime Now = DateTime.Now;
     private static readonly DateTime ValidDate = new DateTime(Now.Year - 1, Now.Month, Now.Day);
+    private const string ValidDescription = "Valid Description";
 
     [SetUp]
     public void SetUpEnvironment()
     {
         Trip.ResetExtent();
         Account.ResetExtent();
-        _valid = new Trip(ValidAccount, ValidDate, TripType.Friends, "Some description");
+        _valid = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
     }
 
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        var trip = new Trip(ValidAccount, ValidDate, TripType.Friends, "Some description");
+        var trip = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
 
         // ID is 2 because _valid.ID == 1
         Assert.That(trip.ID, Is.EqualTo(2));
@@ -33,14 +34,14 @@ public class TripTests
         Assert.That(trip.Date, Is.EqualTo(ValidDate));
         Assert.That(trip.TripType, Is.EqualTo(TripType.Friends));
         Assert.That(trip.Pictures, Is.Empty);
-        Assert.That(trip.Description, Is.EqualTo("Some description"));
+        Assert.That(trip.Description, Is.EqualTo(ValidDescription));
     }
 
     [Test]
     public void Constructor_NewInstanceCreation_IncrementsId()
     {
-        var test1 = new Trip(ValidAccount, ValidDate, TripType.Friends, "Some description");
-        var test2 = new Trip(ValidAccount, ValidDate, TripType.Friends, "Some description");
+        var test1 = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
+        var test2 = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
 
         Assert.That(test2.ID - test1.ID, Is.EqualTo(1));
     }
@@ -59,5 +60,38 @@ public class TripTests
         Assert.That(() => _valid.Date = new DateTime(Now.Year + 1, Now.Month, Now.Day),
             Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Date, Is.EqualTo(ValidDate));
+    }
+
+    [Test]
+    public void Setter_ValidPictures_SetsPictures()
+    {
+        // todo
+    }
+
+    [Test]
+    public void Setter_InvalidPicture_ThrowsInvalidAttributeException()
+    {
+        // todo
+    }
+
+
+    [Test]
+    public void Setter_ValidDescription_SetsDescription()
+    {
+        _valid.Description = "Some proper new description.";
+        Assert.That(_valid.Description, Is.EqualTo("Some proper new description."));
+    }
+
+    [Test]
+    public void Setter_InvalidDescription_ThrowsInvalidAttributeException()
+    {
+        Assert.That(() => _valid.Description = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+
+        Assert.That(() => _valid.Description = "", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+
+        Assert.That(() => _valid.Description = " ", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
     }
 }
