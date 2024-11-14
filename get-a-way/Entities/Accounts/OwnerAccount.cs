@@ -5,9 +5,9 @@ namespace get_a_way.Entities.Accounts;
 [Serializable]
 public class OwnerAccount : Account
 {
-    private static double _tax = 15;
+    private double _tax = 15;
 
-    public static double Tax
+    public double Tax
     {
         get => _tax;
         set => _tax = ValidateTax(value);
