@@ -34,7 +34,7 @@ public class AccountTests
         Assert.That(traveler.Email, Is.EqualTo(ValidEmail));
 
         Assert.That(traveler.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
-
+        // because account created in SetUp gets id = 1
         Assert.That(traveler.ID, Is.EqualTo(2));
 
         Assert.That(traveler.Verified, Is.False);
@@ -141,30 +141,33 @@ public class AccountTests
         Assert.That(_valid.ProfilePictureUrl, Is.EqualTo("https://i.pinimg.com/736x/79/a3/16/79a3168cf52edca304ff32db46e0f888.jpg"));
     }
 
-    public void Setter_InvalidProfilePictureUrl_CatchesInvalidPictureUrlException()
+    [Test]
+    public void Setter_InvalidProfilePictureUrl_ReturnsDefaultProfilePicture()
     {
-        Assert.That(() => _valid.ProfilePictureUrl = "invalid.path", Throws.TypeOf<InvalidPictureUrlException>());
+        _valid.ProfilePictureUrl = "invalid.path";
         Assert.That(_valid.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
     }
 
     [Test]
-    public void Setter_InvalidAttributes_ThrowsInvalidAttributeException()
+    public void Setter_ValidRating_SetsRating()
     {
-        // todo move to separate tests
-        // Assert.That(() => _valid.Username = "inv", Throws.TypeOf<InvalidAttributeException>());
-        // Assert.That(_valid.Username, Is.EqualTo("ValidName"));
-        //
-        // Assert.That(() => _valid.Password = "inv", Throws.TypeOf<InvalidAttributeException>());
-        // Assert.That(_valid.Password, Is.EqualTo("Password123"));
-        //
-        // Assert.That(() => _valid.Email = "inv", Throws.TypeOf<InvalidAttributeException>());
-        // Assert.That(_valid.Email, Is.EqualTo("traveler@example.com"));
-        //
-        // _valid.Rating = -2;
-        // Assert.That(_valid.Rating, Is.EqualTo(0));
-        //
-        // _valid.Rating = 100;
-        // Assert.That(_valid.Rating, Is.EqualTo(10));
+        _valid.Rating = 8.0;
+        Assert.That(_valid.Rating, Is.EqualTo(8.0));
+    }
+    
+    [Test]
+    public void Setter_InvalidRating_SetsRatingWithinBounds()
+    {
+        _valid.Rating = -5.0;
+        Assert.That(_valid.Rating, Is.EqualTo(0));
+        _valid.Rating = 100500;
+        Assert.That(_valid.Rating, Is.EqualTo(10.0));
+    }
+
+    [Test]
+    public void AddLanguage_AddsLanguageToList()
+    {
+        _valid.AddLanguage(Language.English);
     }
 
     [Test]
