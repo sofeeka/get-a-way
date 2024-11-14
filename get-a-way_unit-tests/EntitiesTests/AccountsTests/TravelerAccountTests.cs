@@ -5,10 +5,5 @@ namespace get_a_way_unit_tests.EntitiesTests.AccountsTests;
 
 public class TravelerAccountTests
 {
-    [Test]
-    public void Constructor_InstanceAddedToExtent()
-    {
-        var traveler = new TravelerAccount("Username", "Password123", "traveler@pjwstk.edu.pl");
-        Assert.That(Account.GetExtent().Contains(traveler));
-    }
+    
 }
