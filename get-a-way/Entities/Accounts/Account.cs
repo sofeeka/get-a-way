@@ -73,7 +73,7 @@ public abstract class Account : IExtent<Account>
     // todo make sure lists are saved properly, maybe change to protected
     [XmlArray("Languages")]
     [XmlArrayItem("Language")]
-    protected List<string> Languages { get; set; }
+    protected List<Language> Languages { get; set; }
 
     [XmlArray("Followings")]
     [XmlArrayItem("Following")]
@@ -94,7 +94,7 @@ public abstract class Account : IExtent<Account>
         ProfilePictureUrl = "static/img/default_profile_img.jpg";
         Verified = false;
         Rating = 10.0;
-        Languages = new List<string>();
+        Languages = new List<Language>();
         Followings = new List<Account>();
 
         AddInstanceToExtent(this);
@@ -178,10 +178,9 @@ public abstract class Account : IExtent<Account>
         return value;
     }
 
-    public void AddLanguage(string language)
+    public void AddLanguage(Language language)
     {
-        if (!string.IsNullOrWhiteSpace(language))
-            Languages.Add(language);
+        Languages.Add(language);
     }
 
     public static List<Account> GetExtentCopy()
