@@ -12,8 +12,9 @@ public class AccountTests
     // cant have 2 accounts with same username
     private const string ValidUserName = "ValidUserName";
     private const string AnotherValidUserName = "AnotherValidUserName";
-    private const string ValidPassword = "ValidPassword";
+    private const string ValidPassword = "ValidPassword123";
     private const string ValidEmail = "validemail@pjwstk.edu.pl";
+    private const string DefaultProfilePictureUrl = "static/img/default_profile_img.jpg";
 
     [SetUp]
     public void SetUpEnvironment()
@@ -25,7 +26,6 @@ public class AccountTests
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        // todo
         // do not use ValidUserName, will throw DuplicateUsernameException
         var traveler = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
 
@@ -33,8 +33,7 @@ public class AccountTests
         Assert.That(traveler.Password, Is.EqualTo(ValidPassword));
         Assert.That(traveler.Email, Is.EqualTo(ValidEmail));
 
-        // todo add placeholder for empty pfp
-        Assert.That(traveler.ProfilePictureUrl, Is.EqualTo("static/img/default_profile_img.jpg"));
+        Assert.That(traveler.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
 
         Assert.That(traveler.ID, Is.EqualTo(2));
 
@@ -45,8 +44,8 @@ public class AccountTests
     [Test]
     public void Constructor_NewInstanceCreation_IncrementsId()
     {
-        var test1 = new TestAccount("username1", "password", "traveler1@pjwstk.edu.pl");
-        var test2 = new TestAccount("username2", "password", "2traveler@pjwstk.edu.pl");
+        var test1 = new TestAccount("username1", ValidPassword, ValidEmail);
+        var test2 = new TestAccount("username2", ValidPassword, ValidEmail);
 
         Assert.That(test2.ID - test1.ID, Is.EqualTo(1));
     }
@@ -64,7 +63,7 @@ public class AccountTests
         Assert.That(() => _valid.Username = "inv", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
 
-        Assert.That(() => _valid.Username = "", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Username = " ", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
 
         Assert.That(() => _valid.Username = null, Throws.TypeOf<InvalidAttributeException>());
@@ -76,30 +75,76 @@ public class AccountTests
     }
 
     [Test]
-    public void Constructor_DuplicateUsername_ThrowsInvalidAttributeException()
+    public void Setter_DuplicateUsername_ThrowsDuplicateUsernameException()
     {
-        // todo create exception
         Assert.That(() =>
                 new TestAccount(ValidUserName, ValidPassword, ValidEmail),
-            Throws.TypeOf<InvalidAttributeException>());
+            Throws.TypeOf<DuplicateUsernameException>());
+    }
+    
+    [Test]
+    public void Setter_ValidPassword_SetsPassword()
+    {
+        _valid.Password = "NewVal1dPassword";
+        Assert.That(_valid.Password, Is.EqualTo("NewVal1dPassword"));
     }
 
     [Test]
-    public void Constructor_InvalidPassword_ThrowsInvalidAttributeException()
+    public void Setter_InvalidPassword_ThrowsInvalidPasswordException()
     {
-        // todo add more tests for upper / lower case + special characters
-        Assert.That(() =>
-                new TestAccount("ValidName", "short", "traveler@example.com"),
-            Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Password = "inv", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        
+        Assert.That(() => _valid.Password = "", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        
+        Assert.That(() => _valid.Password = "nouppercasepassword1", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        
+        Assert.That(() => _valid.Password = "NOLOWERCASEPASSWORD1", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        
+        Assert.That(() => _valid.Password = "NoDigitPassword", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        
+        Assert.That(() => _valid.Password = "SuperMegaLongPasswordThatIsTooLongToBeValid123456", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+    }
+    
+    [Test]
+    public void Setter_ValidEmail_SetsEmail()
+    {
+        _valid.Email = "NewValidEmail@pjwstk.edu.pl";
+        Assert.That(_valid.Email, Is.EqualTo("NewValidEmail@pjwstk.edu.pl"));
     }
 
     [Test]
-    public void Constructor_InvalidEmail_ThrowsInvalidAttributeException()
+    public void Setter_InvalidEmail_ThrowsInvalidAttributeException()
     {
-        // todo check for duplicate emails
-        Assert.That(() =>
-                new TestAccount("ValidName", "Password123", "invalidemail"),
-            Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Email = " ", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_valid.Email, Is.EqualTo(ValidEmail));
+        
+        Assert.That(() => _valid.Email = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_valid.Email, Is.EqualTo(ValidEmail));
+        
+        Assert.That(() => _valid.Email = "email.with.no.at", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_valid.Email, Is.EqualTo(ValidEmail));
+        
+        Assert.That(() => _valid.Email = "email@nodot", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_valid.Email, Is.EqualTo(ValidEmail));
+    }
+
+    [Test]
+    public void Setter_ValidProfilePictureUrl_SetsProfilePictureUrl()
+    {
+        _valid.ProfilePictureUrl = "https://i.pinimg.com/736x/79/a3/16/79a3168cf52edca304ff32db46e0f888.jpg";
+        Assert.That(_valid.ProfilePictureUrl, Is.EqualTo("https://i.pinimg.com/736x/79/a3/16/79a3168cf52edca304ff32db46e0f888.jpg"));
+    }
+
+    public void Setter_InvalidProfilePictureUrl_CatchesInvalidPictureUrlException()
+    {
+        Assert.That(() => _valid.ProfilePictureUrl = "invalid.path", Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(_valid.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
     }
 
     [Test]
