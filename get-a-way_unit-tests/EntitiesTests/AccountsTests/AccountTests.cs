@@ -185,6 +185,25 @@ public class AccountTests
         _valid.Rating = 100500;
         Assert.That(_valid.Rating, Is.EqualTo(10.0));
     }
+    
+    [Test]
+    public void Setter_Languages_SetsCorrectValues()
+    {
+        var languages = new HashSet<Language> { Language.English, Language.Ukrainian, Language.Hungarian };
+        _valid.Languages = languages;
+        Assert.That(_valid.Languages, Is.EqualTo(languages));
+    }
+
+    [Test]
+    public void Setter_Languages_IgnoresDuplicateValues()
+    {
+        var languagesWithDuplicates = new HashSet<Language> { Language.English, Language.Spanish, Language.English };
+        _valid.Languages = languagesWithDuplicates;
+
+        Assert.That(_valid.Languages.Count, Is.EqualTo(2)); // only two unique entries should be present
+        Assert.That(_valid.Languages, Does.Contain(Language.English));
+        Assert.That(_valid.Languages, Does.Contain(Language.Spanish));
+    }
 
     [Test]
     public void AddLanguage_AddsLanguageToList()
