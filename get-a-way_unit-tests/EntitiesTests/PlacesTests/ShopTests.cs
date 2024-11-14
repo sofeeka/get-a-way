@@ -7,15 +7,18 @@ public class ShopTests
 {
     private Shop _valid;
 
+    // place fields
     private const string ValidName = "ValidName";
     private const string ValidLocation = "Some Location";
     private static DateTime _validOpenTime = new DateTime();
     private static DateTime _validCloseTime = new DateTime();
     private PriceCategory priceCategory = PriceCategory.Free;
     private static bool petFriendly = true;
+
+    // shop fields
     private static ShopType shopType = ShopType.Mall;
     private static bool onlineOrderAvailability = true;
-
+    private static List<string> holidaySpecials;
     
     [SetUp]
     public void SetUpEnvironment()
@@ -23,6 +26,7 @@ public class ShopTests
         Shop.ResetExtent();
         _valid = new Shop(ValidName, ValidLocation,_validOpenTime, _validCloseTime, 
             priceCategory, petFriendly, shopType, onlineOrderAvailability);
+        holidaySpecials = new List<string>();
     }
 
     [Test]
@@ -37,5 +41,12 @@ public class ShopTests
         Assert.That(shop.Type, Is.EqualTo(shopType));
         Assert.That(shop.OnlineOrderAvailability, Is.EqualTo(onlineOrderAvailability));
         Assert.That(shop.HolidaySpecials, Is.Empty);
+    }
+    
+    [Test]
+    public void Setter_ValidShopType_SetsShopType()
+    {
+        _valid.Type = ShopType.Supermarket;
+        Assert.That(_valid.Type, Is.EqualTo(ShopType.Supermarket));
     }
 }
