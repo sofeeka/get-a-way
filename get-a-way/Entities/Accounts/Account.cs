@@ -79,6 +79,8 @@ public abstract class Account : IExtent<Account>
     [XmlArrayItem("Following")]
     protected List<Account> Followings { get; set; }
 
+    private static string _defaultImage = "static/img/default_profile_img.jpg";
+
     public Account()
     {
     }
@@ -91,7 +93,7 @@ public abstract class Account : IExtent<Account>
         Password = password;
         Email = email;
 
-        ProfilePictureUrl = "static/img/default_profile_img.jpg";
+        ProfilePictureUrl = _defaultImage;
         Verified = false;
         Rating = 10.0;
         Languages = new List<Language>();
@@ -172,7 +174,7 @@ public abstract class Account : IExtent<Account>
         }
         catch (InvalidPictureUrlException e)
         {
-            value = "static/img/default_profile_img.jpg";
+            value = _defaultImage;
         }
 
         return value;
