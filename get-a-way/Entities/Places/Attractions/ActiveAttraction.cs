@@ -17,7 +17,10 @@ public class ActiveAttraction : Attraction
     {
     }
 
-    public ActiveAttraction(string activityType)
+    public ActiveAttraction(string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly, int entryFee, int minimalAge, string description,
+        string activityType) : base(name, location, openTime, closeTime, priceCategory, petFriendly, entryFee,
+        minimalAge, description)
     {
         ActivityType = activityType;
     }
