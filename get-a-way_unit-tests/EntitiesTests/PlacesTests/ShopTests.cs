@@ -49,4 +49,11 @@ public class ShopTests
         _valid.Type = ShopType.Supermarket;
         Assert.That(_valid.Type, Is.EqualTo(ShopType.Supermarket));
     }
+
+    [Test]
+    public void Setter_ValidOnlineOrderAvailability_SetsOnlineOrderAvailability()
+    {
+        _valid.OnlineOrderAvailability = false;
+        Assert.That(_valid.OnlineOrderAvailability, Is.EqualTo(false));
+    }
 }
