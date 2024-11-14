@@ -27,19 +27,19 @@ public class AccountTests
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
         // do not use ValidUserName, will throw DuplicateUsernameException
-        var traveler = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+        var account = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
 
         // because account created in SetUp gets id = 1
-        Assert.That(traveler.ID, Is.EqualTo(2));
+        Assert.That(account.ID, Is.EqualTo(2));
         
-        Assert.That(traveler.Username, Is.EqualTo(AnotherValidUserName));
-        Assert.That(traveler.Password, Is.EqualTo(ValidPassword));
-        Assert.That(traveler.Email, Is.EqualTo(ValidEmail));
+        Assert.That(account.Username, Is.EqualTo(AnotherValidUserName));
+        Assert.That(account.Password, Is.EqualTo(ValidPassword));
+        Assert.That(account.Email, Is.EqualTo(ValidEmail));
 
-        Assert.That(traveler.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
+        Assert.That(account.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
 
-        Assert.That(traveler.Verified, Is.False);
-        Assert.That(traveler.Rating, Is.EqualTo(10.0));
+        Assert.That(account.Verified, Is.False);
+        Assert.That(account.Rating, Is.EqualTo(10.0));
     }
 
     [Test]
