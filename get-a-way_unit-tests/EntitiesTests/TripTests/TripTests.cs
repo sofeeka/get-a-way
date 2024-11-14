@@ -28,7 +28,7 @@ public class TripTests
     {
         var trip = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
 
-        // ID is 2 because _valid.ID == 1
+        // ID == 2 because _valid.ID == 1
         Assert.That(trip.ID, Is.EqualTo(2));
 
         Assert.That(trip.Date, Is.EqualTo(ValidDate));
