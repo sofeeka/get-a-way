@@ -14,6 +14,8 @@ public class TripTests
     private static readonly DateTime Now = DateTime.Now;
     private static readonly DateTime ValidDate = new DateTime(Now.Year - 1, Now.Month, Now.Day);
     private const string ValidDescription = "Valid Description";
+    private const string ValidPictureUrl = "https://valid/image.png";
+    private List<string> _validPictureUrls = new List<string>();
 
     [SetUp]
     public void SetUpEnvironment()
@@ -21,6 +23,12 @@ public class TripTests
         Trip.ResetExtent();
         Account.ResetExtent();
         _valid = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
+
+        _validPictureUrls = new List<string>();
+        _validPictureUrls.Add(ValidPictureUrl);
+        _validPictureUrls.Add(ValidPictureUrl);
+
+        _valid.PictureUrls = _validPictureUrls;
     }
 
     [Test]
@@ -63,17 +71,56 @@ public class TripTests
     }
 
     [Test]
-    public void Setter_ValidPictures_SetsPictures()
+    public void Setter_ValidPictureUrls_SetsPictureUrls()
     {
-        // todo
+        _valid.PictureUrls = _validPictureUrls;
+        Assert.That(_valid.PictureUrls, Is.EqualTo(_validPictureUrls));
     }
 
     [Test]
-    public void Setter_InvalidPicture_ThrowsInvalidAttributeException()
+    public void Setter_InvalidPictureUrlsList_ThrowsInvalidAttributeException()
     {
-        // todo
+        Assert.That(() => _valid.PictureUrls = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+
+        List<string> urls = new List<string>();
+
+        for (int i = 0; i < 12; i++)
+            urls.Add(ValidPictureUrl);
+
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
     }
 
+    [Test]
+    public void Setter_InvalidPictureUrl_ThrowsInvalidAttributeException()
+    {
+        List<string> urls = new List<string>();
+
+        urls.Add(null);
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+
+        urls.Clear();
+        urls.Add("");
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+
+        urls.Clear();
+        urls.Add(" ");
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+
+        urls.Clear();
+        urls.Add("invalid path");
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+
+        urls.Clear();
+        urls.Add("https://not/image/extention");
+        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+    }
 
     [Test]
     public void Setter_ValidDescription_SetsDescription()
