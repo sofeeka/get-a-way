@@ -1,5 +1,6 @@
 using get_a_way.Entities.Places;
 using get_a_way.Entities.Places.Eatery;
+using get_a_way.Exceptions;
 
 namespace get_a_way_unit_tests.EntitiesTests.PlacesTests;
 
@@ -60,5 +61,43 @@ public class EateryTests
     {
         _valid.Cuisine = Cuisine.Ukrainian;
         Assert.That(_valid.Cuisine, Is.EqualTo(Cuisine.Ukrainian));
+    }
+
+
+    [Test]
+    public void Setter_ValidMenu_SetsMenu()
+    {
+        _valid.Menu = _validMenu;
+        Assert.That(_valid.Menu, Is.EqualTo(_validMenu));
+    }
+
+    [Test]
+    public void Setter_InvalidMenu_ThrowsInvalidAttributeException()
+    {
+        _valid.Menu = _validMenu;
+
+        Assert.That(() => _valid.Menu = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _valid.Menu, Is.EqualTo(_validMenu));
+    }
+
+    [Test]
+    public void Setter_InvalidMenuItem_ThrowsInvalidMenuItemException()
+    {
+        _valid.Menu = _validMenu;
+
+        List<string> menu = new List<string>();
+        menu.Add(null);
+        Assert.That(() => _valid.Menu = menu, Throws.TypeOf<InvalidMenuItemException>());
+        Assert.That(() => _valid.Menu, Is.EqualTo(_validMenu));
+
+        menu.Clear();
+        menu.Add("");
+        Assert.That(() => _valid.Menu = menu, Throws.TypeOf<InvalidMenuItemException>());
+        Assert.That(() => _valid.Menu, Is.EqualTo(_validMenu));
+
+        menu.Clear();
+        menu.Add(" ");
+        Assert.That(() => _valid.Menu = menu, Throws.TypeOf<InvalidMenuItemException>());
+        Assert.That(() => _valid.Menu, Is.EqualTo(_validMenu));
     }
 }
