@@ -162,7 +162,6 @@ public abstract class Account : IExtent<Account>
 
     private string ValidateProfilePictureUrl(string value)
     {
-        // todo create exception for invalid url
         var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
         bool valid = Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
 
@@ -171,7 +170,7 @@ public abstract class Account : IExtent<Account>
             if (string.IsNullOrWhiteSpace(value) || !valid)
                 throw new InvalidPictureUrlException();
         }
-        catch (InvalidAttributeException e)
+        catch (InvalidPictureUrlException e)
         {
             value = "static/img/default_profile_img.jpg";
         }
