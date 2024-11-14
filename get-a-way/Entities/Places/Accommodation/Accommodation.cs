@@ -57,8 +57,7 @@ public class Accommodation : Place
     }
 
     public Accommodation(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory,
-        bool petFriendly, AccommodationType type, int maxPeople)
+        PriceCategory priceCategory, bool petFriendly, AccommodationType type, int maxPeople)
         : base(name, location, openTime, closeTime, priceCategory, petFriendly)
     {
         Type = type;
