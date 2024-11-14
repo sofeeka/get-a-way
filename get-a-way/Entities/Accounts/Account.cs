@@ -169,7 +169,7 @@ public abstract class Account : IExtent<Account>
         try
         {
             if (string.IsNullOrWhiteSpace(value) || !valid)
-                throw new InvalidAttributeException($"Invalid picture URL: '{value}'.");
+                throw new InvalidPictureUrlException();
         }
         catch (InvalidAttributeException e)
         {
