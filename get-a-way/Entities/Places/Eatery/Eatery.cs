@@ -32,7 +32,7 @@ public class Eatery : Place
     public HashSet<DietaryOptions> DietaryOptions
     {
         get => _dietaryOptions;
-        set => _dietaryOptions = value;
+        set => _dietaryOptions = ValidateDietaryOptions(value);
     }
 
     public bool ReservationRequired
@@ -62,10 +62,17 @@ public class Eatery : Place
             throw new InvalidAttributeException("Menu cannot be null.");
 
         foreach (var value in values)
-            if (string.IsNullOrEmpty(value))
+            if (string.IsNullOrWhiteSpace(value))
                 throw new InvalidMenuItemException("Menu items cannot be empty");
 
         return values;
+    }
+
+    private HashSet<DietaryOptions> ValidateDietaryOptions(HashSet<DietaryOptions> value)
+    {
+        if (value == null)
+            throw new InvalidAttributeException("Dietary Options cannot be null");
+        return value;
     }
 
     public override string ToString()
