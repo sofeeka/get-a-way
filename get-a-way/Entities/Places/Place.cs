@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
@@ -75,6 +76,10 @@ public abstract class Place : IExtent<Place>
     [XmlArray("Reviews")]
     [XmlArrayItem("Review")]
     public List<Review.Review> Reviews { get; set; }
+    
+    [XmlArray("PictureUrls")]
+    [XmlArrayItem("PictureUrl")]
+    public List<string> PictureUrls { get; set; }
 
     public Place()
     {
@@ -123,6 +128,29 @@ public abstract class Place : IExtent<Place>
             throw new InvalidAttributeException("Location must be at least 3 characters long.");
         return location;
     }
+    
+    private List<string> ValidatePictureUrls(List<string> urls)
+    {
+        if (urls == null)
+            throw new InvalidAttributeException("Pictures list cannot be null.");
+
+        if (urls.Count > 10)
+            throw new InvalidAttributeException("Pictures list cannot contain more than 10 images.");
+
+        if (urls.Any(url => string.IsNullOrWhiteSpace(url) || !IsValidImageUrl(url)))
+        {
+            throw new InvalidPictureUrlException();
+        }
+
+        return urls;
+    }
+
+    private bool IsValidImageUrl(string url)
+    {
+        var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
+        return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
+    }
+    
 
     public static List<Place> GetExtentCopy()
     {
@@ -158,11 +186,19 @@ public abstract class Place : IExtent<Place>
                $"ID: {ID}\n" +
                $"Name: {Name}\n" +
                $"Location: {Location}\n" +
+               $"Pictures: {GetPictureUrls()}\n" +
                $"Open Time: {OpenTime:HH:mm}\n" +
                $"Close Time: {CloseTime:HH:mm}\n" +
                $"Price Category: {PriceCategory}\n" +
                $"Pet Friendly: {(PetFriendly ? "Yes" : "No")}\n" +
                $"Opened At Night: {(OpenedAtNight ? "Yes" : "No")}\n" +
                $"Number of Reviews: {Reviews?.Count ?? 0}\n";
+    }
+    
+    private string GetPictureUrls()
+    {
+        if (PictureUrls.Count == 0)
+            return "No pictures available";
+        return string.Join(", ", PictureUrls);
     }
 }

@@ -15,7 +15,7 @@ public class Trip : IExtent<Trip>
     private Account _account;
     private DateTime _date;
     private TripType _tripType;
-    private List<String> _pictures;
+    private List<String> _pictureUrls;
     private String _description;
 
     public long ID
@@ -42,10 +42,10 @@ public class Trip : IExtent<Trip>
         set => _tripType = value;
     }
 
-    public List<String> Pictures
+    public List<String> PictureUrls
     {
-        get => _pictures;
-        set => _pictures = ValidatePictures(value);
+        get => _pictureUrls;
+        set => _pictureUrls = ValidatePictureUrls(value);
     }
 
     public String Description
@@ -64,7 +64,7 @@ public class Trip : IExtent<Trip>
         Account = account;
         Date = date;
         TripType = tripType;
-        Pictures = new List<string>();
+        PictureUrls = new List<string>();
         Description = description;
 
         AddInstanceToExtent(this);
@@ -77,21 +77,20 @@ public class Trip : IExtent<Trip>
         return date;
     }
 
-    private List<string> ValidatePictures(List<string> pictures)
+    private List<string> ValidatePictureUrls(List<string> urls)
     {
-        if (pictures == null)
+        if (urls == null)
             throw new InvalidAttributeException("Pictures list cannot be null.");
 
-        if (pictures.Count > 10)
+        if (urls.Count > 10)
             throw new InvalidAttributeException("Pictures list cannot contain more than 10 images.");
 
-        foreach (var picture in pictures)
+        if (urls.Any(url => string.IsNullOrWhiteSpace(url) || !IsValidImageUrl(url)))
         {
-            if (string.IsNullOrWhiteSpace(picture) || !IsValidImageUrl(picture))
-                throw new InvalidAttributeException($"Invalid picture URL: '{picture}'.");
+            throw new InvalidPictureUrlException();
         }
 
-        return pictures;
+        return urls;
     }
 
     private bool IsValidImageUrl(string url)
@@ -143,14 +142,14 @@ public class Trip : IExtent<Trip>
                $"Account: {Account.Username}\n" +
                $"Date: {Date:yyyy-MM-dd}\n" +
                $"Trip Type: {TripType}\n" +
-               $"Pictures: {GetPictures()}\n" +
+               $"Pictures: {GetPictureUrls()}\n" +
                $"Description: {(string.IsNullOrWhiteSpace(Description) ? "No description provided" : Description)}\n";
     }
 
-    private string GetPictures()
+    private string GetPictureUrls()
     {
-        if (Pictures.Count == 0)
+        if (PictureUrls.Count == 0)
             return "No pictures available";
-        return string.Join(", ", Pictures);
+        return string.Join(", ", PictureUrls);
     }
 }
