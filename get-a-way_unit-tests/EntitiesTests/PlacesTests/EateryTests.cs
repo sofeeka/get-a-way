@@ -100,4 +100,11 @@ public class EateryTests
         Assert.That(() => _valid.Menu = menu, Throws.TypeOf<InvalidMenuItemException>());
         Assert.That(() => _valid.Menu, Is.EqualTo(_validMenu));
     }
+    
+    [Test]
+    public void Setter_ValidReservationRequired_SetsReservationRequired()
+    {
+        _valid.ReservationRequired = false;
+        Assert.That(_valid.ReservationRequired, Is.EqualTo(false));
+    }
 }
