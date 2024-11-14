@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using get_a_way.Entities.Accounts;
 using get_a_way.Exceptions;
 using get_a_way.Services;
@@ -24,6 +25,7 @@ public class Trip : IExtent<Trip>
         set => _id = value;
     }
 
+    [XmlIgnore]
     public Account Account
     {
         get => _account;
@@ -137,7 +139,7 @@ public class Trip : IExtent<Trip>
     public override string ToString()
     {
         return $"Trip ID: {ID}\n" +
-               $"Account: {Account.Username}\n" +
+               // $"Account: {Account.Username}\n" +
                $"Date: {Date:yyyy-MM-dd}\n" +
                $"Trip Type: {TripType}\n" +
                $"Pictures: {GetPictureUrls()}\n" +
@@ -146,7 +148,7 @@ public class Trip : IExtent<Trip>
 
     private string GetPictureUrls()
     {
-        if (PictureUrls.Count == 0)
+        if (PictureUrls == null || PictureUrls.Count == 0)
             return "No pictures available";
         return string.Join(", ", PictureUrls);
     }

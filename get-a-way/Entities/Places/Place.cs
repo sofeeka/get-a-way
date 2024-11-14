@@ -209,7 +209,7 @@ public abstract class Place : IExtent<Place>
     
     private string GetPictureUrls()
     {
-        if (PictureUrls.Count == 0)
+        if (PictureUrls == null || PictureUrls.Count == 0)
             return "No pictures available";
         return string.Join(", ", PictureUrls);
     }

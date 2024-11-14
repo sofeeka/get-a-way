@@ -32,10 +32,8 @@ public class Message : IExtent<Message>
         get => _timestamp;
         set
         {
-            if (value != _timestamp)
-            {
+            if (_timestamp != DateTime.MinValue && value != _timestamp)
                 throw new InvalidOperationException("Message timestamp can not be changed.");
-            }
         }
     }
 

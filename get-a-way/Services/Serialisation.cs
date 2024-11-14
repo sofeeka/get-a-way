@@ -19,6 +19,7 @@ public static class Serialisation
 
     public static Database loadDB(string path = _fileName)
     {
+        Database.Reset();
         Database db;
         StreamReader file;
         try

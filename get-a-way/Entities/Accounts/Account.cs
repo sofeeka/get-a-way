@@ -240,7 +240,7 @@ public abstract class Account : IExtent<Account>
 
     private string GetFollowings()
     {
-        if (Followings.Count == 0)
+        if (Followings == null || Followings.Count == 0)
             return "None";
         return string.Join(", ", Followings.ConvertAll(f => f.Username));
     }
