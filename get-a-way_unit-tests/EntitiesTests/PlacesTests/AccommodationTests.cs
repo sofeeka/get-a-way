@@ -19,7 +19,7 @@ public class AccommodationTests
     // accommodation fields
     private static AccommodationType _accommodationType = AccommodationType.Apartment;
     private static HashSet<Amenity> _validAmenities;
-    private int _validMaxPeople;
+    private int _validMaxPeople = 2;
 
     [SetUp]
     public void SetUpEnvironment()
