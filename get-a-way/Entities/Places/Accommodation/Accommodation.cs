@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Places.Accommodation;
 
@@ -26,7 +27,14 @@ public class Accommodation : Place
     public int MaxPeople
     {
         get => _maxPeople;
-        set => _maxPeople = value;
+        set => _maxPeople = ValidateMaxPeople(value);
+    }
+
+    private int ValidateMaxPeople(int value)
+    {
+        if (value <= 0)
+            throw new InvalidAttributeException("Max count of people in the accommodation must be greater than 0");
+        return value;
     }
 
     [XmlArray("BedEntries")]
