@@ -55,7 +55,8 @@ public class ActiveAttractionTests
         Assert.That(() => _valid.ActivityType = " ", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.ActivityType, Is.EqualTo(_validActivityType));
 
-        Assert.That(() => _valid.ActivityType = "short", Throws.TypeOf<InvalidAttributeException>());
+        string tooShort = "min";
+        Assert.That(() => _valid.ActivityType = tooShort, Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.ActivityType, Is.EqualTo(_validActivityType));
 
         string tooLong = """
