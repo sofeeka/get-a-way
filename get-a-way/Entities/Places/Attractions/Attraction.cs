@@ -69,7 +69,7 @@ public abstract class Attraction : Place
 
     private List<string> ValidateEvents(List<string> values)
     {
-        if (values.Equals(null))
+        if (values == null)
             throw new InvalidAttributeException("Event list can not be null.");
 
         foreach (var value in values)
