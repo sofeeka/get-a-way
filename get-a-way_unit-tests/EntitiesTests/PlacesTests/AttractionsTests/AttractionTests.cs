@@ -92,10 +92,10 @@ public class AttractionTests
     public void Setter_InvalidMinimalAge_ThrowsInvalidAttributeException()
     {
         Assert.That(() => _valid.MinimalAge = -1, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.MinimalAge, Is.EqualTo(_validEntryFee));
+        Assert.That(() => _valid.MinimalAge, Is.EqualTo(_validMinimalAge));
 
         Assert.That(() => _valid.MinimalAge = 125, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.MinimalAge, Is.EqualTo(_validEntryFee));
+        Assert.That(() => _valid.MinimalAge, Is.EqualTo(_validMinimalAge));
     }
 
     [Test]
