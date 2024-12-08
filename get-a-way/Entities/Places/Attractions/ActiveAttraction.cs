@@ -27,7 +27,7 @@ public class ActiveAttraction : Attraction
 
     private string ValidateActivityType(string value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("Activity type of active attraction cannot be empty");
 
         return value;
