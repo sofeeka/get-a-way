@@ -30,8 +30,8 @@ public class ActiveAttraction : Attraction
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("Activity type of active attraction cannot be empty");
 
-        if (value.Length is < 10 or > 1000)
-            throw new InvalidAttributeException("Activity type length must be between 10 and 1000 characters.");
+        if (value.Length is < 5 or > 1000)
+            throw new InvalidAttributeException("Activity type length must be between 5 and 1000 characters.");
 
         return value;
     }
