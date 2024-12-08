@@ -62,7 +62,7 @@ public class Eatery : Place
             throw new InvalidAttributeException("Menu cannot be null.");
 
         foreach (var value in values)
-            if (string.IsNullOrEmpty(value))
+            if (string.IsNullOrWhiteSpace(value))
                 throw new InvalidMenuItemException("Menu items cannot be empty");
 
         return values;
