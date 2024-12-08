@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using get_a_way.Exceptions;
+﻿using get_a_way.Exceptions;
 using get_a_way.Services;
 
 namespace get_a_way.Entities.Chat;
@@ -50,6 +49,9 @@ public class Message : IExtent<Message>
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("Text of a message cannot be empty.");
+
+        if (value.Length > 1000)
+            throw new InvalidAttributeException("Message cannot be longer than 1000 characters.");
 
         return value;
     }
