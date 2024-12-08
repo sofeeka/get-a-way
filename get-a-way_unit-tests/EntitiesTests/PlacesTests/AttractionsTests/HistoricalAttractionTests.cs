@@ -23,7 +23,7 @@ public class HistoricalAttractionTests
     private string _validDescription = "Some description";
 
     // historical attraction fields
-    private string _validCulturalPeriod = "valid activity type";
+    private string _validCulturalPeriod = "valid historical period";
 
     [SetUp]
     public void SetUpEnvironment()
