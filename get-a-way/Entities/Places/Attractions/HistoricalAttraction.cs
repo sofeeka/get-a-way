@@ -24,7 +24,7 @@ public class HistoricalAttraction : Attraction
 
     private string ValidateCulturalPeriod(string value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("Cultural period of historical attraction cannot be empty");
 
         return value;
