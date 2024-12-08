@@ -29,7 +29,7 @@ public class AccountTests
         // do not use ValidUserName, will throw DuplicateUsernameException
         var traveler = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
 
-        // because account created in SetUp gets id = 1
+        // ID == 2 because _valid.ID == 1
         Assert.That(traveler.ID, Is.EqualTo(2));
         
         Assert.That(traveler.Username, Is.EqualTo(AnotherValidUserName));
