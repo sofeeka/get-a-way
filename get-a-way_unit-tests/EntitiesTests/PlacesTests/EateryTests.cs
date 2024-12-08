@@ -17,8 +17,8 @@ public class EateryTests
     private static bool petFriendly = true;
 
     // eatery fields
-    private static EateryType eateryType = EateryType.Cafe;
-    private static Cuisine cusine = Cuisine.Italian;
+    private static EateryType _eateryType = EateryType.Cafe;
+    private static Cuisine _cusine = Cuisine.Italian;
     private static List<string> _validMenu;
     private static HashSet<DietaryOptions> _validDietaryOptions;
     private bool _reservationRequired = true;
@@ -28,7 +28,7 @@ public class EateryTests
     {
         Place.ResetExtent();
         _valid = new Eatery(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
-            priceCategory, petFriendly, eateryType, cusine, _reservationRequired);
+            priceCategory, petFriendly, _eateryType, _cusine, _reservationRequired);
 
         _validMenu = new List<string>();
         _validMenu.Add("New Valid Menu Item");
@@ -41,13 +41,13 @@ public class EateryTests
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
         var eatery = new Eatery(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
-            priceCategory, petFriendly, eateryType, cusine, _reservationRequired);
+            priceCategory, petFriendly, _eateryType, _cusine, _reservationRequired);
 
         // ID == 2 because _valid.ID == 1
         Assert.That(eatery.ID, Is.EqualTo(2));
 
-        Assert.That(eatery.Type, Is.EqualTo(eateryType));
-        Assert.That(eatery.Cuisine, Is.EqualTo(cusine));
+        Assert.That(eatery.Type, Is.EqualTo(_eateryType));
+        Assert.That(eatery.Cuisine, Is.EqualTo(_cusine));
         Assert.That(eatery.Menu, Is.Empty);
         Assert.That(eatery.DietaryOptions, Is.Empty);
         Assert.That(eatery.ReservationRequired, Is.EqualTo(_reservationRequired));
@@ -66,7 +66,6 @@ public class EateryTests
         _valid.Cuisine = Cuisine.Ukrainian;
         Assert.That(_valid.Cuisine, Is.EqualTo(Cuisine.Ukrainian));
     }
-
 
     [Test]
     public void Setter_ValidMenu_SetsMenu()
