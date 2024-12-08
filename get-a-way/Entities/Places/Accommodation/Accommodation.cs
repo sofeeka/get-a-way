@@ -21,20 +21,13 @@ public class Accommodation : Place
     public HashSet<Amenity> Amenities
     {
         get => _amenities;
-        set => _amenities = value;
+        set => _amenities = ValidateAmenities(value);
     }
 
     public int MaxPeople
     {
         get => _maxPeople;
         set => _maxPeople = ValidateMaxPeople(value);
-    }
-
-    private int ValidateMaxPeople(int value)
-    {
-        if (value <= 0)
-            throw new InvalidAttributeException("Max count of people in the accommodation must be greater than 0");
-        return value;
     }
 
     [XmlArray("BedEntries")]
@@ -102,5 +95,19 @@ public class Accommodation : Place
         }
 
         return string.Join(", ", bedEntries);
+    }
+
+    private HashSet<Amenity> ValidateAmenities(HashSet<Amenity> value)
+    {
+        if (value == null)
+            throw new InvalidAttributeException("Amenities list cannot be null");
+        return value;
+    }
+
+    private int ValidateMaxPeople(int value)
+    {
+        if (value <= 0)
+            throw new InvalidAttributeException("Max count of people in the accommodation must be greater than 0");
+        return value;
     }
 }
