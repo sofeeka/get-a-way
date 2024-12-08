@@ -68,6 +68,20 @@ public class Accommodation : Place
         BedEntries = new List<BedEntry>();
     }
 
+    private HashSet<Amenity> ValidateAmenities(HashSet<Amenity> value)
+    {
+        if (value == null)
+            throw new InvalidAttributeException("Amenities list cannot be null");
+        return value;
+    }
+
+    private int ValidateMaxPeople(int value)
+    {
+        if (value <= 0)
+            throw new InvalidAttributeException("Max count of people in the accommodation must be greater than 0");
+        return value;
+    }
+
     public override string ToString()
     {
         return base.ToString() +
@@ -95,19 +109,5 @@ public class Accommodation : Place
         }
 
         return string.Join(", ", bedEntries);
-    }
-
-    private HashSet<Amenity> ValidateAmenities(HashSet<Amenity> value)
-    {
-        if (value == null)
-            throw new InvalidAttributeException("Amenities list cannot be null");
-        return value;
-    }
-
-    private int ValidateMaxPeople(int value)
-    {
-        if (value <= 0)
-            throw new InvalidAttributeException("Max count of people in the accommodation must be greater than 0");
-        return value;
     }
 }
