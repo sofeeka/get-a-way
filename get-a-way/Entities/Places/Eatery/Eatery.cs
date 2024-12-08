@@ -71,7 +71,7 @@ public class Eatery : Place
     private HashSet<DietaryOptions> ValidateDietaryOptions(HashSet<DietaryOptions> value)
     {
         if (value == null)
-            throw new InvalidAttributeException("Dietary options list cannot be null");
+            throw new InvalidAttributeException("Dietary Options cannot be null");
         return value;
     }
 

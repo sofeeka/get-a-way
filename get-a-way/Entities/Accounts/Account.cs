@@ -24,6 +24,7 @@ public abstract class Account : IExtent<Account>
     private string? _profilePictureUrl;
     private bool _verified;
     private double _rating;
+    private HashSet<Language> _languages;
 
     public long ID
     {
@@ -73,7 +74,11 @@ public abstract class Account : IExtent<Account>
     // todo make sure lists are saved properly, maybe change to protected
     [XmlArray("Languages")]
     [XmlArrayItem("Language")]
-    protected List<Language> Languages { get; set; }
+    public HashSet<Language> Languages
+    {
+        get => _languages ; 
+        set => _languages = value;
+    }
 
     [XmlArray("Followings")]
     [XmlArrayItem("Following")]
@@ -96,7 +101,7 @@ public abstract class Account : IExtent<Account>
         ProfilePictureUrl = _defaultImage;
         Verified = false;
         Rating = 10.0;
-        Languages = new List<Language>();
+        Languages = new HashSet<Language>();
         Followings = new List<Account>();
 
         AddInstanceToExtent(this);
@@ -235,7 +240,7 @@ public abstract class Account : IExtent<Account>
 
     private string GetFollowings()
     {
-        if (Followings.Count == 0)
+        if (Followings == null || Followings.Count == 0)
             return "None";
         return string.Join(", ", Followings.ConvertAll(f => f.Username));
     }

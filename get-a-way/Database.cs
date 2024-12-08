@@ -101,4 +101,14 @@ public class Database
             Console.WriteLine(value);
         }
     }
+
+    public static void Reset()
+    {
+        Account.ResetExtent();
+        ChatRoom.ResetExtent();
+        Message.ResetExtent();
+        Place.ResetExtent();
+        Review.ResetExtent();
+        Trip.ResetExtent();
+    }
 }

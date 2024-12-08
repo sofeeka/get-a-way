@@ -19,6 +19,7 @@ public abstract class Place : IExtent<Place>
     private long _id;
     private string _name;
     private string _location;
+    private List<String> _pictureUrls; // todo addPicture()
     private DateTime _openTime;
     private DateTime _closeTime;
     private PriceCategory _priceCategory;
@@ -43,16 +44,30 @@ public abstract class Place : IExtent<Place>
         set => _location = ValidateLocation(value);
     }
 
+    public List<String> PictureUrls
+    {
+        get => _pictureUrls;
+        set => _pictureUrls = ValidatePictureUrls(value);
+    }
+
     public DateTime OpenTime
     {
         get => _openTime;
-        set => _openTime = value;
+        set
+        {
+            _openTime = value;
+            SetOpenedAtNight(); // recalculate when OpenTime is updated
+        }
     }
 
     public DateTime CloseTime
     {
         get => _closeTime;
-        set => _closeTime = value;
+        set
+        {
+            _closeTime = value;
+            SetOpenedAtNight(); // recalculate when CloseTime is updated
+        }
     }
 
     public PriceCategory PriceCategory
@@ -76,10 +91,6 @@ public abstract class Place : IExtent<Place>
     [XmlArray("Reviews")]
     [XmlArrayItem("Review")]
     public List<Review.Review> Reviews { get; set; }
-    
-    [XmlArray("PictureUrls")]
-    [XmlArrayItem("PictureUrl")]
-    public List<string> PictureUrls { get; set; }
 
     public Place()
     {
@@ -103,32 +114,33 @@ public abstract class Place : IExtent<Place>
 
     private void SetOpenedAtNight()
     {
-        TimeSpan nightStart = new TimeSpan(20, 0, 0);
+        TimeSpan nightStart = new TimeSpan(22, 0, 0);
         TimeSpan nightEnd = new TimeSpan(6, 0, 0);
 
         TimeSpan openTime = OpenTime.TimeOfDay;
         TimeSpan closeTime = CloseTime.TimeOfDay;
 
-        bool opensDuringNight = (openTime <= nightEnd || openTime >= nightStart);
-        bool closesDuringNight = (closeTime >= nightStart || closeTime <= nightEnd);
+        bool opensDuringNight = (openTime < nightEnd || openTime > nightStart);
+        bool closesDuringNight = (closeTime > nightStart || closeTime < nightEnd);
 
         OpenedAtNight = opensDuringNight || closesDuringNight;
     }
 
     private string ValidateName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name) || name.Length < 3)
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 3 || name.Length > 40)
             throw new InvalidAttributeException("Name must be at least 3 characters long.");
         return name;
     }
 
+    //todo validate through API
     private string ValidateLocation(string location)
     {
         if (string.IsNullOrWhiteSpace(location))
-            throw new InvalidAttributeException("Location must be at least 3 characters long.");
+            throw new InvalidAttributeException("Location must not be null or white space");
         return location;
     }
-    
+
     private List<string> ValidatePictureUrls(List<string> urls)
     {
         if (urls == null)
@@ -150,7 +162,6 @@ public abstract class Place : IExtent<Place>
         var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
         return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
     }
-    
 
     public static List<Place> GetExtentCopy()
     {
@@ -194,10 +205,10 @@ public abstract class Place : IExtent<Place>
                $"Opened At Night: {(OpenedAtNight ? "Yes" : "No")}\n" +
                $"Number of Reviews: {Reviews?.Count ?? 0}\n";
     }
-    
+
     private string GetPictureUrls()
     {
-        if (PictureUrls.Count == 0)
+        if (PictureUrls == null || PictureUrls.Count == 0)
             return "No pictures available";
         return string.Join(", ", PictureUrls);
     }

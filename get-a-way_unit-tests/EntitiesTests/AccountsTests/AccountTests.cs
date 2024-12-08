@@ -27,19 +27,19 @@ public class AccountTests
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
         // do not use ValidUserName, will throw DuplicateUsernameException
-        var traveler = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+        var account = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
 
         // ID == 2 because _valid.ID == 1
-        Assert.That(traveler.ID, Is.EqualTo(2));
+        Assert.That(account.ID, Is.EqualTo(2));
         
-        Assert.That(traveler.Username, Is.EqualTo(AnotherValidUserName));
-        Assert.That(traveler.Password, Is.EqualTo(ValidPassword));
-        Assert.That(traveler.Email, Is.EqualTo(ValidEmail));
+        Assert.That(account.Username, Is.EqualTo(AnotherValidUserName));
+        Assert.That(account.Password, Is.EqualTo(ValidPassword));
+        Assert.That(account.Email, Is.EqualTo(ValidEmail));
 
-        Assert.That(traveler.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
+        Assert.That(account.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
 
-        Assert.That(traveler.Verified, Is.False);
-        Assert.That(traveler.Rating, Is.EqualTo(10.0));
+        Assert.That(account.Verified, Is.False);
+        Assert.That(account.Rating, Is.EqualTo(10.0));
     }
 
     [Test]
@@ -184,6 +184,25 @@ public class AccountTests
         Assert.That(_valid.Rating, Is.EqualTo(0));
         _valid.Rating = 100500;
         Assert.That(_valid.Rating, Is.EqualTo(10.0));
+    }
+    
+    [Test]
+    public void Setter_Languages_SetsCorrectValues()
+    {
+        var languages = new HashSet<Language> { Language.English, Language.Ukrainian, Language.Hungarian };
+        _valid.Languages = languages;
+        Assert.That(_valid.Languages, Is.EqualTo(languages));
+    }
+
+    [Test]
+    public void Setter_Languages_IgnoresDuplicateValues()
+    {
+        var languagesWithDuplicates = new HashSet<Language> { Language.English, Language.Spanish, Language.English };
+        _valid.Languages = languagesWithDuplicates;
+
+        Assert.That(_valid.Languages.Count, Is.EqualTo(2)); // only two unique entries should be present
+        Assert.That(_valid.Languages, Does.Contain(Language.English));
+        Assert.That(_valid.Languages, Does.Contain(Language.Spanish));
     }
 
     [Test]

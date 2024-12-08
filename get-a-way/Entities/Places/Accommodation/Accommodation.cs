@@ -37,8 +37,9 @@ public class Accommodation : Place
         get
         {
             var entries = new List<BedEntry>();
-            foreach (var kvp in _beds)
-                entries.Add(new BedEntry { BedType = kvp.Key, Count = kvp.Value });
+            if (_beds != null)
+                foreach (var kvp in _beds)
+                    entries.Add(new BedEntry { BedType = kvp.Key, Count = kvp.Value });
 
             return entries;
         }
@@ -58,8 +59,7 @@ public class Accommodation : Place
     }
 
     public Accommodation(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory,
-        bool petFriendly, AccommodationType type, int maxPeople)
+        PriceCategory priceCategory, bool petFriendly, AccommodationType type, int maxPeople)
         : base(name, location, openTime, closeTime, priceCategory, petFriendly)
     {
         Type = type;
@@ -100,7 +100,7 @@ public class Accommodation : Place
 
     private string GetBedEntries()
     {
-        if (_beds.Count == 0)
+        if (_beds == null || _beds.Count == 0)
             return "No beds available";
         var bedEntries = new List<string>();
         foreach (var kvp in _beds)
