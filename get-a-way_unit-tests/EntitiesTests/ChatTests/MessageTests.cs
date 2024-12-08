@@ -6,7 +6,7 @@ namespace get_a_way_unit_tests.EntitiesTests.ChatTests;
 public class MessageTests
 {
     private Message _valid;
-    
+
     private const string ValidText = "Valid text of a message.";
 
     [SetUp]
@@ -15,7 +15,7 @@ public class MessageTests
         Message.ResetExtent();
         _valid = new Message(ValidText);
     }
-    
+
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
@@ -36,7 +36,7 @@ public class MessageTests
 
         Assert.That(message2.ID - message1.ID, Is.EqualTo(1));
     }
-    
+
     [Test]
     public void Setter_ValidText_SetsText()
     {

@@ -55,7 +55,7 @@ public class Message : IExtent<Message>
             throw new InvalidAttributeException("Text of a message cannot be empty.");
 
         if (value.Length > 10000)
-            throw new InvalidAttributeException("Message text can not exceed 1000 characters");
+            throw new InvalidAttributeException("Message text can not exceed 10000 characters");
 
         return value;
     }
