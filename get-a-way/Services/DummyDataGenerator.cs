@@ -51,9 +51,9 @@ public class DummyDataGenerator
 
     private static void GenerateMessages()
     {
-        var message1 = new Message("Hello, everyone! Excited to be here.");
-        var message2 = new Message("Does anyone have recommendations for places to visit?");
-        var message3 = new Message("Looking forward to our next adventure together!");
+        var message1 = new Message("Hello, everyone! Excited to be here.", DateTime.Now);
+        var message2 = new Message("Does anyone have recommendations for places to visit?", DateTime.Now);
+        var message3 = new Message("Looking forward to our next adventure together!", DateTime.Now);
     }
 
     private static void GeneratePlaces()
