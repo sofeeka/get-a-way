@@ -24,7 +24,7 @@ public class NightLifeAttraction : Attraction
 
     private string ValidateDressCode(string value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("DressCode cannot be empty");
 
         return value;
