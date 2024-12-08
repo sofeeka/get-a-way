@@ -35,7 +35,7 @@ public class ActiveAttractionTests
         _validEvents = new List<string>();
         _validEvents.Add("Some new valid event");
     }
-    
+
     [Test]
     public void Setter_ValidActivityType_SetsActivityType()
     {
@@ -76,5 +76,4 @@ public class ActiveAttractionTests
         Assert.That(() => _valid.ActivityType = tooLong, Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.ActivityType, Is.EqualTo(_validActivityType));
     }
-
 }
