@@ -17,7 +17,10 @@ public class NightLifeAttraction : Attraction
     {
     }
 
-    public NightLifeAttraction(string dressCode)
+    public NightLifeAttraction(string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly, int entryFee, int minimalAge, string description,
+        string dressCode) : base(name, location, openTime, closeTime, priceCategory, petFriendly, entryFee,
+        minimalAge, description)
     {
         DressCode = dressCode;
     }
@@ -25,7 +28,10 @@ public class NightLifeAttraction : Attraction
     private string ValidateDressCode(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new InvalidAttributeException("DressCode cannot be empty");
+            throw new InvalidAttributeException("Dress code cannot be empty");
+
+        if (value.Length is < 5 or > 1000)
+            throw new InvalidAttributeException("Dress code length must be between 5 and 1000 characters.");
 
         return value;
     }
