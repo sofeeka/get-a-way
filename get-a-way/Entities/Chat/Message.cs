@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using get_a_way.Exceptions;
+﻿using get_a_way.Exceptions;
 using get_a_way.Services;
 
 namespace get_a_way.Entities.Chat;
@@ -56,11 +55,18 @@ public class Message : IExtent<Message>
             throw new InvalidAttributeException("Text of a message cannot be empty.");
 
         if (value.Length > 10000)
-            throw new InvalidAttributeException("Message text can not exceed 10000 characters");
+            throw new InvalidAttributeException("Message text can not exceed 1000 characters");
 
         return value;
     }
-    
+
+    private DateTime ValidateTimestamp(DateTime value)
+    {
+        if (value > DateTime.Now)
+            throw new InvalidAttributeException("Message Timestamp cannot be in the future.");
+        return value;
+    }
+
     public static List<Message> GetExtentCopy()
     {
         return new List<Message>(_extent);

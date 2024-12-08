@@ -7,7 +7,7 @@ public class MessageTests
 {
     private Message _valid;
     
-    private const string ValidText = "ValidText";
+    private const string ValidText = "Valid text of a message.";
 
     [SetUp]
     public void SetUpEnvironment()
@@ -20,12 +20,12 @@ public class MessageTests
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
         var message = new Message(ValidText);
-        
-        // ID is 2 because _valid.ID == 1
-        Assert.That(message.ID, Is.EqualTo(2));
 
         Assert.That(message.Text, Is.EqualTo(ValidText));
         Assert.That(message.Timestamp, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+
+        // ID is 2 because _valid.ID == 1
+        Assert.That(message.ID, Is.EqualTo(2));
     }
 
     [Test]

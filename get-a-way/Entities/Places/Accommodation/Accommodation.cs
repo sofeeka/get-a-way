@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Places.Accommodation;
 
@@ -20,13 +21,13 @@ public class Accommodation : Place
     public HashSet<Amenity> Amenities
     {
         get => _amenities;
-        set => _amenities = value;
+        set => _amenities = ValidateAmenities(value);
     }
 
     public int MaxPeople
     {
         get => _maxPeople;
-        set => _maxPeople = value;
+        set => _maxPeople = ValidateMaxPeople(value);
     }
 
     [XmlArray("BedEntries")]
@@ -65,6 +66,20 @@ public class Accommodation : Place
         Amenities = new HashSet<Amenity>();
         MaxPeople = maxPeople;
         BedEntries = new List<BedEntry>();
+    }
+
+    private HashSet<Amenity> ValidateAmenities(HashSet<Amenity> value)
+    {
+        if (value == null)
+            throw new InvalidAttributeException("Amenities list cannot be null");
+        return value;
+    }
+
+    private int ValidateMaxPeople(int value)
+    {
+        if (value <= 0)
+            throw new InvalidAttributeException("Max count of people in the accommodation must be greater than 0");
+        return value;
     }
 
     public override string ToString()
