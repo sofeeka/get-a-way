@@ -9,7 +9,7 @@ namespace get_a_way.Entities.Places.Attractions;
 [XmlInclude(typeof(NightLifeAttraction))]
 public abstract class Attraction : Place
 {
-    private int _entryFee;
+    private int _entryFee; // todo what about currency? assuming a local one?
     private int _minimalAge;
     private List<string> _events;
     private string _description;
@@ -71,9 +71,11 @@ public abstract class Attraction : Place
     {
         if (values.Equals(null))
             throw new InvalidAttributeException("Event list can not be null.");
+
         foreach (var value in values)
-            if (string.IsNullOrEmpty(value))
-                throw new InvalidAttributeException("Event cannot be null.");
+            if (string.IsNullOrWhiteSpace(value))
+                throw new InvalidEventException("Event cannot be null or empty.");
+
         return values;
     }
 
@@ -81,8 +83,10 @@ public abstract class Attraction : Place
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new InvalidAttributeException("Description can not be empty.");
-        if (value.Length is < 10 or > 100)
+
+        if (value.Length is < 10 or > 1000)
             throw new InvalidAttributeException("Description length must be between 10 and 1000 characters.");
+
         return value;
     }
 
