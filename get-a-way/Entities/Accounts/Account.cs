@@ -1,4 +1,3 @@
-using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using get_a_way.Exceptions;
@@ -76,8 +75,8 @@ public abstract class Account : IExtent<Account>
     [XmlArrayItem("Language")]
     public HashSet<Language> Languages
     {
-        get => _languages ; 
-        set => _languages = value;
+        get => _languages;
+        set => _languages = value; // todo validate and change the test (check for null list)
     }
 
     [XmlArray("Followings")]
@@ -130,13 +129,13 @@ public abstract class Account : IExtent<Account>
     private string ValidatePassword(string password)
     {
         var errorMessages = new List<string>();
-        
+
         if (string.IsNullOrWhiteSpace(password))
             errorMessages.Add("Password cannot be empty or whitespace.");
 
         if (password.Length < 8 || password.Length > 40)
             errorMessages.Add("Password must be at least 8 characters long.");
-        
+
         if (!password.Any(char.IsUpper))
             errorMessages.Add("Password must contain at least one uppercase letter.");
 
@@ -145,10 +144,10 @@ public abstract class Account : IExtent<Account>
 
         if (!password.Any(char.IsDigit))
             errorMessages.Add("Password must contain at least one digit.");
-        
+
         if (errorMessages.Any())
             throw new InvalidPasswordException(string.Join(" ", errorMessages));
-        
+
         return password;
     }
 

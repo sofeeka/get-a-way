@@ -150,9 +150,7 @@ public abstract class Place : IExtent<Place>
             throw new InvalidAttributeException("Pictures list cannot contain more than 10 images.");
 
         if (urls.Any(url => string.IsNullOrWhiteSpace(url) || !IsValidImageUrl(url)))
-        {
             throw new InvalidPictureUrlException();
-        }
 
         return urls;
     }
