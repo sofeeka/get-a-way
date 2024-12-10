@@ -24,6 +24,9 @@ public abstract class Account : IExtent<Account>
     private bool _verified;
     private double _rating;
     private HashSet<Language> _languages;
+    
+    private HashSet<Account> _followers;
+    private HashSet<Account> _followings;
 
     public long ID
     {
@@ -70,26 +73,28 @@ public abstract class Account : IExtent<Account>
         set => _rating = ValidateRating(value);
     }
 
-    // todo make sure lists are saved properly, maybe change to protected
     [XmlArray("Languages")]
     [XmlArrayItem("Language")]
-    public HashSet<Language> Languages
-    {
-        get => _languages;
-        set => _languages = value; // todo validate and change the test (check for null list)
-    }
+    public HashSet<Language> Languages => new HashSet<Language>(_languages);
 
     [XmlArray("Followings")]
     [XmlArrayItem("Following")]
-    protected List<Account> Followings { get; set; }
+    public HashSet<Account> Followings => new HashSet<Account>(_followings);
+
+    [XmlArray("Followers")]
+    [XmlArrayItem("Follower")]
+    public  HashSet<Account> Followers => new HashSet<Account>(_followers);
 
     private static string _defaultImage = "static/img/default_profile_img.jpg";
 
     public Account()
     {
+        _followings = new HashSet<Account>();
+        _followers = new HashSet<Account>();
+        _languages = new HashSet<Language>();
     }
 
-    protected Account(string username, string password, string email)
+    protected Account(string username, string password, string email) : this()
     {
         ID = ++IdCounter;
 
@@ -100,8 +105,6 @@ public abstract class Account : IExtent<Account>
         ProfilePictureUrl = _defaultImage;
         Verified = false;
         Rating = 10.0;
-        Languages = new HashSet<Language>();
-        Followings = new List<Account>();
 
         AddInstanceToExtent(this);
     }
@@ -171,22 +174,57 @@ public abstract class Account : IExtent<Account>
         var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
         bool valid = Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
 
-        try
-        {
-            if (string.IsNullOrWhiteSpace(value) || !valid)
-                throw new InvalidPictureUrlException();
-        }
-        catch (InvalidPictureUrlException e)
-        {
-            value = _defaultImage;
-        }
+        if (string.IsNullOrWhiteSpace(value) || !valid)
+            return _defaultImage;
 
         return value;
     }
 
     public void AddLanguage(Language language)
     {
-        Languages.Add(language);
+        if (language == null)
+            throw new ArgumentNullException(nameof(language));
+        _languages.Add(language);
+    }
+
+    public void RemoveLanguage(Language language)
+    {
+        _languages.Remove(language);
+    }
+    
+    private void AddFollower(Account account)
+    {
+        _followers.Add(account);
+    }
+
+    private void RemoveFollower(Account account)
+    {
+        _followers.Remove(account);
+    }
+    
+    public void Follow(Account account)
+    {
+        if (account == null)
+            throw new ArgumentNullException(nameof(account), "Account to follow cannot be null");
+
+        if (account == this)
+            throw new InvalidOperationException("An account cannot follow itself");
+
+        if (_followings.Add(account)) //checks if not already present
+        {
+            account.AddFollower(this); //reverse connection
+        }
+    }
+
+    public void Unfollow(Account account)
+    {
+        if (account == null)
+            throw new ArgumentNullException(nameof(account), "Account to unfollow cannot be null");
+
+        if (_followings.Remove(account)) //checks if present
+        {
+            account.RemoveFollower(this); //reverse connection
+        }
     }
 
     public static List<Account> GetExtentCopy()
@@ -216,6 +254,7 @@ public abstract class Account : IExtent<Account>
         _extent.Clear();
         IdCounter = 0;
     }
+    
 
     public override string ToString()
     {
@@ -226,21 +265,22 @@ public abstract class Account : IExtent<Account>
                $"Profile Picture URL: {(ProfilePictureUrl ?? "No profile picture available")}\n" +
                $"Verified: {(Verified ? "Yes" : "No")}\n" +
                $"Rating: {Rating:F1}\n" +
-               $"Languages: {GetLanguages()}\n" +
-               $"Following: {GetFollowings()}\n";
+               $"Languages: {GetLanguagesToString()}\n" +
+               $"Followings: {GetUsernamesToStringFromAccountSet(_followings)}\n" + 
+               $"Followers: {GetUsernamesToStringFromAccountSet(_followers)}\n";
     }
 
-    private string GetLanguages()
+    private string GetLanguagesToString()
     {
-        if (Languages.Count == 0)
+        if (_languages == null || _languages.Count == 0)
             return "None";
-        return string.Join(", ", Languages);
+        return string.Join(", ", _languages);
     }
 
-    private string GetFollowings()
+    private string GetUsernamesToStringFromAccountSet(HashSet<Account> accounts)
     {
-        if (Followings == null || Followings.Count == 0)
+        if (accounts == null || accounts.Count == 0)
             return "None";
-        return string.Join(", ", Followings.ConvertAll(f => f.Username));
+        return string.Join(", ", accounts.Select(f => f.Username));
     }
 }
