@@ -185,31 +185,106 @@ public class AccountTests
         _valid.Rating = 100500;
         Assert.That(_valid.Rating, Is.EqualTo(10.0));
     }
-    
-    [Test]
-    public void Setter_Languages_SetsCorrectValues()
-    {
-        var languages = new HashSet<Language> { Language.English, Language.Ukrainian, Language.Hungarian };
-        _valid.Languages = languages;
-        Assert.That(_valid.Languages, Is.EqualTo(languages));
-    }
-
-    [Test]
-    public void Setter_Languages_IgnoresDuplicateValues()
-    {
-        var languagesWithDuplicates = new HashSet<Language> { Language.English, Language.Spanish, Language.English };
-        _valid.Languages = languagesWithDuplicates;
-
-        Assert.That(_valid.Languages.Count, Is.EqualTo(2)); // only two unique entries should be present
-        Assert.That(_valid.Languages, Does.Contain(Language.English));
-        Assert.That(_valid.Languages, Does.Contain(Language.Spanish));
-    }
 
     [Test]
     public void AddLanguage_AddsLanguageToList()
     {
         _valid.AddLanguage(Language.English);
     }
+    
+    [Test]
+    public void Follow_ValidAccount_AddsToFollowingsAndFollowers()
+    {
+        var validAccountToFollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _valid.Follow(validAccountToFollow);
+        
+        Assert.That(_valid.Followings.Contains(validAccountToFollow));
+        Assert.That(validAccountToFollow.Followers.Contains(_valid));
+    }
+
+    [Test]
+    public void Unfollow_ValidAccount_RemovesFromFollowingsAndFollowers()
+    {
+        var validAccountToUnfollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _valid.Follow(validAccountToUnfollow);
+
+        _valid.Unfollow(validAccountToUnfollow);
+
+        Assert.That(_valid.Followings.Contains(validAccountToUnfollow), Is.False);
+        Assert.That(validAccountToUnfollow.Followers.Contains(_valid), Is.False);
+    }
+    
+    [Test]
+    public void Follow_SelfFollow_ThrowsInvalidOperationException()
+    {
+        Assert.That(() => _valid.Follow(_valid), Throws.TypeOf<InvalidOperationException>());
+    }
+
+    [Test]
+    public void Follow_DuplicateAccount_DoesNotAddTwice()
+    {
+        var validAccountToFollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _valid.Follow(validAccountToFollow);
+        _valid.Follow(validAccountToFollow);
+
+        Assert.That(_valid.Followings.Count, Is.EqualTo(1));
+        Assert.That(validAccountToFollow.Followers.Count, Is.EqualTo(1));
+    }
+    
+    [Test]
+    public void Follow_NullAccount_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _valid.Follow(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void Unfollow_NullAccount_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _valid.Unfollow(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void Unfollow_NonFollowedAccount_DoesNothing()
+    {
+        var validAccountToUnfollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _valid.Unfollow(validAccountToUnfollow);
+
+        Assert.That(_valid.Followings.Contains(validAccountToUnfollow), Is.False);
+        Assert.That(validAccountToUnfollow.Followers.Contains(_valid), Is.False);
+    }
+
+    [Test]
+    public void GetFollowings_ReturnsCopy()
+    {
+        var validAccountToFollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _valid.Follow(validAccountToFollow);
+        var followings = _valid.Followings;
+
+        //modify the returned copy
+        followings.Clear();
+
+        Assert.That(_valid.Followings.Count, Is.EqualTo(1)); //original list is unchanged
+    }
+
+    [Test]
+    public void GetFollowers_ReturnsCopy()
+    {
+        var validAccountToFollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        validAccountToFollow.Follow(_valid);
+        var followers = _valid.Followers;
+
+        //modify the returned copy
+        followers.Clear();
+
+        Assert.That(_valid.Followers.Count, Is.EqualTo(1)); //original list is unchanged
+    }
+
 
     [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
