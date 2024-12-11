@@ -89,7 +89,7 @@ public abstract class Account : IExtent<Account>
 
     [XmlArray("Chatrooms")]
     [XmlArrayItem("Chatroom")]
-    public HashSet<ChatRoom> ChatRooms => new HashSet<ChatRoom>(_chatrooms);
+    public HashSet<ChatRoom> Chatrooms => new HashSet<ChatRoom>(_chatrooms);
 
     private static string _defaultImage = "static/img/default_profile_img.jpg";
 
