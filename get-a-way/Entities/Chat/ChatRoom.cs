@@ -19,7 +19,7 @@ public class ChatRoom : IExtent<ChatRoom>
     
     private HashSet<Account> _members;
 
-    private static string _defaultImage = "https://i.pinimg.com/736x/a2/de/85/a2de85ffccbdc7267ef8bf801b56a747.jpg";
+    private static string _defaultImage = "static/img/default_chatroom_img.jpg";
 
     public long ID
     {
