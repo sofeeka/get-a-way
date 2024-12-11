@@ -1,11 +1,12 @@
 using get_a_way.Entities.Accounts;
+using get_a_way.Entities.Chat;
 using get_a_way.Exceptions;
 
 namespace get_a_way_unit_tests.EntitiesTests.AccountsTests;
 
 public class AccountTests
 {
-    private class TestAccount(string username, string password, string email) : Account(username, password, email);
+    public class TestAccount(string username, string password, string email) : Account(username, password, email);
 
     private TestAccount _valid;
 
@@ -155,7 +156,7 @@ public class AccountTests
     }
 
     [Test]
-    public void Setter_InvalidProfilePictureUrl_ReturnsDefaultProfilePicture()
+    public void Setter_InvalidProfilePictureUrl_SetsDefaultProfilePicture()
     {
         _valid.ProfilePictureUrl = null;
         Assert.That(_valid.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
@@ -328,6 +329,78 @@ public class AccountTests
         Assert.That(_valid.Followers.Count, Is.EqualTo(1)); //original set is unchanged
     }
 
+    [Test]
+    public void JoinChatroom_ValidChatroom_AddsAccountToChatroom()
+    {
+        var validChatRoom = new ChatRoom("TestChat", "static/img/valid_img.jpg");
+
+        _valid.JoinChatroom(validChatRoom);
+
+        Assert.That(_valid.Chatrooms.Contains(validChatRoom));
+        Assert.That(validChatRoom.Members.Contains(_valid));
+    }
+    
+    [Test]
+    public void LeaveChatroom_ValidChatroom_RemovesAccountFromChatroom()
+    {
+        var validChatRoom = new ChatRoom("TestChat", "static/img/valid_img.jpg");
+
+        _valid.JoinChatroom(validChatRoom);
+
+        _valid.LeaveChatroom(validChatRoom);
+
+        Assert.That(_valid.Chatrooms.Contains(validChatRoom), Is.False);
+        Assert.That(validChatRoom.Members.Contains(_valid), Is.False);
+    }
+
+    [Test]
+    public void JoinChatroom_DuplicateChatroom_DoesNotAddTwice()
+    {
+        var chatRoom = new ChatRoom("TestChat", "static/img/valid_img.jpg");
+
+        _valid.JoinChatroom(chatRoom);
+        _valid.JoinChatroom(chatRoom);
+
+        Assert.That(_valid.Chatrooms.Count, Is.EqualTo(1));
+        Assert.That(chatRoom.Members.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void LeaveChatroom_NonJoinedChatroom_DoesNothing()
+    {
+        var chatRoom = new ChatRoom("TestChat", "static/img/valid_img.jpg");
+
+        _valid.LeaveChatroom(chatRoom);
+
+        Assert.That(_valid.Chatrooms.Contains(chatRoom), Is.False);
+        Assert.That(chatRoom.Members.Contains(_valid), Is.False);
+    }
+
+    [Test]
+    public void JoinChatroom_NullChatroom_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _valid.JoinChatroom(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void LeaveChatroom_NullChatroom_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _valid.LeaveChatroom(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void GetChatrooms_ReturnsCopy()
+    {
+        var chatRoom = new ChatRoom("TestChat", "static/img/valid_img.jpg");
+
+        _valid.JoinChatroom(chatRoom);
+
+        var chatrooms = _valid.Chatrooms;
+
+        chatrooms.Clear();
+
+        Assert.That(_valid.Chatrooms.Count, Is.EqualTo(1));
+    }
 
     [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
