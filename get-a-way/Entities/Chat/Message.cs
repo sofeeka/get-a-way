@@ -1,4 +1,6 @@
-﻿using get_a_way.Exceptions;
+﻿using System.Xml.Serialization;
+using get_a_way.Entities.Accounts;
+using get_a_way.Exceptions;
 using get_a_way.Services;
 
 namespace get_a_way.Entities.Chat;
@@ -13,6 +15,9 @@ public class Message : IExtent<Message>
     private long _id;
     private string _text;
     private DateTime _timestamp;
+    
+    [XmlIgnore]
+    public Account Sender { get; private set; }
 
     public long ID
     {
@@ -47,6 +52,12 @@ public class Message : IExtent<Message>
         _timestamp = DateTime.Now;
 
         AddInstanceToExtent(this);
+    }
+    
+    public Message(string text, Account sender) : this(text)
+    {
+        Sender = sender ?? throw new ArgumentNullException(nameof(sender), "Sender cannot be null");
+        sender.AddMessage(this); //reverse connection
     }
 
     private string ValidateText(string value)

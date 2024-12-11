@@ -29,6 +29,7 @@ public abstract class Account : IExtent<Account>
     private HashSet<Account> _followers;
     private HashSet<Account> _followings;
     private HashSet<ChatRoom> _chatrooms;
+    private HashSet<Message> _messages;
 
     public long ID
     {
@@ -91,10 +92,15 @@ public abstract class Account : IExtent<Account>
     [XmlArrayItem("Chatroom")]
     public HashSet<ChatRoom> Chatrooms => new HashSet<ChatRoom>(_chatrooms);
 
+    [XmlArray("Messages")]
+    [XmlArrayItem("Message")]
+    public HashSet<Message> Messages => new HashSet<Message>(_messages);
+
     private static string _defaultImage = "static/img/default_profile_img.jpg";
 
     public Account()
     {
+        _messages = new HashSet<Message>();
         _languages = new HashSet<Language>();
         _followings = new HashSet<Account>();
         _followers = new HashSet<Account>();
@@ -248,6 +254,22 @@ public abstract class Account : IExtent<Account>
             chatRoom.RemoveMember(this); //reverse connection
     }
 
+    public void AddMessage(Message message)
+    {
+        if (message == null)
+            throw new ArgumentNullException(nameof(message), "Message cannot be null");
+
+        _messages.Add(message);
+    }
+
+    public void RemoveMessage(Message message)
+    {
+        if (message == null)
+            throw new ArgumentNullException(nameof(message), "Message cannot be null");
+
+        _messages.Remove(message);
+    }
+    
     public static List<Account> GetExtentCopy()
     {
         return new List<Account>(_extent);
