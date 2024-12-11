@@ -18,6 +18,9 @@ public class Message : IExtent<Message>
     
     [XmlIgnore]
     public Account Sender { get; private set; }
+    
+    [XmlIgnore]
+    public ChatRoom ChatRoom { get; private set; }
 
     public long ID
     {
@@ -58,6 +61,22 @@ public class Message : IExtent<Message>
     {
         Sender = sender ?? throw new ArgumentNullException(nameof(sender), "Sender cannot be null");
         sender.AddMessage(this); //reverse connection
+    }
+    
+    public void AssignToChatRoom(ChatRoom chatRoom)
+    {
+        if (chatRoom == null)
+            throw new ArgumentNullException(nameof(chatRoom), "ChatRoom cannot be null");
+
+        if (ChatRoom != null)
+            throw new InvalidOperationException("Message is already assigned to a ChatRoom");
+
+        ChatRoom = chatRoom;
+    }
+
+    public void RemoveFromChatRoom()
+    {
+        ChatRoom = null;
     }
 
     private string ValidateText(string value)
