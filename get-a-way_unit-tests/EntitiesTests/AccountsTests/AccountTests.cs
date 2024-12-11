@@ -187,9 +187,52 @@ public class AccountTests
     }
 
     [Test]
-    public void AddLanguage_AddsLanguageToList()
+    public void AddLanguage_ValidLanguage_AddsLanguageToList()
     {
         _valid.AddLanguage(Language.English);
+        Assert.That(_valid.Languages.Contains(Language.English));
+        Assert.That(_valid.Languages.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void AddLanguage_DuplicateLanguage_DoesNotAddTwice()
+    {
+        _valid.AddLanguage(Language.Ukrainian);
+        _valid.AddLanguage(Language.Ukrainian);
+        Assert.That(_valid.Languages.Count, Is.EqualTo(1));
+    }
+    
+    [Test]
+    public void RemoveLanguage_ExistingLanguage_RemovesFromLanguages()
+    {
+        _valid.AddLanguage(Language.English);
+
+        _valid.RemoveLanguage(Language.English);
+        
+        Assert.That(_valid.Languages.Contains(Language.English), Is.False);
+        Assert.That(_valid.Languages.Count, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void RemoveLanguage_NonExistingLanguage_DoesNothing()
+    {
+        _valid.RemoveLanguage(Language.Mandarin); //was not added
+
+        Assert.That(_valid.Languages.Contains(Language.Mandarin), Is.False);
+        Assert.That(_valid.Languages.Count, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void GetLanguages_ReturnsCopy()
+    {
+        _valid.AddLanguage(Language.Hungarian);
+
+        var languages = _valid.Languages;
+
+        //modify copy
+        languages.Clear();
+
+        Assert.That(_valid.Languages.Count, Is.EqualTo(1)); //original set unchanged
     }
     
     [Test]
@@ -268,7 +311,7 @@ public class AccountTests
         //modify the returned copy
         followings.Clear();
 
-        Assert.That(_valid.Followings.Count, Is.EqualTo(1)); //original list is unchanged
+        Assert.That(_valid.Followings.Count, Is.EqualTo(1)); //original set is unchanged
     }
 
     [Test]
@@ -282,7 +325,7 @@ public class AccountTests
         //modify the returned copy
         followers.Clear();
 
-        Assert.That(_valid.Followers.Count, Is.EqualTo(1)); //original list is unchanged
+        Assert.That(_valid.Followers.Count, Is.EqualTo(1)); //original set is unchanged
     }
 
 
