@@ -16,6 +16,7 @@ public class MessageTests
     {
         Message.ResetExtent();
         Account.ResetExtent();
+        ChatRoom.ResetExtent();
         _valid = new Message(ValidText);
     }
 
@@ -57,8 +58,7 @@ public class MessageTests
     {
         Assert.That(() => new Message(ValidText, null), Throws.TypeOf<ArgumentNullException>());
     }
-
-
+    
     [Test]
     public void Setter_ValidText_SetsText()
     {
@@ -99,6 +99,34 @@ public class MessageTests
         
         Assert.That(() => _valid.Timestamp = DateTime.Now, Throws.TypeOf<InvalidOperationException>());
         Assert.That(_valid.Timestamp, Is.EqualTo(originalTimestamp).Within(TimeSpan.FromSeconds(1)));
+    }
+    
+    [Test]
+    public void AssignToChatRoom_ValidChatRoom_AssignsChatRoom()
+    {
+        var chatRoom = new ChatRoom("Test ChatRoom", "https://valid/photo.png");
+
+        _valid.AssignToChatRoom(chatRoom);
+
+        Assert.That(_valid.ChatRoom, Is.EqualTo(chatRoom));
+    }
+    
+    [Test]
+    public void AssignToChatRoom_NullChatRoom_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _valid.AssignToChatRoom(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void RemoveFromChatRoom_RemovesChatRoomReference()
+    {
+        var chatRoom = new ChatRoom("Test ChatRoom", "https://valid/photo.png");
+        _valid.AssignToChatRoom(chatRoom);
+
+        _valid.RemoveFromChatRoom();
+
+        Assert.That(_valid.ChatRoom, Is.Null);
+        Assert.That(chatRoom.Messages.Contains(_valid), Is.False);
     }
     
     [Test]

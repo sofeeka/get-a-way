@@ -9,6 +9,7 @@ public class ChatRoomTests
 {
     private ChatRoom _validChatroom;
     private AccountTests.TestAccount _validAccount;
+    private Message _validMessage;
 
     private const string ValidName = "ValidName";
     private const string DefaultPhotoUrl = "static/img/default_chatroom_img.jpg";
@@ -17,9 +18,11 @@ public class ChatRoomTests
     public void SetUpEnvironment()
     {
         ChatRoom.ResetExtent();
-        _validChatroom = new ChatRoom(ValidName, DefaultPhotoUrl);
         Account.ResetExtent();
+        Message.ResetExtent();
+        _validChatroom = new ChatRoom(ValidName, DefaultPhotoUrl);
         _validAccount = new AccountTests.TestAccount("ValidUserName", "ValidPassword123", "validemail@pjwstk.edu.pl");
+        _validMessage = new Message("Valid message text");
     }
 
     [Test]
@@ -153,6 +156,45 @@ public class ChatRoomTests
     }
     
     [Test]
+    public void AddMessage_ValidMessage_AddsToChatRoomAndSetsChatRoomReference()
+    {
+        _validChatroom.AddMessage(_validMessage);
+
+        Assert.That(_validChatroom.Messages.Contains(_validMessage));
+        Assert.That(_validMessage.ChatRoom, Is.EqualTo(_validChatroom));
+    }
+
+    [Test]
+    public void AddMessage_MessageAlreadyInAnotherChatRoom_ThrowsInvalidOperationException()
+    {
+        var anotherChatRoom = new ChatRoom("Another ChatRoom", DefaultPhotoUrl);
+        anotherChatRoom.AddMessage(_validMessage);
+
+        Assert.That(() => _validChatroom.AddMessage(_validMessage), Throws.TypeOf<InvalidOperationException>());
+    }
+
+    [Test]
+    public void RemoveMessage_ValidMessage_RemovesFromChatRoomAndClearsChatRoomReference()
+    {
+        _validChatroom.AddMessage(_validMessage);
+
+        _validChatroom.RemoveMessage(_validMessage);
+
+        Assert.That(_validChatroom.Messages.Contains(_validMessage), Is.False);
+        Assert.That(_validMessage.ChatRoom, Is.Null);
+    }
+
+    [Test]
+    public void RemoveMessage_MessageNotInChatRoom_DoesNothing()
+    {
+        _validChatroom.RemoveMessage(_validMessage);
+
+        Assert.That(_validChatroom.Messages.Contains(_validMessage), Is.False);
+        Assert.That(_validMessage.ChatRoom, Is.Null);
+    }
+
+    
+    [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
     {
         int count = ChatRoom.GetExtentCopy().Count;
@@ -162,12 +204,20 @@ public class ChatRoomTests
     }
 
     [Test]
-    public void RemoveInstanceFromExtent_OnRemovalOfInstance_DecreasesExtentCount()
+    public void RemoveInstanceFromExtent_RemovesChatRoomAndDeletesItsMessages()
     {
-        int count = ChatRoom.GetExtentCopy().Count;
+        var message1 = new Message("Message 1");
+        var message2 = new Message("Message 2");
+        _validChatroom.AddMessage(message1);
+        _validChatroom.AddMessage(message2);
+
         ChatRoom.RemoveInstanceFromExtent(_validChatroom);
-        Assert.That(ChatRoom.GetExtentCopy().Count, Is.EqualTo(count - 1));
+
+        Assert.That(ChatRoom.GetExtent().Contains(_validChatroom), Is.False); 
+        Assert.That(Message.GetExtent().Contains(message1), Is.False);
+        Assert.That(Message.GetExtent().Contains(message2), Is.False);
     }
+
 
     [Test]
     public void GetExtentCopy_DoesNotReturnActualExtent()
@@ -177,9 +227,16 @@ public class ChatRoomTests
     }
 
     [Test]
-    public void ResetExtent_ClearsExtent()
+    public void ResetExtent_DeletesAllChatRoomsAndTheirMessages()
     {
+        var message1 = new Message("Message 1");
+        var message2 = new Message("Message 2");
+        _validChatroom.AddMessage(message1);
+        _validChatroom.AddMessage(message2);
+
         ChatRoom.ResetExtent();
+
         Assert.That(ChatRoom.GetExtent().Count, Is.EqualTo(0));
+        Assert.That(Message.GetExtent().Count, Is.EqualTo(1)); //bcs of _validMessage
     }
 }
