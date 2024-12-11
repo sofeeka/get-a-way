@@ -18,6 +18,7 @@ public class ChatRoom : IExtent<ChatRoom>
     private string? _photoUrl;
     
     private HashSet<Account> _members;
+    private List<Message> _messages;
 
     private static string _defaultImage = "static/img/default_chatroom_img.jpg";
 
@@ -45,10 +46,15 @@ public class ChatRoom : IExtent<ChatRoom>
     [XmlArray("Members")]
     [XmlArrayItem("Member")]
     public HashSet<Account> Members => new HashSet<Account>(_members);
+    
+    [XmlArray("Messages")]
+    [XmlArrayItem("Message")]
+    public List<Message> Messages => new List<Message>(_messages);
 
     public ChatRoom()
     {
         _members = new HashSet<Account>();
+        _messages = new List<Message>();
     }
 
     public ChatRoom(string name, string photoUrl) : this()
@@ -94,6 +100,29 @@ public class ChatRoom : IExtent<ChatRoom>
     {
         _members.Remove(account);
     }
+    
+    public void AddMessage(Message message)
+    {
+        if (message == null)
+            throw new ArgumentNullException(nameof(message), "Message cannot be null");
+
+        if (message.ChatRoom != null)
+            throw new InvalidOperationException("Message already belongs to another ChatRoom");
+
+        message.AssignToChatRoom(this); //reverse connection 
+        _messages.Add(message);
+    }
+
+    public void RemoveMessage(Message message)
+    {
+        if (message == null)
+            throw new ArgumentNullException(nameof(message), "Message cannot be null");
+
+        if (_messages.Remove(message))
+        {
+            message.RemoveFromChatRoom();
+        }
+    }
 
     public static List<ChatRoom> GetExtentCopy()
     {
@@ -109,6 +138,16 @@ public class ChatRoom : IExtent<ChatRoom>
 
     public static void RemoveInstanceFromExtent(ChatRoom instance)
     {
+        if (instance == null)
+            throw new ArgumentNullException(nameof(instance), "ChatRoom instance cannot be null");
+
+        //remove all messages from Message extent
+        foreach (var message in instance._messages)
+        {
+            Message.RemoveInstanceFromExtent(message);
+        }
+
+        instance._messages.Clear(); //clear messages list
         _extent.Remove(instance);
     }
 
@@ -119,6 +158,17 @@ public class ChatRoom : IExtent<ChatRoom>
 
     public static void ResetExtent()
     {
+        foreach (var chatRoom in _extent)
+        {
+            //remove all messages from Message extent
+            foreach (var message in chatRoom._messages)
+            {
+                Message.RemoveInstanceFromExtent(message);
+            }
+
+            chatRoom._messages.Clear(); //clear messages list
+        }
+        
         _extent.Clear();
         IdCounter = 0;
     }
