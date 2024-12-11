@@ -211,9 +211,7 @@ public abstract class Account : IExtent<Account>
             throw new InvalidOperationException("An account cannot follow itself");
 
         if (_followings.Add(account)) //checks if not already present
-        {
             account.AddFollower(this); //reverse connection
-        }
     }
 
     public void Unfollow(Account account)
@@ -222,9 +220,7 @@ public abstract class Account : IExtent<Account>
             throw new ArgumentNullException(nameof(account), "Account to unfollow cannot be null");
 
         if (_followings.Remove(account)) //checks if present
-        {
             account.RemoveFollower(this); //reverse connection
-        }
     }
 
     public static List<Account> GetExtentCopy()
