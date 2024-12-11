@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using get_a_way.Entities.Chat;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
@@ -27,6 +28,7 @@ public abstract class Account : IExtent<Account>
     
     private HashSet<Account> _followers;
     private HashSet<Account> _followings;
+    private HashSet<ChatRoom> _chatrooms;
 
     public long ID
     {
@@ -85,13 +87,18 @@ public abstract class Account : IExtent<Account>
     [XmlArrayItem("Follower")]
     public  HashSet<Account> Followers => new HashSet<Account>(_followers);
 
+    [XmlArray("Chatrooms")]
+    [XmlArrayItem("Chatroom")]
+    public HashSet<ChatRoom> ChatRooms => new HashSet<ChatRoom>(_chatrooms);
+
     private static string _defaultImage = "static/img/default_profile_img.jpg";
 
     public Account()
     {
+        _languages = new HashSet<Language>();
         _followings = new HashSet<Account>();
         _followers = new HashSet<Account>();
-        _languages = new HashSet<Language>();
+        _chatrooms = new HashSet<ChatRoom>();
     }
 
     protected Account(string username, string password, string email) : this()
@@ -223,6 +230,24 @@ public abstract class Account : IExtent<Account>
             account.RemoveFollower(this); //reverse connection
     }
 
+    public void JoinChatroom(ChatRoom chatRoom)
+    {
+        if (chatRoom == null)
+            throw new ArgumentNullException(nameof(chatRoom), "Chatroom cannot be null");
+
+        if (_chatrooms.Add(chatRoom))
+            chatRoom.AddMember(this); //reverse connection
+    }
+    
+    public void LeaveChatroom(ChatRoom chatRoom)
+    {
+        if (chatRoom == null)
+            throw new ArgumentNullException(nameof(chatRoom), "Chatroom cannot be null");
+
+        if (_chatrooms.Remove(chatRoom))
+            chatRoom.RemoveMember(this); //reverse connection
+    }
+
     public static List<Account> GetExtentCopy()
     {
         return new List<Account>(_extent);
@@ -279,4 +304,5 @@ public abstract class Account : IExtent<Account>
             return "None";
         return string.Join(", ", accounts.Select(f => f.Username));
     }
+    
 }

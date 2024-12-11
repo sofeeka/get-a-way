@@ -16,6 +16,10 @@ public class ChatRoom : IExtent<ChatRoom>
     private long _id;
     private string _name;
     private string? _photoUrl;
+    
+    private HashSet<Account> _members;
+
+    private static string defaultImage = "https://i.pinimg.com/736x/a2/de/85/a2de85ffccbdc7267ef8bf801b56a747.jpg";
 
     public long ID
     {
@@ -37,21 +41,21 @@ public class ChatRoom : IExtent<ChatRoom>
             if (value != null) _photoUrl = ValidatePhotoUrl(value);
         }
     }
-
+    
     [XmlArray("Members")]
     [XmlArrayItem("Member")]
-    public List<Account> Members { get; set; }
+    public HashSet<Account> Members => new HashSet<Account>(_members);
 
     public ChatRoom()
     {
+        _members = new HashSet<Account>();
     }
 
-    public ChatRoom(string name, string photoUrl)
+    public ChatRoom(string name, string photoUrl) : this()
     {
         ID = ++IdCounter;
         Name = name;
         PhotoUrl = photoUrl;
-        Members = new List<Account>();
 
         AddInstanceToExtent(this);
     }
@@ -77,6 +81,19 @@ public class ChatRoom : IExtent<ChatRoom>
             throw new InvalidPictureUrlException();
 
         return value;
+    }
+    
+    public void AddMember(Account account)
+    {
+        if (account == null)
+            throw new ArgumentNullException(nameof(account), "Account cannot be null");
+        
+        _members.Add(account);
+    }
+
+    public void RemoveMember(Account account)
+    {
+        _members.Remove(account);
     }
 
     public static List<ChatRoom> GetExtentCopy()
@@ -114,14 +131,11 @@ public class ChatRoom : IExtent<ChatRoom>
                $"Name: {Name}\n" +
                $"Photo URL: {(PhotoUrl ?? "No photo available")}\n" +
                $"Number of Members: {Members?.Count ?? 0}\n" +
-               $"Members: {GetMemberNames()}\n";
+               $"Members: {GetMembersNames()}\n";
     }
 
-    private string GetMemberNames()
+    private string GetMembersNames()
     {
-        if (Members.Count == 0)
-            return "No members";
-
-        return string.Join(", ", Members.ConvertAll(member => member.Username));
+        return _members.Count == 0 ? "No participants" : string.Join(", ", _members.Select(a => a.Username));
     }
 }
