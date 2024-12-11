@@ -19,7 +19,7 @@ public class ChatRoom : IExtent<ChatRoom>
     
     private HashSet<Account> _members;
 
-    private static string defaultImage = "https://i.pinimg.com/736x/a2/de/85/a2de85ffccbdc7267ef8bf801b56a747.jpg";
+    private static string _defaultImage = "https://i.pinimg.com/736x/a2/de/85/a2de85ffccbdc7267ef8bf801b56a747.jpg";
 
     public long ID
     {
@@ -73,12 +73,11 @@ public class ChatRoom : IExtent<ChatRoom>
 
     private string ValidatePhotoUrl(string value)
     {
-        // todo change like in Account
         var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
         bool valid = Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase);
 
         if (string.IsNullOrWhiteSpace(value) || !valid)
-            throw new InvalidPictureUrlException();
+            return _defaultImage;
 
         return value;
     }
