@@ -1,3 +1,5 @@
+using get_a_way_unit_tests.EntitiesTests.AccountsTests;
+using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Chat;
 using get_a_way.Exceptions;
 
@@ -13,6 +15,7 @@ public class MessageTests
     public void SetUpEnvironment()
     {
         Message.ResetExtent();
+        Account.ResetExtent();
         _valid = new Message(ValidText);
     }
 
@@ -36,6 +39,25 @@ public class MessageTests
 
         Assert.That(message2.ID - message1.ID, Is.EqualTo(1));
     }
+    
+    [Test]
+    public void Constructor_WithSender_AssignsCorrectValues()
+    {
+        var account = new AccountTests.TestAccount("User1", "Password123", "user1@pjwstk.edu.pl");
+        var message = new Message(ValidText, account);
+
+        Assert.That(message.Text, Is.EqualTo(ValidText));
+        Assert.That(message.Timestamp, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+        Assert.That(message.Sender, Is.EqualTo(account));
+        Assert.That(account.Messages.Contains(message));
+    }
+
+    [Test]
+    public void Constructor_WithNullSender_ThrowsArgumentNullException()
+    {
+        Assert.That(() => new Message(ValidText, null), Throws.TypeOf<ArgumentNullException>());
+    }
+
 
     [Test]
     public void Setter_ValidText_SetsText()

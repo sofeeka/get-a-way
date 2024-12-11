@@ -401,6 +401,53 @@ public class AccountTests
 
         Assert.That(_valid.Chatrooms.Count, Is.EqualTo(1));
     }
+    
+    [Test]
+    public void AddMessage_ValidMessage_AddsToMessages()
+    {
+        var message = new Message("This is a test message", _valid);
+
+        Assert.That(_valid.Messages.Contains(message));
+        Assert.That(message.Sender, Is.EqualTo(_valid));
+    }
+
+    [Test]
+    public void AddMessage_NullMessage_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _valid.AddMessage(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void RemoveMessage_ExistingMessage_RemovesFromMessages()
+    {
+        var message = new Message("This is a test message", _valid);
+
+        _valid.RemoveMessage(message);
+
+        Assert.That(_valid.Messages.Contains(message), Is.False);
+    }
+
+    [Test]
+    public void RemoveMessage_NonExistingMessage_DoesNothing()
+    {
+        var message = new Message("This is a test message");
+
+        _valid.RemoveMessage(message); //message not added
+
+        Assert.That(_valid.Messages.Contains(message), Is.False);
+    }
+
+    [Test]
+    public void Messages_ReturnsCopy()
+    {
+        var message = new Message("This is a test message", _valid);
+
+        var messagesCopy = _valid.Messages;
+
+        messagesCopy.Clear();
+
+        Assert.That(_valid.Messages.Count, Is.EqualTo(1));
+    }
 
     [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
