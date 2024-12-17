@@ -15,6 +15,7 @@ public class Message : IExtent<Message>
     private long _id;
     private string _text;
     private DateTime _timestamp;
+    private bool _edited;
     
     [XmlIgnore]
     public Account Sender { get; private set; }
@@ -31,7 +32,18 @@ public class Message : IExtent<Message>
     public string Text
     {
         get => _text;
-        set => _text = ValidateText(value);
+        set
+        {
+            if (_text != value)
+            {
+                _text = ValidateText(value);
+                _edited = true; 
+            }
+            else
+            {
+                _text = value;
+            }
+        }
     }
 
     public DateTime Timestamp
@@ -44,15 +56,22 @@ public class Message : IExtent<Message>
         }
     }
 
+    public bool Edited
+    {
+        get => _edited;
+        set => _edited = value;
+    }
+
     public Message()
     {
     }
 
     public Message(string text)
     {
-        ID = ++IdCounter;
-        Text = text;
+        _id = ++IdCounter;
+        _text = text;
         _timestamp = DateTime.Now;
+        _edited = false;
 
         AddInstanceToExtent(this);
     }
@@ -87,13 +106,6 @@ public class Message : IExtent<Message>
         if (value.Length > 10000)
             throw new InvalidAttributeException("Message text can not exceed 10000 characters");
 
-        return value;
-    }
-
-    private DateTime ValidateTimestamp(DateTime value)
-    {
-        if (value > DateTime.Now)
-            throw new InvalidAttributeException("Message Timestamp cannot be in the future.");
         return value;
     }
 
