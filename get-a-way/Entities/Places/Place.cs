@@ -120,8 +120,15 @@ public abstract class Place : IExtent<Place>
         Reviews = new List<Review.Review>();
         SetOpenedAtNight();
         _archived = false;
+        //dummy owner
 
         AddInstanceToExtent(this);
+    }
+
+    protected Place(string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly, OwnerAccount account) 
+    {
+        //add owner
     }
 
     private void SetOpenedAtNight()
