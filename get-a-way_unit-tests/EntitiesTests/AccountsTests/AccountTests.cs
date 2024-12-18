@@ -1,13 +1,16 @@
 using get_a_way.Entities.Accounts;
+using get_a_way.Entities.Chat;
 using get_a_way.Exceptions;
 
 namespace get_a_way_unit_tests.EntitiesTests.AccountsTests;
 
 public class AccountTests
 {
-    private class TestAccount(string username, string password, string email) : Account(username, password, email);
+    public class TestAccount(string username, string password, string email) : Account(username, password, email);
 
-    private TestAccount _valid;
+    private TestAccount _validAccount;
+    private Message _validMessage;
+    private ChatRoom _validChatRoom;
 
     // cant have 2 accounts with same username
     private const string ValidUserName = "ValidUserName";
@@ -20,7 +23,11 @@ public class AccountTests
     public void SetUpEnvironment()
     {
         Account.ResetExtent();
-        _valid = new TestAccount(ValidUserName, ValidPassword, ValidEmail);
+        Message.ResetExtent();
+        ChatRoom.ResetExtent();
+        _validAccount = new TestAccount(ValidUserName, ValidPassword, ValidEmail);
+        _validChatRoom = new ChatRoom("Test ChatRoom", "static/img/default_chatroom_img.jpg");
+        _validMessage = new Message("Some text", _validAccount, _validChatRoom);
     }
 
     [Test]
@@ -29,7 +36,7 @@ public class AccountTests
         // do not use ValidUserName, will throw DuplicateUsernameException
         var account = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
 
-        // ID == 2 because _valid.ID == 1
+        // ID == 2 because _validAccount.ID == 1
         Assert.That(account.ID, Is.EqualTo(2));
         
         Assert.That(account.Username, Is.EqualTo(AnotherValidUserName));
@@ -54,28 +61,28 @@ public class AccountTests
     [Test]
     public void Setter_ValidUsername_SetsUsername()
     {
-        _valid.Username = AnotherValidUserName;
-        Assert.That(_valid.Username, Is.EqualTo(AnotherValidUserName));
+        _validAccount.Username = AnotherValidUserName;
+        Assert.That(_validAccount.Username, Is.EqualTo(AnotherValidUserName));
     }
 
     [Test]
     public void Setter_InvalidUsername_ThrowsInvalidAttributeException()
     {
-        Assert.That(() => _valid.Username = null, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
+        Assert.That(() => _validAccount.Username = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validAccount.Username, Is.EqualTo(ValidUserName));
         
-        Assert.That(() => _valid.Username = "", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
+        Assert.That(() => _validAccount.Username = "", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validAccount.Username, Is.EqualTo(ValidUserName));
 
-        Assert.That(() => _valid.Username = " ", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
+        Assert.That(() => _validAccount.Username = " ", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validAccount.Username, Is.EqualTo(ValidUserName));
         
-        Assert.That(() => _valid.Username = "inv", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
+        Assert.That(() => _validAccount.Username = "inv", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validAccount.Username, Is.EqualTo(ValidUserName));
 
-        Assert.That(() => _valid.Username = "tooLongOfUsernameToBeValidAndSomeMore",
+        Assert.That(() => _validAccount.Username = "tooLongOfUsernameToBeValidAndSomeMore",
             Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Username, Is.EqualTo(ValidUserName));
+        Assert.That(() => _validAccount.Username, Is.EqualTo(ValidUserName));
     }
 
     [Test]
@@ -89,126 +96,339 @@ public class AccountTests
     [Test]
     public void Setter_ValidPassword_SetsPassword()
     {
-        _valid.Password = "NewVal1dPassword";
-        Assert.That(_valid.Password, Is.EqualTo("NewVal1dPassword"));
+        _validAccount.Password = "NewVal1dPassword";
+        Assert.That(_validAccount.Password, Is.EqualTo("NewVal1dPassword"));
     }
 
     [Test]
     public void Setter_InvalidPassword_ThrowsInvalidPasswordException()
     {
-        Assert.That(() => _valid.Password = null, Throws.TypeOf<NullReferenceException>());
-        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        Assert.That(() => _validAccount.Password = null, Throws.TypeOf<NullReferenceException>());
+        Assert.That(_validAccount.Password, Is.EqualTo(ValidPassword));
         
-        Assert.That(() => _valid.Password = "", Throws.TypeOf<InvalidPasswordException>());
-        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        Assert.That(() => _validAccount.Password = "", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_validAccount.Password, Is.EqualTo(ValidPassword));
         
-        Assert.That(() => _valid.Password = " ", Throws.TypeOf<InvalidPasswordException>());
-        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        Assert.That(() => _validAccount.Password = " ", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_validAccount.Password, Is.EqualTo(ValidPassword));
         
-        Assert.That(() => _valid.Password = "inv", Throws.TypeOf<InvalidPasswordException>());
-        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        Assert.That(() => _validAccount.Password = "inv", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_validAccount.Password, Is.EqualTo(ValidPassword));
         
-        Assert.That(() => _valid.Password = "nouppercasepassword1", Throws.TypeOf<InvalidPasswordException>());
-        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        Assert.That(() => _validAccount.Password = "nouppercasepassword1", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_validAccount.Password, Is.EqualTo(ValidPassword));
         
-        Assert.That(() => _valid.Password = "NOLOWERCASEPASSWORD1", Throws.TypeOf<InvalidPasswordException>());
-        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        Assert.That(() => _validAccount.Password = "NOLOWERCASEPASSWORD1", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_validAccount.Password, Is.EqualTo(ValidPassword));
         
-        Assert.That(() => _valid.Password = "NoDigitPassword", Throws.TypeOf<InvalidPasswordException>());
-        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        Assert.That(() => _validAccount.Password = "NoDigitPassword", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_validAccount.Password, Is.EqualTo(ValidPassword));
         
-        Assert.That(() => _valid.Password = "SuperMegaLongPasswordThatIsTooLongToBeValid123456", Throws.TypeOf<InvalidPasswordException>());
-        Assert.That(_valid.Password, Is.EqualTo(ValidPassword));
+        Assert.That(() => _validAccount.Password = "SuperMegaLongPasswordThatIsTooLongToBeValid123456", Throws.TypeOf<InvalidPasswordException>());
+        Assert.That(_validAccount.Password, Is.EqualTo(ValidPassword));
     }
     
     [Test]
     public void Setter_ValidEmail_SetsEmail()
     {
-        _valid.Email = "NewValidEmail@pjwstk.edu.pl";
-        Assert.That(_valid.Email, Is.EqualTo("NewValidEmail@pjwstk.edu.pl"));
+        _validAccount.Email = "NewValidEmail@pjwstk.edu.pl";
+        Assert.That(_validAccount.Email, Is.EqualTo("NewValidEmail@pjwstk.edu.pl"));
     }
 
     [Test]
     public void Setter_InvalidEmail_ThrowsInvalidAttributeException()
     {
-        Assert.That(() => _valid.Email = null, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(_valid.Email, Is.EqualTo(ValidEmail));
+        Assert.That(() => _validAccount.Email = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_validAccount.Email, Is.EqualTo(ValidEmail));
         
-        Assert.That(() => _valid.Email = "", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(_valid.Email, Is.EqualTo(ValidEmail));
+        Assert.That(() => _validAccount.Email = "", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_validAccount.Email, Is.EqualTo(ValidEmail));
         
-        Assert.That(() => _valid.Email = " ", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(_valid.Email, Is.EqualTo(ValidEmail));
+        Assert.That(() => _validAccount.Email = " ", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_validAccount.Email, Is.EqualTo(ValidEmail));
         
-        Assert.That(() => _valid.Email = "email.with.no.at", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(_valid.Email, Is.EqualTo(ValidEmail));
+        Assert.That(() => _validAccount.Email = "email.with.no.at", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_validAccount.Email, Is.EqualTo(ValidEmail));
         
-        Assert.That(() => _valid.Email = "email@nodot", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(_valid.Email, Is.EqualTo(ValidEmail));
+        Assert.That(() => _validAccount.Email = "email@nodot", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(_validAccount.Email, Is.EqualTo(ValidEmail));
     }
 
     [Test]
     public void Setter_ValidProfilePictureUrl_SetsProfilePictureUrl()
     {
-        _valid.ProfilePictureUrl = "https://i.pinimg.com/736x/79/a3/16/79a3168cf52edca304ff32db46e0f888.jpg";
-        Assert.That(_valid.ProfilePictureUrl, Is.EqualTo("https://i.pinimg.com/736x/79/a3/16/79a3168cf52edca304ff32db46e0f888.jpg"));
+        _validAccount.ProfilePictureUrl = "https://i.pinimg.com/736x/79/a3/16/79a3168cf52edca304ff32db46e0f888.jpg";
+        Assert.That(_validAccount.ProfilePictureUrl, Is.EqualTo("https://i.pinimg.com/736x/79/a3/16/79a3168cf52edca304ff32db46e0f888.jpg"));
     }
 
     [Test]
-    public void Setter_InvalidProfilePictureUrl_ReturnsDefaultProfilePicture()
+    public void Setter_InvalidProfilePictureUrl_SetsDefaultProfilePicture()
     {
-        _valid.ProfilePictureUrl = null;
-        Assert.That(_valid.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
+        _validAccount.ProfilePictureUrl = null;
+        Assert.That(_validAccount.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
         
-        _valid.ProfilePictureUrl = "";
-        Assert.That(_valid.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
+        _validAccount.ProfilePictureUrl = "";
+        Assert.That(_validAccount.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
         
-        _valid.ProfilePictureUrl = " ";
-        Assert.That(_valid.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
+        _validAccount.ProfilePictureUrl = " ";
+        Assert.That(_validAccount.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
         
-        _valid.ProfilePictureUrl = "invalid.path";
-        Assert.That(_valid.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
+        _validAccount.ProfilePictureUrl = "invalid.path";
+        Assert.That(_validAccount.ProfilePictureUrl, Is.EqualTo(DefaultProfilePictureUrl));
     }
 
     [Test]
     public void Setter_ValidRating_SetsRating()
     {
-        _valid.Rating = 8.0;
-        Assert.That(_valid.Rating, Is.EqualTo(8.0));
+        _validAccount.Rating = 8.0;
+        Assert.That(_validAccount.Rating, Is.EqualTo(8.0));
     }
     
     [Test]
     public void Setter_InvalidRating_SetsRatingWithinBounds()
     {
-        _valid.Rating = -5.0;
-        Assert.That(_valid.Rating, Is.EqualTo(0));
-        _valid.Rating = 100500;
-        Assert.That(_valid.Rating, Is.EqualTo(10.0));
+        _validAccount.Rating = -5.0;
+        Assert.That(_validAccount.Rating, Is.EqualTo(0));
+        _validAccount.Rating = 100500;
+        Assert.That(_validAccount.Rating, Is.EqualTo(10.0));
+    }
+
+    [Test]
+    public void AddLanguage_ValidLanguage_AddsLanguageToList()
+    {
+        _validAccount.AddLanguage(Language.English);
+        Assert.That(_validAccount.Languages.Contains(Language.English));
+        Assert.That(_validAccount.Languages.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void AddLanguage_DuplicateLanguage_DoesNotAddTwice()
+    {
+        _validAccount.AddLanguage(Language.Ukrainian);
+        _validAccount.AddLanguage(Language.Ukrainian);
+        Assert.That(_validAccount.Languages.Count, Is.EqualTo(1));
     }
     
     [Test]
-    public void Setter_Languages_SetsCorrectValues()
+    public void RemoveLanguage_ExistingLanguage_RemovesFromLanguages()
     {
-        var languages = new HashSet<Language> { Language.English, Language.Ukrainian, Language.Hungarian };
-        _valid.Languages = languages;
-        Assert.That(_valid.Languages, Is.EqualTo(languages));
+        _validAccount.AddLanguage(Language.English);
+
+        _validAccount.RemoveLanguage(Language.English);
+        
+        Assert.That(_validAccount.Languages.Contains(Language.English), Is.False);
+        Assert.That(_validAccount.Languages.Count, Is.EqualTo(0));
     }
 
     [Test]
-    public void Setter_Languages_IgnoresDuplicateValues()
+    public void RemoveLanguage_NonExistingLanguage_DoesNothing()
     {
-        var languagesWithDuplicates = new HashSet<Language> { Language.English, Language.Spanish, Language.English };
-        _valid.Languages = languagesWithDuplicates;
+        _validAccount.RemoveLanguage(Language.Mandarin); //was not added
 
-        Assert.That(_valid.Languages.Count, Is.EqualTo(2)); // only two unique entries should be present
-        Assert.That(_valid.Languages, Does.Contain(Language.English));
-        Assert.That(_valid.Languages, Does.Contain(Language.Spanish));
+        Assert.That(_validAccount.Languages.Contains(Language.Mandarin), Is.False);
+        Assert.That(_validAccount.Languages.Count, Is.EqualTo(0));
     }
 
     [Test]
-    public void AddLanguage_AddsLanguageToList()
+    public void GetLanguages_ReturnsCopy()
     {
-        _valid.AddLanguage(Language.English);
+        _validAccount.AddLanguage(Language.Hungarian);
+
+        var languages = _validAccount.Languages;
+
+        //modify copy
+        languages.Clear();
+
+        Assert.That(_validAccount.Languages.Count, Is.EqualTo(1)); //original set unchanged
+    }
+    
+    [Test]
+    public void Follow_ValidAccount_AddsToFollowingsAndFollowers()
+    {
+        var validAccountToFollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _validAccount.Follow(validAccountToFollow);
+        
+        Assert.That(_validAccount.Followings.Contains(validAccountToFollow));
+        Assert.That(validAccountToFollow.Followers.Contains(_validAccount));
+    }
+
+    [Test]
+    public void Unfollow_ValidAccount_RemovesFromFollowingsAndFollowers()
+    {
+        var validAccountToUnfollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _validAccount.Follow(validAccountToUnfollow);
+
+        _validAccount.Unfollow(validAccountToUnfollow);
+
+        Assert.That(_validAccount.Followings.Contains(validAccountToUnfollow), Is.False);
+        Assert.That(validAccountToUnfollow.Followers.Contains(_validAccount), Is.False);
+    }
+    
+    [Test]
+    public void Follow_SelfFollow_ThrowsInvalidOperationException()
+    {
+        Assert.That(() => _validAccount.Follow(_validAccount), Throws.TypeOf<InvalidOperationException>());
+    }
+
+    [Test]
+    public void Follow_DuplicateAccount_DoesNotAddTwice()
+    {
+        var validAccountToFollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _validAccount.Follow(validAccountToFollow);
+        _validAccount.Follow(validAccountToFollow);
+
+        Assert.That(_validAccount.Followings.Count, Is.EqualTo(1));
+        Assert.That(validAccountToFollow.Followers.Count, Is.EqualTo(1));
+    }
+    
+    [Test]
+    public void Follow_NullAccount_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _validAccount.Follow(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void Unfollow_NullAccount_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _validAccount.Unfollow(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void Unfollow_NonFollowedAccount_DoesNothing()
+    {
+        var validAccountToUnfollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _validAccount.Unfollow(validAccountToUnfollow);
+
+        Assert.That(_validAccount.Followings.Contains(validAccountToUnfollow), Is.False);
+        Assert.That(validAccountToUnfollow.Followers.Contains(_validAccount), Is.False);
+    }
+
+    [Test]
+    public void GetFollowings_ReturnsCopy()
+    {
+        var validAccountToFollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        _validAccount.Follow(validAccountToFollow);
+        var followings = _validAccount.Followings;
+
+        //modify the returned copy
+        followings.Clear();
+
+        Assert.That(_validAccount.Followings.Count, Is.EqualTo(1)); //original set is unchanged
+    }
+
+    [Test]
+    public void GetFollowers_ReturnsCopy()
+    {
+        var validAccountToFollow = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
+
+        validAccountToFollow.Follow(_validAccount);
+        var followers = _validAccount.Followers;
+
+        //modify the returned copy
+        followers.Clear();
+
+        Assert.That(_validAccount.Followers.Count, Is.EqualTo(1)); //original set is unchanged
+    }
+
+    [Test]
+    public void JoinChatroom_ValidChatroom_AddsAccountToChatroom()
+    {
+        _validAccount.JoinChatroom(_validChatRoom);
+
+        Assert.That(_validAccount.Chatrooms.Contains(_validChatRoom));
+        Assert.That(_validChatRoom.Members.Contains(_validAccount));
+    }
+    
+    [Test]
+    public void LeaveChatroom_ValidChatroom_RemovesAccountFromChatroom()
+    {
+        _validAccount.JoinChatroom(_validChatRoom);
+
+        _validAccount.LeaveChatroom(_validChatRoom);
+
+        Assert.That(_validAccount.Chatrooms.Contains(_validChatRoom), Is.False);
+        Assert.That(_validChatRoom.Members.Contains(_validAccount), Is.False);
+    }
+
+    [Test]
+    public void JoinChatroom_DuplicateChatroom_DoesNotAddTwice()
+    {
+        _validAccount.JoinChatroom(_validChatRoom);
+        _validAccount.JoinChatroom(_validChatRoom);
+
+        Assert.That(_validAccount.Chatrooms.Count, Is.EqualTo(1));
+        Assert.That(_validChatRoom.Members.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void LeaveChatroom_NonJoinedChatroom_DoesNothing()
+    {
+        _validAccount.LeaveChatroom(_validChatRoom);
+
+        Assert.That(_validAccount.Chatrooms.Contains(_validChatRoom), Is.False);
+        Assert.That(_validChatRoom.Members.Contains(_validAccount), Is.False);
+    }
+
+    [Test]
+    public void JoinChatroom_NullChatroom_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _validAccount.JoinChatroom(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void LeaveChatroom_NullChatroom_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _validAccount.LeaveChatroom(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void GetChatrooms_ReturnsCopy()
+    {
+        _validAccount.JoinChatroom(_validChatRoom);
+
+        var chatrooms = _validAccount.Chatrooms;
+
+        chatrooms.Clear();
+
+        Assert.That(_validAccount.Chatrooms.Count, Is.EqualTo(1));
+    }
+    
+    [Test]
+    public void AddMessage_ValidMessage_AddsToMessages()
+    {
+
+        Assert.That(_validAccount.Messages.Contains(_validMessage));
+        Assert.That(_validMessage.Sender, Is.EqualTo(_validAccount));
+    }
+
+    [Test]
+    public void AddMessage_NullMessage_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _validAccount.AddMessage(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void RemoveMessage_ExistingMessage_RemovesFromMessages()
+    {
+
+        _validAccount.RemoveMessage(_validMessage);
+
+        Assert.That(_validAccount.Messages.Contains(_validMessage), Is.False);
+    }
+
+    [Test]
+    public void Messages_ReturnsCopy()
+    {
+        var messagesCopy = _validAccount.Messages;
+
+        messagesCopy.Clear();
+
+        Assert.That(_validAccount.Messages.Count, Is.EqualTo(1));
     }
 
     [Test]
@@ -224,7 +444,7 @@ public class AccountTests
     public void RemoveInstanceFromExtent_OnRemovalOfInstance_DecreasesExtentCount()
     {
         int count = Account.GetExtentCopy().Count;
-        Account.RemoveInstanceFromExtent(_valid);
+        Account.RemoveInstanceFromExtent(_validAccount);
         Assert.That(Account.GetExtentCopy().Count, Is.EqualTo(count - 1));
     }
     
