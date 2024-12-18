@@ -22,16 +22,14 @@ public class DummyDataGenerator
 
     public static void GenerateData()
     {
-        GenerateAccounts();
-        GenerateChatRooms();
-        GenerateMessages();
+        GenerateAccountsChatRoomsMessages();
         GeneratePlaces();
         GenerateTrips();
         GenerateReviews();
     }
 
     // todo automate it with random generation
-    private static void GenerateAccounts()
+    private static void GenerateAccountsChatRoomsMessages()
     {
         var traveler1 = new TravelerAccount("Traveler01", "securePass123", "traveler01@example.com");
         var traveler2 = new TravelerAccount("Traveler02", "securePass456", "traveler02@example.com");
@@ -40,20 +38,14 @@ public class DummyDataGenerator
         var owner1 = new OwnerAccount("Owner01", "ownerPass123", "owner01@example.com");
         var owner2 = new OwnerAccount("Owner02", "ownerPass456", "owner02@example.com");
         var owner3 = new OwnerAccount("Owner03", "ownerPass789", "owner03@example.com");
-    }
-
-    private static void GenerateChatRooms()
-    {
+        
         var chatRoom1 = new ChatRoom("Travel Buddies", "https://example.com/photos/travel_buddies.jpg");
         var chatRoom2 = new ChatRoom("Adventure Seekers", "https://example.com/photos/adventure_seekers.jpg");
         var chatRoom3 = new ChatRoom("City Explorers", "https://example.com/photos/city_explorers.jpg");
-    }
-
-    private static void GenerateMessages()
-    {
-        var message1 = new Message("Hello, everyone! Excited to be here.");
-        var message2 = new Message("Does anyone have recommendations for places to visit?");
-        var message3 = new Message("Looking forward to our next adventure together!");
+        
+        var message1 = new Message("Hello, everyone! Excited to be here.", traveler1, chatRoom1);
+        var message2 = new Message("Does anyone have recommendations for places to visit?", owner1, chatRoom1);
+        var message3 = new Message("Looking forward to our next adventure together!", traveler2, chatRoom1);
     }
 
     private static void GeneratePlaces()
