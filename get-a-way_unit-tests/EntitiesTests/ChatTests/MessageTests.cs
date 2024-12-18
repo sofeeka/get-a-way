@@ -7,7 +7,10 @@ namespace get_a_way_unit_tests.EntitiesTests.ChatTests;
 
 public class MessageTests
 {
-    private Message _valid;
+    private Message _validMessage;
+    private AccountTests.TestAccount _validSender;
+    private ChatRoom _validChatRoom;
+
 
     private const string ValidText = "Valid text of a message.";
 
@@ -17,124 +20,92 @@ public class MessageTests
         Message.ResetExtent();
         Account.ResetExtent();
         ChatRoom.ResetExtent();
-        _valid = new Message(ValidText);
-    }
-
-    [Test]
-    public void Constructor_ValidAttributes_AssignsCorrectValues()
-    {
-        var message = new Message(ValidText);
-
-        Assert.That(message.Text, Is.EqualTo(ValidText));
-        Assert.That(message.Timestamp, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
-
-        // ID is 2 because _valid.ID == 1
-        Assert.That(message.ID, Is.EqualTo(2));
+        
+        _validSender = new AccountTests.TestAccount("ValidUserName", "ValidPassword123", "validemail@pjwstk.edu.pl");
+        _validChatRoom = new ChatRoom("Test ChatRoom", "static/img/default_chatroom_img.jpg");
+        _validMessage = new Message(ValidText, _validSender, _validChatRoom);
     }
 
     [Test]
     public void Constructor_NewInstanceCreation_IncrementsId()
     {
-        var message1 = new Message(ValidText);
-        var message2 = new Message(ValidText);
+        var message1 = new Message(ValidText, _validSender, _validChatRoom);
+        var message2 = new Message(ValidText, _validSender, _validChatRoom);
 
         Assert.That(message2.ID - message1.ID, Is.EqualTo(1));
     }
     
     [Test]
-    public void Constructor_WithSender_AssignsCorrectValues()
+    public void Constructor_AssignsCorrectValuesToAssociations()
     {
-        var account = new AccountTests.TestAccount("User1", "Password123", "user1@pjwstk.edu.pl");
-        var message = new Message(ValidText, account);
-
-        Assert.That(message.Text, Is.EqualTo(ValidText));
-        Assert.That(message.Timestamp, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
-        Assert.That(message.Sender, Is.EqualTo(account));
-        Assert.That(account.Messages.Contains(message));
+        Assert.That(_validMessage.Sender, Is.EqualTo(_validSender));
+        Assert.That(_validMessage.ChatRoom, Is.EqualTo(_validChatRoom));
+        Assert.That(_validSender.Messages.Contains(_validMessage));
+        Assert.That(_validChatRoom.Messages.Contains(_validMessage));
     }
 
     [Test]
-    public void Constructor_WithNullSender_ThrowsArgumentNullException()
+    public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        Assert.That(() => new Message(ValidText, null), Throws.TypeOf<ArgumentNullException>());
+        Assert.That(_validMessage.Text, Is.EqualTo(ValidText));
+        Assert.That(_validMessage.Timestamp, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+        Assert.That(_validMessage.Edited, Is.False);
+    }
+
+    [Test]
+    public void Constructor_WithNullSenderAndChatroom_ThrowsArgumentNullException()
+    {
+        Assert.That(() => new Message(ValidText, null, null), Throws.TypeOf<ArgumentNullException>());
     }
     
     [Test]
     public void Setter_ValidText_SetsText()
     {
-        _valid.Text = "AnotherValidText";
-        Assert.That(_valid.Text, Is.EqualTo("AnotherValidText"));
+        _validMessage.Text = "AnotherValidText";
+        Assert.That(_validMessage.Text, Is.EqualTo("AnotherValidText"));
 
-        _valid.Text = "t";
-        Assert.That(_valid.Text, Is.EqualTo("t"));
+        _validMessage.Text = "t";
+        Assert.That(_validMessage.Text, Is.EqualTo("t"));
 
-        _valid.Text = "50";
-        Assert.That(_valid.Text, Is.EqualTo("50"));
+        _validMessage.Text = "50";
+        Assert.That(_validMessage.Text, Is.EqualTo("50"));
 
-        _valid.Text = "_";
-        Assert.That(_valid.Text, Is.EqualTo("_"));
+        _validMessage.Text = "_";
+        Assert.That(_validMessage.Text, Is.EqualTo("_"));
     }
 
     [Test]
     public void Setter_InvalidText_ThrowsInvalidAttributeException()
     {
-        Assert.That(() => _valid.Text = " ", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Text, Is.EqualTo(ValidText));
+        Assert.That(() => _validMessage.Text = " ", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validMessage.Text, Is.EqualTo(ValidText));
 
-        Assert.That(() => _valid.Text = "", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Text, Is.EqualTo(ValidText));
+        Assert.That(() => _validMessage.Text = "", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validMessage.Text, Is.EqualTo(ValidText));
 
-        Assert.That(() => _valid.Text = null, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Text, Is.EqualTo(ValidText));
+        Assert.That(() => _validMessage.Text = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validMessage.Text, Is.EqualTo(ValidText));
 
         var longText = new string('a', 10001);
-        Assert.That(() => _valid.Text = longText, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Text, Is.EqualTo(ValidText));
+        Assert.That(() => _validMessage.Text = longText, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validMessage.Text, Is.EqualTo(ValidText));
     }
 
     [Test]
     public void Setter_NewTimestampValue_ThrowsInvalidOperationException()
     {
-        DateTime originalTimestamp = _valid.Timestamp;
+        DateTime originalTimestamp = _validMessage.Timestamp;
         
-        Assert.That(() => _valid.Timestamp = DateTime.Now, Throws.TypeOf<InvalidOperationException>());
-        Assert.That(_valid.Timestamp, Is.EqualTo(originalTimestamp).Within(TimeSpan.FromSeconds(1)));
-    }
-    
-    [Test]
-    public void AssignToChatRoom_ValidChatRoom_AssignsChatRoom()
-    {
-        var chatRoom = new ChatRoom("Test ChatRoom", "https://valid/photo.png");
-
-        _valid.AssignToChatRoom(chatRoom);
-
-        Assert.That(_valid.ChatRoom, Is.EqualTo(chatRoom));
-    }
-    
-    [Test]
-    public void AssignToChatRoom_NullChatRoom_ThrowsArgumentNullException()
-    {
-        Assert.That(() => _valid.AssignToChatRoom(null), Throws.TypeOf<ArgumentNullException>());
+        Assert.That(() => _validMessage.Timestamp = DateTime.Now, Throws.TypeOf<InvalidOperationException>());
+        Assert.That(_validMessage.Timestamp, Is.EqualTo(originalTimestamp).Within(TimeSpan.FromSeconds(1)));
     }
 
-    [Test]
-    public void RemoveFromChatRoom_RemovesChatRoomReference()
-    {
-        var chatRoom = new ChatRoom("Test ChatRoom", "https://valid/photo.png");
-        _valid.AssignToChatRoom(chatRoom);
-
-        _valid.RemoveFromChatRoom();
-
-        Assert.That(_valid.ChatRoom, Is.Null);
-        Assert.That(chatRoom.Messages.Contains(_valid), Is.False);
-    }
-    
     [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
     {
         int count = Message.GetExtentCopy().Count;
         // AddInstanceToExtent is called in constructor
-        var newTestInstance = new Message(ValidText);
+        var newTestInstance = new Message(ValidText, _validSender, _validChatRoom);
         Assert.That(Message.GetExtentCopy().Count, Is.EqualTo(count + 1));
     }
 
@@ -142,7 +113,7 @@ public class MessageTests
     public void RemoveInstanceFromExtent_OnRemovalOfInstance_DecreasesExtentCount()
     {
         int count = Message.GetExtentCopy().Count;
-        Message.RemoveInstanceFromExtent(_valid);
+        Message.RemoveInstanceFromExtent(_validMessage);
         Assert.That(Message.GetExtentCopy().Count, Is.EqualTo(count - 1));
     }
 
