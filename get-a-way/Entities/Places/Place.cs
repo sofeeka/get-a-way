@@ -27,7 +27,9 @@ public abstract class Place : IExtent<Place>
     private bool _petFriendly;
     private bool _openedAtNight;
     private bool _archived;
+
     private OwnerAccount _owner;
+    private HashSet<Trip.Trip> _trips;
     
     public long ID
     {
@@ -94,7 +96,7 @@ public abstract class Place : IExtent<Place>
     public bool Archived
     {
         get => _archived;
-        private set => _archived = value;
+        set => _archived = value;
     }
 
     public OwnerAccount Owner => _owner;
@@ -102,6 +104,10 @@ public abstract class Place : IExtent<Place>
     [XmlArray("Reviews")]
     [XmlArrayItem("Review")]
     public List<Review.Review> Reviews { get; set; }
+
+    [XmlArray("Trips")]
+    [XmlArrayItem("Trip")]
+    private List<Trip.Trip> Trips => new List<Trip.Trip>(_trips);
 
     public Place()
     {
@@ -177,7 +183,6 @@ public abstract class Place : IExtent<Place>
     {
         if (_owner != null)
             throw new InvalidOperationException("Place already has an owner.");
-
         _owner = owner ?? throw new ArgumentNullException(nameof(owner));
     }
 
@@ -192,6 +197,20 @@ public abstract class Place : IExtent<Place>
         RemoveOwner();
     }
 
+    public void AddTrip(Trip.Trip trip)
+    {
+        if (trip == null)
+            throw new InvalidAttributeException("Place cannot be added to a null trip. Trip cannot be null");
+        _trips.Add(trip);
+    }
+    
+    public void RemoveTrip(Trip.Trip trip)
+    {
+        if (trip == null)
+            throw new InvalidAttributeException("Place cannot be removed from a null trip. Trip cannot be null");
+        _trips.Remove(trip);
+    }
+    
     public static List<Place> GetExtentCopy()
     {
         return new List<Place>(_extent);

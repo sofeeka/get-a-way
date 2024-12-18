@@ -20,7 +20,7 @@ public class MessageTests
         Message.ResetExtent();
         Account.ResetExtent();
         ChatRoom.ResetExtent();
-        
+
         _validSender = new AccountTests.TestAccount("ValidUserName", "ValidPassword123", "validemail@pjwstk.edu.pl");
         _validChatRoom = new ChatRoom("Test ChatRoom", "static/img/default_chatroom_img.jpg");
         _validMessage = new Message(ValidText, _validSender, _validChatRoom);
@@ -34,7 +34,7 @@ public class MessageTests
 
         Assert.That(message2.ID - message1.ID, Is.EqualTo(1));
     }
-    
+
     [Test]
     public void Constructor_AssignsCorrectValuesToAssociations()
     {
@@ -57,7 +57,7 @@ public class MessageTests
     {
         Assert.That(() => new Message(ValidText, null, null), Throws.TypeOf<ArgumentNullException>());
     }
-    
+
     [Test]
     public void Setter_ValidText_SetsText()
     {
@@ -95,11 +95,11 @@ public class MessageTests
     public void Setter_NewTimestampValue_ThrowsInvalidOperationException()
     {
         DateTime originalTimestamp = _validMessage.Timestamp;
-        
+
         Assert.That(() => _validMessage.Timestamp = DateTime.Now, Throws.TypeOf<InvalidOperationException>());
         Assert.That(_validMessage.Timestamp, Is.EqualTo(originalTimestamp).Within(TimeSpan.FromSeconds(1)));
     }
-    
+
     [Test]
     public void EditedField_UpdatesWhenTextChanges()
     {
