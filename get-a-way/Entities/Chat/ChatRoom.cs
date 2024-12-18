@@ -105,11 +105,7 @@ public class ChatRoom : IExtent<ChatRoom>
     {
         if (message == null)
             throw new ArgumentNullException(nameof(message), "Message cannot be null");
-
-        if (message.ChatRoom != null)
-            throw new InvalidOperationException("Message already belongs to another ChatRoom");
-
-        message.AssignToChatRoom(this); //reverse connection 
+        
         _messages.Add(message);
     }
 
@@ -120,7 +116,7 @@ public class ChatRoom : IExtent<ChatRoom>
 
         if (_messages.Remove(message))
         {
-            message.RemoveFromChatRoom();
+            Message.RemoveInstanceFromExtent(message); //message does not exists outside of chatroom
         }
     }
 
@@ -141,13 +137,12 @@ public class ChatRoom : IExtent<ChatRoom>
         if (instance == null)
             throw new ArgumentNullException(nameof(instance), "ChatRoom instance cannot be null");
 
-        //remove all messages from Message extent
         foreach (var message in instance._messages)
         {
-            Message.RemoveInstanceFromExtent(message);
+            Message.RemoveInstanceFromExtent(message); //messages are deleted on deletion of chatroom
         }
 
-        instance._messages.Clear(); //clear messages list
+        instance._messages.Clear();
         _extent.Remove(instance);
     }
 

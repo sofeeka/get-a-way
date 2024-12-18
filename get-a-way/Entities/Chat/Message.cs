@@ -66,38 +66,22 @@ public class Message : IExtent<Message>
     {
     }
 
-    public Message(string text)
+    public Message(string text, Account sender, ChatRoom chatroom)
     {
         _id = ++IdCounter;
+        Sender = sender ?? throw new ArgumentNullException(nameof(sender), "Sender cannot be null");
+        ChatRoom = chatroom ?? throw new ArgumentNullException(nameof(chatroom), "ChatRoom cannot be null");
+        
         _text = text;
         _timestamp = DateTime.Now;
         _edited = false;
+        
+        sender.AddMessage(this); // aggregation (reverse connection)
+        chatroom.AddMessage(this); // composition (reverse connection)
 
         AddInstanceToExtent(this);
     }
     
-    public Message(string text, Account sender) : this(text)
-    {
-        Sender = sender ?? throw new ArgumentNullException(nameof(sender), "Sender cannot be null");
-        sender.AddMessage(this); //reverse connection
-    }
-    
-    public void AssignToChatRoom(ChatRoom chatRoom)
-    {
-        if (chatRoom == null)
-            throw new ArgumentNullException(nameof(chatRoom), "ChatRoom cannot be null");
-
-        if (ChatRoom != null)
-            throw new InvalidOperationException("Message is already assigned to a ChatRoom");
-
-        ChatRoom = chatRoom;
-    }
-
-    public void RemoveFromChatRoom()
-    {
-        ChatRoom = null;
-    }
-
     private string ValidateText(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
