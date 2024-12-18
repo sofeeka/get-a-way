@@ -99,6 +99,24 @@ public class MessageTests
         Assert.That(() => _validMessage.Timestamp = DateTime.Now, Throws.TypeOf<InvalidOperationException>());
         Assert.That(_validMessage.Timestamp, Is.EqualTo(originalTimestamp).Within(TimeSpan.FromSeconds(1)));
     }
+    
+    [Test]
+    public void EditedField_UpdatesWhenTextChanges()
+    {
+        _validMessage.Text = "Updated text";
+
+        Assert.That(_validMessage.Text, Is.EqualTo("Updated text"));
+        Assert.That(_validMessage.Edited, Is.True);
+    }
+
+    [Test]
+    public void EditedField_DoesNotUpdateIfTextRemainsSame()
+    {
+        _validMessage.Text = ValidText;
+
+        Assert.That(_validMessage.Text, Is.EqualTo(ValidText));
+        Assert.That(_validMessage.Edited, Is.False);
+    }
 
     [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
