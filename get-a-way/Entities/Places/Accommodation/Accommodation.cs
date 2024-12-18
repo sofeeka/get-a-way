@@ -30,29 +30,10 @@ public class Accommodation : Place
         set => _maxPeople = ValidateMaxPeople(value);
     }
 
-    [XmlArray("BedEntries")]
-    [XmlArrayItem("BedEntry")]
-    public List<BedEntry> BedEntries
-    {
-        get
-        {
-            var entries = new List<BedEntry>();
-            if (_beds != null)
-                foreach (var kvp in _beds)
-                    entries.Add(new BedEntry { BedType = kvp.Key, Count = kvp.Value });
-
-            return entries;
-        }
-        set
-        {
-            if (value != null)
-            {
-                _beds = new Dictionary<BedType, int>();
-                foreach (var entry in value)
-                    _beds[entry.BedType] = entry.Count;
-            }
-        }
-    }
+    
+    [XmlArray("Beds")]
+    [XmlArrayItem("Bed")]
+    public List<KeyValuePair<BedType, int>> Beds => _beds.ToList();
 
     public Accommodation()
     {
@@ -65,7 +46,8 @@ public class Accommodation : Place
         Type = type;
         Amenities = new HashSet<Amenity>();
         MaxPeople = maxPeople;
-        BedEntries = new List<BedEntry>();
+        _amenities = new HashSet<Amenity>();
+        _beds = new Dictionary<BedType, int>();
     }
 
     private HashSet<Amenity> ValidateAmenities(HashSet<Amenity> value)
@@ -81,33 +63,46 @@ public class Accommodation : Place
             throw new InvalidAttributeException("Max count of people in the accommodation must be greater than 0");
         return value;
     }
+    
+    public void AddBed(BedType bedType, int count)
+    {
+        if (count <= 0)
+            throw new InvalidAttributeException("Bed count must be greater than zero");
+
+        if (_beds.ContainsKey(bedType))
+            _beds[bedType] += count; 
+        else
+            _beds[bedType] = count;
+    }
+
+    public void RemoveBed(BedType bedType)
+    {
+        if (!_beds.ContainsKey(bedType))
+            throw new KeyNotFoundException("No bed entry found for the specified BedType");
+
+        _beds.Remove(bedType);
+    }
 
     public override string ToString()
     {
         return base.ToString() +
                $"Accommodation Type: {Type}\n" +
                $"Max People: {MaxPeople}\n" +
-               $"Amenities: {GetAmenities()}\n" +
-               $"Bed Entries: {GetBedEntries()}\n";
+               $"Amenities: {GetAmenitiesString()}\n" +
+               $"Beds: {GetBedsString()}\n";
     }
 
-    private string GetAmenities()
+    private string GetAmenitiesString()
     {
         if (Amenities.Count == 0)
             return "No amenities available";
         return string.Join(", ", Amenities);
     }
 
-    private string GetBedEntries()
+    private string GetBedsString()
     {
-        if (_beds == null || _beds.Count == 0)
-            return "No beds available";
-        var bedEntries = new List<string>();
-        foreach (var kvp in _beds)
-        {
-            bedEntries.Add($"{kvp.Key} x {kvp.Value}");
-        }
-
-        return string.Join(", ", bedEntries);
+        return _beds.Count == 0
+            ? "No beds available"
+            : string.Join(", ", _beds.Select(b => $"{b.Key} x {b.Value}"));
     }
 }

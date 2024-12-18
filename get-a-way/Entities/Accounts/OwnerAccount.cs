@@ -1,4 +1,5 @@
-﻿using get_a_way.Exceptions;
+﻿using get_a_way.Entities.Places;
+using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Accounts;
 
@@ -6,6 +7,7 @@ namespace get_a_way.Entities.Accounts;
 public class OwnerAccount : Account
 {
     private double _tax = 15;
+    private HashSet<Place> _places;
 
     public double Tax
     {

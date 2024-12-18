@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using get_a_way.Entities.Accounts;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
@@ -25,7 +26,9 @@ public abstract class Place : IExtent<Place>
     private PriceCategory _priceCategory;
     private bool _petFriendly;
     private bool _openedAtNight;
-
+    private bool _archived;
+    private OwnerAccount _owner;
+    
     public long ID
     {
         get => _id;
@@ -87,6 +90,14 @@ public abstract class Place : IExtent<Place>
         get => _openedAtNight;
         set => _openedAtNight = value;
     }
+    
+    public bool Archived
+    {
+        get => _archived;
+        private set => _archived = value;
+    }
+
+    public OwnerAccount Owner => _owner;
 
     [XmlArray("Reviews")]
     [XmlArrayItem("Review")]
@@ -108,6 +119,7 @@ public abstract class Place : IExtent<Place>
         PetFriendly = petFriendly;
         Reviews = new List<Review.Review>();
         SetOpenedAtNight();
+        _archived = false;
 
         AddInstanceToExtent(this);
     }
@@ -159,6 +171,25 @@ public abstract class Place : IExtent<Place>
     {
         var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
         return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
+    }
+    
+    public void AssignOwner(OwnerAccount owner)
+    {
+        if (_owner != null)
+            throw new InvalidOperationException("Place already has an owner.");
+
+        _owner = owner ?? throw new ArgumentNullException(nameof(owner));
+    }
+
+    public void RemoveOwner()
+    {
+        _owner = null;
+    }
+
+    public void Archive()
+    {
+        _archived = true;
+        RemoveOwner();
     }
 
     public static List<Place> GetExtentCopy()
