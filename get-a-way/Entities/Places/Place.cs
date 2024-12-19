@@ -27,8 +27,8 @@ public abstract class Place : IExtent<Place>
     private bool _petFriendly;
     private bool _openedAtNight;
     private bool _archived;
-    private OwnerAccount _owner;
 
+    private OwnerAccount _owner;
     private HashSet<Trip.Trip> _trips;
     
     public long ID
@@ -107,14 +107,15 @@ public abstract class Place : IExtent<Place>
 
     [XmlArray("Trips")]
     [XmlArrayItem("Trip")]
-    private List<Trip.Trip> Trips => new List<Trip.Trip>(_trips);
+    public List<Trip.Trip> Trips => new List<Trip.Trip>(_trips);
 
     public Place()
     {
+        _trips = new HashSet<Trip.Trip>();
     }
 
     protected Place(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory, bool petFriendly)
+        PriceCategory priceCategory, bool petFriendly) : this()
     {
         ID = ++IdCounter;
         Name = name;

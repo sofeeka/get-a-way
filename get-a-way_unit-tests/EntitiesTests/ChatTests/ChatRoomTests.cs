@@ -22,7 +22,7 @@ public class ChatRoomTests
         Message.ResetExtent();
         _validChatroom = new ChatRoom(ValidName, DefaultPhotoUrl);
         _validAccount = new AccountTests.TestAccount("ValidUserName", "ValidPassword123", "validemail@pjwstk.edu.pl");
-        _validMessage = new Message("Valid message text");
+        _validMessage = new Message("Valid message text", _validAccount, _validChatroom);
     }
 
     [Test]
@@ -156,10 +156,8 @@ public class ChatRoomTests
     }
     
     [Test]
-    public void AddMessage_ValidMessage_AddsToChatRoomAndSetsChatRoomReference()
+    public void AddMessage_ValidMessage_AddsToMessages()
     {
-        _validChatroom.AddMessage(_validMessage);
-
         Assert.That(_validChatroom.Messages.Contains(_validMessage));
         Assert.That(_validMessage.ChatRoom, Is.EqualTo(_validChatroom));
     }
@@ -185,7 +183,13 @@ public class ChatRoomTests
     }
 
     [Test]
-    public void RemoveMessage_MessageNotInChatRoom_DoesNothing()
+    public void AddMessage_NullMessage_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _validChatroom.AddMessage(null), Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void RemoveMessage_ValidMessage_RemovesFromMessages()
     {
         _validChatroom.RemoveMessage(_validMessage);
 
@@ -193,6 +197,20 @@ public class ChatRoomTests
         Assert.That(_validMessage.ChatRoom, Is.Null);
     }
 
+    [Test]
+    public void RemoveMessage_NonExistingMessage_DoesNothing()
+    {
+        var newMessage = new Message("Non-existing message", _validAccount, _validChatroom);
+        _validChatroom.RemoveMessage(newMessage);
+
+        Assert.That(_validChatroom.Messages.Count, Is.EqualTo(1)); //only _validMessage is present
+    }
+
+    [Test]
+    public void RemoveMessage_NullMessage_ThrowsArgumentNullException()
+    {
+        Assert.That(() => _validChatroom.RemoveMessage(null), Throws.TypeOf<ArgumentNullException>());
+    }
     
     [Test]
     public void AddInstanceToExtent_OnCreationOfNewInstance_IncreasesExtentCount()
@@ -206,10 +224,8 @@ public class ChatRoomTests
     [Test]
     public void RemoveInstanceFromExtent_RemovesChatRoomAndDeletesItsMessages()
     {
-        var message1 = new Message("Message 1");
-        var message2 = new Message("Message 2");
-        _validChatroom.AddMessage(message1);
-        _validChatroom.AddMessage(message2);
+        var message1 = new Message("Message 1", _validAccount, _validChatroom);
+        var message2 = new Message("Message 2", _validAccount, _validChatroom);
 
         ChatRoom.RemoveInstanceFromExtent(_validChatroom);
 
@@ -229,10 +245,8 @@ public class ChatRoomTests
     [Test]
     public void ResetExtent_DeletesAllChatRoomsAndTheirMessages()
     {
-        var message1 = new Message("Message 1");
-        var message2 = new Message("Message 2");
-        _validChatroom.AddMessage(message1);
-        _validChatroom.AddMessage(message2);
+        var message1 = new Message("Message 1", _validAccount, _validChatroom);
+        var message2 = new Message("Message 2", _validAccount, _validChatroom);
 
         ChatRoom.ResetExtent();
 
