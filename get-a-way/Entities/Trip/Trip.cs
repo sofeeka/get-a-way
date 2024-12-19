@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using get_a_way.Entities.Accounts;
+using get_a_way.Entities.Places;
 using get_a_way.Exceptions;
 using get_a_way.Services;
 
@@ -18,6 +19,8 @@ public class Trip : IExtent<Trip>
     private TripType _tripType;
     private List<String> _pictureUrls; // todo addPicture() and validate
     private String _description;
+
+    private HashSet<Place> _places;
 
     public long ID
     {
@@ -56,11 +59,16 @@ public class Trip : IExtent<Trip>
         set => _description = ValidateDescription(value);
     }
 
+    [XmlArray("Places")]
+    [XmlArrayItem("Place")]
+    public HashSet<Place> Places => new HashSet<Place>(_places);
+
     public Trip()
     {
+        _places = new HashSet<Place>();
     }
 
-    public Trip(Account account, DateTime date, TripType tripType, string description)
+    public Trip(Account account, DateTime date, TripType tripType, string description) : this()
     {
         ID = ++IdCounter;
         Account = account;
@@ -106,6 +114,24 @@ public class Trip : IExtent<Trip>
         if (description.Length > 1000)
             throw new InvalidAttributeException("Description cannot exceed 1000 characters.");
         return description;
+    }
+
+    public void AddPlace(Place place)
+    {
+        if (place == null)
+            throw new InvalidAttributeException("Place added to a trip cannot be null");
+
+        if (_places.Add(place)) // check if not already present
+            place.AddTrip(this); // reverse connection
+    }
+
+    public void RemovePlace(Place place)
+    {
+        if (place == null)
+            throw new InvalidAttributeException("Place removed from a trip cannot be null");
+
+        if (_places.Remove(place)) // check if present
+            place.RemoveTrip(this); // reverse connection
     }
 
     public static List<Trip> GetExtentCopy()
