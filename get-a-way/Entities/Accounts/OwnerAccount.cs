@@ -7,13 +7,16 @@ namespace get_a_way.Entities.Accounts;
 public class OwnerAccount : Account
 {
     private double _tax = 15;
-    private HashSet<Place> _places;
+    private HashSet<Place> _places = new HashSet<Place>();
 
     public double Tax
     {
         get => _tax;
         set => _tax = ValidateTax(value);
     }
+
+    public bool Valid => _places.Count > 0;
+    public HashSet<Place> Places => new HashSet<Place>(_places);
 
     private static double ValidateTax(double value)
     {
@@ -30,6 +33,24 @@ public class OwnerAccount : Account
     public OwnerAccount(string username, string password, string email) :
         base(username, password, email)
     {
+    }
+
+    public void AddPlace(Place place)
+    {
+        if (place == null)
+            throw new ArgumentNullException(nameof(place),"Place cannot be null when trying to add place to owned places.");
+
+        if (_places.Add(place))
+            place.AssignOwner(this);
+    }
+
+    public void RemovePlace(Place place)
+    {
+        if (place == null)
+            throw new ArgumentNullException(nameof(place),"Place cannot be null when trying to remove place from owned places.");
+
+        if (place.Owners.Contains(this) && _places.Remove(place))
+            place.RemoveOwner(this);
     }
 
     public override string ToString()

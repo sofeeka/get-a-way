@@ -26,11 +26,10 @@ public abstract class Place : IExtent<Place>
     private PriceCategory _priceCategory;
     private bool _petFriendly;
     private bool _openedAtNight;
-    private bool _archived;
 
-    private OwnerAccount _owner;
+    private HashSet<OwnerAccount> _owners;
     private HashSet<Trip.Trip> _trips;
-    
+
     public long ID
     {
         get => _id;
@@ -92,14 +91,10 @@ public abstract class Place : IExtent<Place>
         get => _openedAtNight;
         set => _openedAtNight = value;
     }
-    
-    public bool Archived
-    {
-        get => _archived;
-        set => _archived = value;
-    }
 
-    public OwnerAccount Owner => _owner;
+    public bool Active => _owners.Count > 0;
+
+    public HashSet<OwnerAccount> Owners => _owners;
 
     [XmlArray("Reviews")]
     [XmlArrayItem("Review")]
@@ -112,6 +107,7 @@ public abstract class Place : IExtent<Place>
     public Place()
     {
         _trips = new HashSet<Trip.Trip>();
+        _owners = new HashSet<OwnerAccount>();
     }
 
     protected Place(string name, string location, DateTime openTime, DateTime closeTime,
@@ -126,7 +122,6 @@ public abstract class Place : IExtent<Place>
         PetFriendly = petFriendly;
         Reviews = new List<Review.Review>();
         SetOpenedAtNight();
-        _archived = false;
 
         AddInstanceToExtent(this);
     }
@@ -179,23 +174,30 @@ public abstract class Place : IExtent<Place>
         var pattern = @"^(https?://.*\.(jpg|jpeg|png|gif|bmp))$";
         return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
     }
-    
+
     public void AssignOwner(OwnerAccount owner)
     {
-        if (_owner != null)
-            throw new InvalidOperationException("Place already has an owner.");
-        _owner = owner ?? throw new ArgumentNullException(nameof(owner));
+        if (owner == null)
+            throw new ArgumentNullException(nameof(owner), "Cannot add null owner to place.");
+        Owners.Add(owner);
     }
 
-    public void RemoveOwner()
+    public void RemoveOwner(OwnerAccount owner)
     {
-        _owner = null;
+        if (owner == null)
+            throw new ArgumentNullException(nameof(owner), "Cannot remove null owner from place.");
+        Owners.Remove(owner);
+    }
+
+    private void RemoveOwners()
+    {
+        foreach (OwnerAccount owner in Owners)
+            RemoveOwner(owner);
     }
 
     public void Archive()
     {
-        _archived = true;
-        RemoveOwner();
+        RemoveOwners();
     }
 
     public void AddTrip(Trip.Trip trip)
@@ -204,14 +206,14 @@ public abstract class Place : IExtent<Place>
             throw new InvalidAttributeException("Place cannot be added to a null trip. Trip cannot be null");
         _trips.Add(trip);
     }
-    
+
     public void RemoveTrip(Trip.Trip trip)
     {
         if (trip == null)
             throw new InvalidAttributeException("Place cannot be removed from a null trip. Trip cannot be null");
         _trips.Remove(trip);
     }
-    
+
     public static List<Place> GetExtentCopy()
     {
         return new List<Place>(_extent);
