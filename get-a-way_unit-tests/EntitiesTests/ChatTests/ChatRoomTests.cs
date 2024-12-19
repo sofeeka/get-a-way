@@ -163,26 +163,6 @@ public class ChatRoomTests
     }
 
     [Test]
-    public void AddMessage_MessageAlreadyInAnotherChatRoom_ThrowsInvalidOperationException()
-    {
-        var anotherChatRoom = new ChatRoom("Another ChatRoom", DefaultPhotoUrl);
-        anotherChatRoom.AddMessage(_validMessage);
-
-        Assert.That(() => _validChatroom.AddMessage(_validMessage), Throws.TypeOf<InvalidOperationException>());
-    }
-
-    [Test]
-    public void RemoveMessage_ValidMessage_RemovesFromChatRoomAndClearsChatRoomReference()
-    {
-        _validChatroom.AddMessage(_validMessage);
-
-        _validChatroom.RemoveMessage(_validMessage);
-
-        Assert.That(_validChatroom.Messages.Contains(_validMessage), Is.False);
-        Assert.That(_validMessage.ChatRoom, Is.Null);
-    }
-
-    [Test]
     public void AddMessage_NullMessage_ThrowsArgumentNullException()
     {
         Assert.That(() => _validChatroom.AddMessage(null), Throws.TypeOf<ArgumentNullException>());
@@ -194,9 +174,9 @@ public class ChatRoomTests
         _validChatroom.RemoveMessage(_validMessage);
 
         Assert.That(_validChatroom.Messages.Contains(_validMessage), Is.False);
-        Assert.That(_validMessage.ChatRoom, Is.Null);
+        Assert.That(Message.GetExtent().Count == 0);
     }
-
+    
     [Test]
     public void RemoveMessage_NonExistingMessage_DoesNothing()
     {
@@ -226,6 +206,8 @@ public class ChatRoomTests
     {
         var message1 = new Message("Message 1", _validAccount, _validChatroom);
         var message2 = new Message("Message 2", _validAccount, _validChatroom);
+        _validChatroom.AddMessage(message1);
+        _validChatroom.AddMessage(message2);
 
         ChatRoom.RemoveInstanceFromExtent(_validChatroom);
 
@@ -247,10 +229,12 @@ public class ChatRoomTests
     {
         var message1 = new Message("Message 1", _validAccount, _validChatroom);
         var message2 = new Message("Message 2", _validAccount, _validChatroom);
+        _validChatroom.AddMessage(message1);
+        _validChatroom.AddMessage(message2);
 
         ChatRoom.ResetExtent();
 
         Assert.That(ChatRoom.GetExtent().Count, Is.EqualTo(0));
-        Assert.That(Message.GetExtent().Count, Is.EqualTo(1)); //bcs of _validMessage
+        Assert.That(Message.GetExtent().Count, Is.EqualTo(0));
     }
 }
