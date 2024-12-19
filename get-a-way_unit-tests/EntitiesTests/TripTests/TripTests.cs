@@ -1,4 +1,6 @@
 using get_a_way.Entities.Accounts;
+using get_a_way.Entities.Places;
+using get_a_way.Entities.Places.Shop;
 using get_a_way.Entities.Trip;
 using get_a_way.Exceptions;
 
@@ -6,7 +8,8 @@ namespace get_a_way_unit_tests.EntitiesTests.TripTests;
 
 public class TripTests
 {
-    private static Trip _valid;
+    private static Trip _validTrip;
+    private static Place _validPlace;
 
     private static readonly Account ValidAccount =
         new OwnerAccount("ValidName", "Password123", "valid.email@pjwstk.edu.pl");
@@ -22,13 +25,16 @@ public class TripTests
     {
         Trip.ResetExtent();
         Account.ResetExtent();
-        _valid = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
+        _validTrip = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
 
         _validPictureUrls = new List<string>();
         _validPictureUrls.Add(ValidPictureUrl);
         _validPictureUrls.Add(ValidPictureUrl);
 
-        _valid.PictureUrls = _validPictureUrls;
+        _validTrip.PictureUrls = _validPictureUrls;
+
+        _validPlace = new Shop("ValidName", "ValidLocation", DateTime.Today.AddHours(8), DateTime.Today.AddHours(21),
+            PriceCategory.Moderate, true, ShopType.Supermarket, true);
     }
 
     [Test]
@@ -58,38 +64,38 @@ public class TripTests
     public void Setter_ValidDate_SetsDate()
     {
         var anotherValidDate = new DateTime(Now.Year - 2, Now.Month, Now.Day);
-        _valid.Date = anotherValidDate;
-        Assert.That(_valid.Date, Is.EqualTo(anotherValidDate));
+        _validTrip.Date = anotherValidDate;
+        Assert.That(_validTrip.Date, Is.EqualTo(anotherValidDate));
     }
 
     [Test]
     public void Setter_InvalidDate_ThrowsInvalidAttributeException()
     {
-        Assert.That(() => _valid.Date = new DateTime(Now.Year + 1, Now.Month, Now.Day),
+        Assert.That(() => _validTrip.Date = new DateTime(Now.Year + 1, Now.Month, Now.Day),
             Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Date, Is.EqualTo(ValidDate));
+        Assert.That(() => _validTrip.Date, Is.EqualTo(ValidDate));
     }
 
     [Test]
     public void Setter_ValidPictureUrls_SetsPictureUrls()
     {
-        _valid.PictureUrls = _validPictureUrls;
-        Assert.That(_valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+        _validTrip.PictureUrls = _validPictureUrls;
+        Assert.That(_validTrip.PictureUrls, Is.EqualTo(_validPictureUrls));
     }
 
     [Test]
     public void Setter_InvalidPictureUrlsList_ThrowsInvalidAttributeException()
     {
-        Assert.That(() => _valid.PictureUrls = null, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+        Assert.That(() => _validTrip.PictureUrls = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validTrip.Description, Is.EqualTo(ValidDescription));
 
         List<string> urls = new List<string>();
 
         for (int i = 0; i < 12; i++)
             urls.Add(ValidPictureUrl);
 
-        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+        Assert.That(() => _validTrip.PictureUrls = urls, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validTrip.PictureUrls, Is.EqualTo(_validPictureUrls));
     }
 
     [Test]
@@ -98,48 +104,48 @@ public class TripTests
         List<string> urls = new List<string>();
 
         urls.Add(null);
-        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
-        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+        Assert.That(() => _validTrip.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _validTrip.PictureUrls, Is.EqualTo(_validPictureUrls));
 
         urls.Clear();
         urls.Add("");
-        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
-        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+        Assert.That(() => _validTrip.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _validTrip.PictureUrls, Is.EqualTo(_validPictureUrls));
 
         urls.Clear();
         urls.Add(" ");
-        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
-        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+        Assert.That(() => _validTrip.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _validTrip.PictureUrls, Is.EqualTo(_validPictureUrls));
 
         urls.Clear();
         urls.Add("invalid path");
-        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
-        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+        Assert.That(() => _validTrip.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _validTrip.PictureUrls, Is.EqualTo(_validPictureUrls));
 
         urls.Clear();
         urls.Add("https://not/image/extention");
-        Assert.That(() => _valid.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
-        Assert.That(() => _valid.PictureUrls, Is.EqualTo(_validPictureUrls));
+        Assert.That(() => _validTrip.PictureUrls = urls, Throws.TypeOf<InvalidPictureUrlException>());
+        Assert.That(() => _validTrip.PictureUrls, Is.EqualTo(_validPictureUrls));
     }
 
     [Test]
     public void Setter_ValidDescription_SetsDescription()
     {
-        _valid.Description = "Some proper new description.";
-        Assert.That(_valid.Description, Is.EqualTo("Some proper new description."));
+        _validTrip.Description = "Some proper new description.";
+        Assert.That(_validTrip.Description, Is.EqualTo("Some proper new description."));
     }
 
     [Test]
     public void Setter_InvalidDescription_ThrowsInvalidAttributeException()
     {
-        Assert.That(() => _valid.Description = null, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+        Assert.That(() => _validTrip.Description = null, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validTrip.Description, Is.EqualTo(ValidDescription));
 
-        Assert.That(() => _valid.Description = "", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+        Assert.That(() => _validTrip.Description = "", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validTrip.Description, Is.EqualTo(ValidDescription));
 
-        Assert.That(() => _valid.Description = " ", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+        Assert.That(() => _validTrip.Description = " ", Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validTrip.Description, Is.EqualTo(ValidDescription));
 
         string hugeDescription = """
                                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula
@@ -157,8 +163,58 @@ public class TripTests
                                  blandit vel, luctus pulvinar, hendre
                                  """;
 
-        Assert.That(() => _valid.Description = hugeDescription, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(ValidDescription));
+        Assert.That(() => _validTrip.Description = hugeDescription, Throws.TypeOf<InvalidAttributeException>());
+        Assert.That(() => _validTrip.Description, Is.EqualTo(ValidDescription));
+    }
+
+    [Test]
+    public void AddPlace_ValidPlace_AddsPlace()
+    {
+        _validTrip.AddPlace(_validPlace);
+        Assert.That(_validTrip.Places.Contains(_validPlace));
+        Assert.That(_validPlace.Trips.Contains(_validTrip));
+    }
+
+    [Test]
+    public void AddPlace_DuplicatePlace_DoesNotAddPlaceAgain()
+    {
+        _validTrip.AddPlace(_validPlace);
+        var count = _validTrip.Places.Count;
+
+        _validTrip.AddPlace(_validPlace);
+        Assert.True(_validTrip.Places.Count == count);
+    }
+
+    [Test]
+    public void AddPlace_NullPlace_ThrowsInvalidAttributeException()
+    {
+        Assert.That(() => _validTrip.AddPlace(null), Throws.TypeOf<InvalidAttributeException>());
+    }
+    
+    [Test]
+    public void RemovePlace_AddedPlace_RemovesPlace()
+    {
+        _validTrip.AddPlace(_validPlace);
+
+        _validTrip.RemovePlace(_validPlace);
+        Assert.That(_validTrip.Places.Contains(_validPlace), Is.False);
+        Assert.That(_validPlace.Trips.Contains(_validTrip), Is.False);
+    }
+    
+    [Test]
+    public void RemovePlace_NullPlace_ThrowsInvalidAttributeException()
+    {
+        Assert.That(() => _validTrip.RemovePlace(null), Throws.TypeOf<InvalidAttributeException>());
+    }
+
+    [Test]
+    public void RemovePlace_NotAddedPlace_DoesNothing()
+    {
+        Assert.That(_validTrip.Places.Contains(_validPlace), Is.False);
+
+        _validTrip.RemovePlace(_validPlace);
+        Assert.That(_validTrip.Places.Contains(_validPlace), Is.False);
+        Assert.That(_validPlace.Trips.Contains(_validTrip), Is.False);
     }
 
     [Test]
@@ -174,7 +230,7 @@ public class TripTests
     public void RemoveInstanceFromExtent_OnRemovalOfInstance_DecreasesExtentCount()
     {
         int count = Trip.GetExtentCopy().Count;
-        Trip.RemoveInstanceFromExtent(_valid);
+        Trip.RemoveInstanceFromExtent(_validTrip);
         Assert.That(Trip.GetExtentCopy().Count, Is.EqualTo(count - 1));
     }
 
