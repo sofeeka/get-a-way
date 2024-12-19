@@ -96,7 +96,7 @@ public abstract class Place : IExtent<Place>
     public bool Archived
     {
         get => _archived;
-        private set => _archived = value;
+        set => _archived = value;
     }
 
     public OwnerAccount Owner => _owner;
@@ -184,7 +184,6 @@ public abstract class Place : IExtent<Place>
     {
         if (_owner != null)
             throw new InvalidOperationException("Place already has an owner.");
-
         _owner = owner ?? throw new ArgumentNullException(nameof(owner));
     }
 
