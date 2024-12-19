@@ -9,7 +9,9 @@ namespace get_a_way_unit_tests.EntitiesTests.TripTests;
 public class TripTests
 {
     private static Trip _validTrip;
-    private static Place _validPlace;
+
+    private static readonly Place ValidPlace = new Shop("ValidName", "ValidLocation", DateTime.Today.AddHours(8),
+        DateTime.Today.AddHours(21), PriceCategory.Moderate, true, ShopType.Supermarket, true);
 
     private static readonly Account ValidAccount =
         new OwnerAccount("ValidName", "Password123", "valid.email@pjwstk.edu.pl");
@@ -32,9 +34,6 @@ public class TripTests
         _validPictureUrls.Add(ValidPictureUrl);
 
         _validTrip.PictureUrls = _validPictureUrls;
-
-        _validPlace = new Shop("ValidName", "ValidLocation", DateTime.Today.AddHours(8), DateTime.Today.AddHours(21),
-            PriceCategory.Moderate, true, ShopType.Supermarket, true);
     }
 
     [Test]
@@ -170,18 +169,18 @@ public class TripTests
     [Test]
     public void AddPlace_ValidPlace_AddsPlace()
     {
-        _validTrip.AddPlace(_validPlace);
-        Assert.That(_validTrip.Places.Contains(_validPlace));
-        Assert.That(_validPlace.Trips.Contains(_validTrip));
+        _validTrip.AddPlace(ValidPlace);
+        Assert.That(_validTrip.Places.Contains(ValidPlace));
+        Assert.That(ValidPlace.Trips.Contains(_validTrip));
     }
 
     [Test]
     public void AddPlace_DuplicatePlace_DoesNotAddPlaceAgain()
     {
-        _validTrip.AddPlace(_validPlace);
+        _validTrip.AddPlace(ValidPlace);
         var count = _validTrip.Places.Count;
 
-        _validTrip.AddPlace(_validPlace);
+        _validTrip.AddPlace(ValidPlace);
         Assert.True(_validTrip.Places.Count == count);
     }
 
@@ -190,17 +189,17 @@ public class TripTests
     {
         Assert.That(() => _validTrip.AddPlace(null), Throws.TypeOf<InvalidAttributeException>());
     }
-    
+
     [Test]
     public void RemovePlace_AddedPlace_RemovesPlace()
     {
-        _validTrip.AddPlace(_validPlace);
+        _validTrip.AddPlace(ValidPlace);
 
-        _validTrip.RemovePlace(_validPlace);
-        Assert.That(_validTrip.Places.Contains(_validPlace), Is.False);
-        Assert.That(_validPlace.Trips.Contains(_validTrip), Is.False);
+        _validTrip.RemovePlace(ValidPlace);
+        Assert.That(_validTrip.Places.Contains(ValidPlace), Is.False);
+        Assert.That(ValidPlace.Trips.Contains(_validTrip), Is.False);
     }
-    
+
     [Test]
     public void RemovePlace_NullPlace_ThrowsInvalidAttributeException()
     {
@@ -210,11 +209,11 @@ public class TripTests
     [Test]
     public void RemovePlace_NotAddedPlace_DoesNothing()
     {
-        Assert.That(_validTrip.Places.Contains(_validPlace), Is.False);
+        Assert.That(_validTrip.Places.Contains(ValidPlace), Is.False);
 
-        _validTrip.RemovePlace(_validPlace);
-        Assert.That(_validTrip.Places.Contains(_validPlace), Is.False);
-        Assert.That(_validPlace.Trips.Contains(_validTrip), Is.False);
+        _validTrip.RemovePlace(ValidPlace);
+        Assert.That(_validTrip.Places.Contains(ValidPlace), Is.False);
+        Assert.That(ValidPlace.Trips.Contains(_validTrip), Is.False);
     }
 
     [Test]
