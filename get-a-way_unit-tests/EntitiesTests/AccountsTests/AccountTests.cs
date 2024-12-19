@@ -439,7 +439,7 @@ public class AccountTests
         Account.RemoveInstanceFromExtent(_validAccount);
         Assert.That(Account.GetExtentCopy().Count, Is.EqualTo(count - 1));
     }
-
+    
     [Test]
     public void GetExtentCopy_DoesNotReturnActualExtent()
     {
