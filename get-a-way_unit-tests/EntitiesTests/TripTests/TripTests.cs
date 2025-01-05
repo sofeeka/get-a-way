@@ -1,5 +1,6 @@
 using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Places;
+using get_a_way.Entities.Places.Accommodation;
 using get_a_way.Entities.Places.Shop;
 using get_a_way.Entities.Trip;
 using get_a_way.Exceptions;
@@ -13,21 +14,24 @@ public class TripTests
     private static readonly Place ValidPlace = new Shop("ValidName", "ValidLocation", DateTime.Today.AddHours(8),
         DateTime.Today.AddHours(21), PriceCategory.Moderate, true, ShopType.Supermarket, true);
 
-    private static readonly Account ValidAccount =
-        new OwnerAccount("ValidName", "Password123", "valid.email@pjwstk.edu.pl");
+    private static readonly TravelerAccount ValidAccount =
+        new TravelerAccount("ValidName", "Password123", "valid.email@pjwstk.edu.pl");
 
     private static readonly DateTime Now = DateTime.Now;
     private static readonly DateTime ValidDate = new DateTime(Now.Year - 1, Now.Month, Now.Day);
     private const string ValidDescription = "Valid Description";
     private const string ValidPictureUrl = "https://valid/image.png";
     private List<string> _validPictureUrls = new List<string>();
+    private readonly HashSet<Place> _validPlaces = new HashSet<Place>();
 
     [SetUp]
     public void SetUpEnvironment()
     {
         Trip.ResetExtent();
         Account.ResetExtent();
-        _validTrip = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
+        _validPlaces.Add(ValidPlace);
+
+        _validTrip = new Trip(ValidAccount, _validPlaces, ValidDate, TripType.Friends, ValidDescription);
 
         _validPictureUrls = new List<string>();
         _validPictureUrls.Add(ValidPictureUrl);
@@ -39,7 +43,7 @@ public class TripTests
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        var trip = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
+        var trip = new Trip(ValidAccount, _validPlaces, ValidDate, TripType.Friends, ValidDescription);
 
         // ID == 2 because _valid.ID == 1
         Assert.That(trip.ID, Is.EqualTo(2));
@@ -53,11 +57,36 @@ public class TripTests
     [Test]
     public void Constructor_NewInstanceCreation_IncrementsId()
     {
-        var test1 = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
-        var test2 = new Trip(ValidAccount, ValidDate, TripType.Friends, ValidDescription);
+        var test1 = new Trip(ValidAccount, _validPlaces, ValidDate, TripType.Friends, ValidDescription);
+        var test2 = new Trip(ValidAccount, _validPlaces, ValidDate, TripType.Friends, ValidDescription);
 
         Assert.That(test2.ID - test1.ID, Is.EqualTo(1));
     }
+    
+    [Test]
+    public void Constructor_NullPLaces_ThrowsArgumentNullException()
+    {
+        Assert.That(() => { new Trip(ValidAccount, null, ValidDate, TripType.Friends, ValidDescription); },
+            Throws.TypeOf<ArgumentNullException>());
+    }
+
+    [Test]
+    public void Constructor_EmptyPLaces_ThrowsInvalidAttributeException()
+    {
+        Assert.That(() => { new Trip(ValidAccount, new HashSet<Place>(), ValidDate, TripType.Friends, ValidDescription); },
+            Throws.TypeOf<InvalidAttributeException>());
+    }
+
+    [Test]
+    public void Constructor_NullPLace_ThrowsArgumentNullException()
+    {
+        HashSet<Place> placesWithNullPlace = new HashSet<Place>();
+        placesWithNullPlace.Add(null);
+
+        Assert.That(() => { new Trip(ValidAccount, placesWithNullPlace, ValidDate, TripType.Friends, ValidDescription); },
+            Throws.TypeOf<ArgumentNullException>());
+    }
+
 
     [Test]
     public void Setter_ValidDate_SetsDate()
@@ -195,11 +224,29 @@ public class TripTests
     [Test]
     public void RemovePlace_NotAddedPlace_DoesNothing()
     {
-        Assert.That(_validTrip.Places.Contains(ValidPlace), Is.False);
+        Place place = new Accommodation("ValidName", "ValidLocation", DateTime.Today.AddHours(8),
+            DateTime.Today.AddHours(21), PriceCategory.Moderate, true, AccommodationType.Cabin, 3);
 
-        _validTrip.RemovePlace(ValidPlace);
-        Assert.That(_validTrip.Places.Contains(ValidPlace), Is.False);
-        Assert.That(ValidPlace.Trips.Contains(_validTrip), Is.False);
+        Assert.That(_validTrip.Places.Contains(ValidPlace), Is.True);
+        Assert.That(_validTrip.Places.Contains(place), Is.False);
+
+        _validTrip.RemovePlace(place);
+
+        Assert.That(_validTrip.Places.Contains(ValidPlace), Is.True);
+        Assert.That(ValidPlace.Trips.Contains(_validTrip), Is.True);
+
+        Assert.That(_validTrip.Places.Contains(place), Is.False);
+        Assert.That(place.Trips.Contains(_validTrip), Is.False);
+    }
+
+    [Test]
+    public void GetPlace_ReturnsCopy()
+    {
+        HashSet<Place> places = _validTrip.Places;
+        int count = places.Count;
+
+        places.Clear();
+        Assert.That(_validTrip.Places.Count == count);
     }
 
     [Test]
@@ -207,7 +254,7 @@ public class TripTests
     {
         int count = Trip.GetExtentCopy().Count;
         // AddInstanceToExtent is called in constructor
-        var newTestInstance = new Trip(ValidAccount, ValidDate, TripType.Family, ValidDescription);
+        var newTestInstance = new Trip(ValidAccount, _validPlaces, ValidDate, TripType.Friends, ValidDescription);
         Assert.That(Trip.GetExtentCopy().Count, Is.EqualTo(count + 1));
     }
 

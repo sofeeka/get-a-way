@@ -117,26 +117,27 @@ public class DummyDataGenerator
         var traveler2 = new TravelerAccount("Traveler2", "Password456!", "traveler2@example.com");
         var traveler3 = new TravelerAccount("Traveler3", "Password789!", "traveler3@example.com");
 
-        var trip1 = new Trip(
-            account: traveler1,
-            date: new DateTime(2024, 5, 15),
-            tripType: TripType.Friends,
-            description: "A thrilling trip to the Rocky Mountains with hiking and camping!"
-        );
-
-        var trip2 = new Trip(
-            account: traveler2,
-            date: new DateTime(2024, 6, 10),
-            tripType: TripType.Family,
-            description: "Exploring the rich history and architecture of Rome."
-        );
-
-        var trip3 = new Trip(
-            account: traveler3,
-            date: new DateTime(2024, 7, 20),
-            tripType: TripType.Couple,
-            description: "A peaceful getaway to the Maldives with beach relaxation and snorkeling."
-        );
+        // todo
+        // var trip1 = new Trip(
+        //     traveler: traveler1,
+        //     date: new DateTime(2024, 5, 15),
+        //     tripType: TripType.Friends,
+        //     description: "A thrilling trip to the Rocky Mountains with hiking and camping!"
+        // );
+        //
+        // var trip2 = new Trip(
+        //     traveler: traveler2,
+        //     date: new DateTime(2024, 6, 10),
+        //     tripType: TripType.Family,
+        //     description: "Exploring the rich history and architecture of Rome."
+        // );
+        //
+        // var trip3 = new Trip(
+        //     traveler: traveler3,
+        //     date: new DateTime(2024, 7, 20),
+        //     tripType: TripType.Couple,
+        //     description: "A peaceful getaway to the Maldives with beach relaxation and snorkeling."
+        // );
     }
 
     private static void GenerateReviews()
