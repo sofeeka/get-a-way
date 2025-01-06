@@ -105,8 +105,8 @@ public class Database
     public static void Reset()
     {
         Account.ResetExtent();
-        ChatRoom.ResetExtent();
         Message.ResetExtent();
+        ChatRoom.ResetExtent();
         Place.ResetExtent();
         Review.ResetExtent();
         Trip.ResetExtent();

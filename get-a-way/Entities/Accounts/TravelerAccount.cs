@@ -1,5 +1,6 @@
-﻿using get_a_way.Entities.Places;
+using get_a_way.Entities.Places;
 using get_a_way.Exceptions;
+using System.Xml.Serialization;
 
 namespace get_a_way.Entities.Accounts;
 
@@ -8,13 +9,20 @@ public class TravelerAccount : Account
 {
     private Dictionary<String, Place> _accessiblePlacesByLocation;
 
+    private HashSet<Trip.Trip> _trips = new HashSet<Trip.Trip>();
+
     public Dictionary<String, Place> AccessiblePlacesByLocation => new Dictionary<string, Place>(_accessiblePlacesByLocation);
+
+    [XmlArray("Trips")]
+    [XmlArrayItem("Trip")]
+    public HashSet<Trip.Trip> Trips => new HashSet<Trip.Trip>(_trips);
+
     public TravelerAccount()
     {
     }
 
-    public TravelerAccount(string username, string password, string email) : base(username,
-        password, email)
+    public TravelerAccount(string username, string password, string email)
+        : base(username, password, email)
     {
         _accessiblePlacesByLocation = new Dictionary<string, Place>();
     }
@@ -49,6 +57,28 @@ public class TravelerAccount : Account
     public List<Place> GetAllPlaces()
     {
         return _accessiblePlacesByLocation.Values.ToList();
+    }
+
+    ~TravelerAccount()
+    {
+        // composition (when account gets deleted, all their trips are deleted too)
+        foreach (Trip.Trip trip in _trips)
+            RemoveTrip(trip);
+    }
+
+    public void AddTrip(Trip.Trip trip)
+    {
+        if (trip == null)
+            throw new ArgumentNullException(nameof(trip), "Null trip cannot be added to traveller account.");
+        _trips.Add(trip);
+    }
+
+    public void RemoveTrip(Trip.Trip trip)
+    {
+        if (trip == null)
+            throw new ArgumentNullException(nameof(trip), "Null trip cannot be removed from traveller account.");
+        _trips.Remove(trip);
+        trip.RemoveTraveler(this); // reverse connection
     }
 
     public override string ToString()

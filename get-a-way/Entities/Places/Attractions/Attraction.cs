@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using get_a_way.Entities.Accounts;
 using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Places.Attractions;
@@ -42,10 +43,10 @@ public abstract class Attraction : Place
     {
     }
 
-    protected Attraction(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory,
-        bool petFriendly, int entryFee, int minimalAge, string description)
-        : base(name, location, openTime, closeTime, priceCategory, petFriendly)
+    protected Attraction(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime,
+        DateTime closeTime, PriceCategory priceCategory, bool petFriendly, int entryFee, int minimalAge,
+        string description, bool isDummy = false) : base(owners, name, location, openTime, closeTime, priceCategory,
+        petFriendly, isDummy)
     {
         EntryFee = entryFee;
         MinimalAge = minimalAge;

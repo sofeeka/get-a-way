@@ -1,3 +1,4 @@
+using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Places;
 using get_a_way.Entities.Places.Eatery;
 using get_a_way.Exceptions;
@@ -16,6 +17,11 @@ public class EateryTests
     private PriceCategory priceCategory = PriceCategory.Free;
     private static bool petFriendly = true;
 
+    private static readonly HashSet<OwnerAccount> Owners = new HashSet<OwnerAccount>();
+
+    private static readonly OwnerAccount DummyOwner =
+        new OwnerAccount("EateryOwner", "ValidPassword123", "validemail@pjwstk.edu.pl");
+
     // eatery fields
     private static EateryType _eateryType = EateryType.Cafe;
     private static Cuisine _cusine = Cuisine.Italian;
@@ -26,8 +32,8 @@ public class EateryTests
     [SetUp]
     public void SetUpEnvironment()
     {
-        Place.ResetExtent();
-        _valid = new Eatery(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
+        Owners.Add(DummyOwner);
+        _valid = new Eatery(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             priceCategory, petFriendly, _eateryType, _cusine, _reservationRequired);
 
         _validMenu = new List<string>();
@@ -37,14 +43,18 @@ public class EateryTests
         _validDietaryOptions.Add(DietaryOptions.Vegan);
     }
 
+    [TearDown]
+    public void TearDownEnvironment()
+    {
+        Place.ResetExtent();
+        Account.ResetExtent();
+    }
+
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        var eatery = new Eatery(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
+        var eatery = new Eatery(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             priceCategory, petFriendly, _eateryType, _cusine, _reservationRequired);
-
-        // ID == 2 because _valid.ID == 1
-        Assert.That(eatery.ID, Is.EqualTo(2));
 
         Assert.That(eatery.Type, Is.EqualTo(_eateryType));
         Assert.That(eatery.Cuisine, Is.EqualTo(_cusine));

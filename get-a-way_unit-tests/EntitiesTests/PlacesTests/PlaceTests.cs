@@ -1,3 +1,4 @@
+using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Places;
 using get_a_way.Exceptions;
 
@@ -6,13 +7,14 @@ namespace get_a_way_unit_tests.EntitiesTests.PlacesTests;
 public class PlaceTests
 {
     private class TestPlace(
+        HashSet<OwnerAccount> owners,
         string name,
         string location,
         DateTime openTime,
         DateTime closeTime,
         PriceCategory priceCategory,
-        bool petFriendly) : Place(name, location, openTime, closeTime, priceCategory, petFriendly);
-    
+        bool petFriendly) : Place(owners, name, location, openTime, closeTime, priceCategory, petFriendly);
+
     private TestPlace _valid;
 
     private const string ValidName = "ValidName";
@@ -20,21 +22,34 @@ public class PlaceTests
     private static readonly DateTime ValidOpenTime = DateTime.Today.AddHours(8);
     private static readonly DateTime ValidCloseTime = DateTime.Today.AddHours(21);
     private const PriceCategory ValidPriceCategory = PriceCategory.Moderate;
-    private const bool ValidPetFriendly = true; 
-    
+    private const bool ValidPetFriendly = true;
+
+    private static readonly HashSet<OwnerAccount> Owners = new HashSet<OwnerAccount>();
+
+    private static readonly OwnerAccount DummyOwner =
+        new OwnerAccount("PlaceOwner", "ValidPassword123", "validemail@pjwstk.edu.pl");
+
     [SetUp]
     public void SetUpEnvironment()
     {
-        Place.ResetExtent();
-        _valid = new TestPlace(ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, ValidPriceCategory, ValidPetFriendly);
+        Owners.Add(DummyOwner);
+        _valid = new TestPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, ValidPriceCategory,
+            ValidPetFriendly);
     }
-    
+
+    [TearDown]
+    public void TearDownEnvironment()
+    {
+        Place.ResetExtent();
+        Account.ResetExtent();
+    }
+
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        var place = new TestPlace(ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, PriceCategory.Budget, false);
+        var place = new TestPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, PriceCategory.Budget,
+            false);
 
-        Assert.That(place.ID, Is.EqualTo(2)); // _validPlace has ID 1, so this should be 2
         Assert.That(place.Name, Is.EqualTo(ValidName));
         Assert.That(place.Location, Is.EqualTo(ValidLocation));
         Assert.That(place.OpenTime, Is.EqualTo(ValidOpenTime));
@@ -43,12 +58,14 @@ public class PlaceTests
         Assert.That(place.PetFriendly, Is.False);
         Assert.That(place.OpenedAtNight, Is.False);
     }
-    
+
     [Test]
     public void Constructor_NewInstance_IncrementsId()
     {
-        var place1 = new TestPlace(ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, PriceCategory.Moderate, true);
-        var place2 = new TestPlace(ValidName, ValidLocation, ValidOpenTime.AddHours(1), ValidCloseTime.AddHours(2), PriceCategory.Budget, false);
+        var place1 = new TestPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime,
+            PriceCategory.Moderate, true);
+        var place2 = new TestPlace(Owners, ValidName, ValidLocation, ValidOpenTime.AddHours(1),
+            ValidCloseTime.AddHours(2), PriceCategory.Budget, false);
 
         Assert.That(place2.ID - place1.ID, Is.EqualTo(1));
     }
@@ -65,13 +82,13 @@ public class PlaceTests
     {
         Assert.That(() => _valid.Name = null, Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Name, Is.EqualTo(ValidName));
-        
+
         Assert.That(() => _valid.Name = "", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Name, Is.EqualTo(ValidName));
 
         Assert.That(() => _valid.Name = " ", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Name, Is.EqualTo(ValidName));
-        
+
         Assert.That(() => _valid.Name = "iv", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Name, Is.EqualTo(ValidName));
 
@@ -79,7 +96,7 @@ public class PlaceTests
             Throws.TypeOf<InvalidAttributeException>());
         Assert.That(() => _valid.Name, Is.EqualTo(ValidName));
     }
-    
+
     [Test]
     public void Setter_ValidLocation_SetsLocation()
     {
@@ -92,10 +109,10 @@ public class PlaceTests
     {
         Assert.That(() => _valid.Location = null, Throws.TypeOf<InvalidAttributeException>());
         Assert.That(_valid.Location, Is.EqualTo("ValidLocation"));
-        
+
         Assert.That(() => _valid.Location = "", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(_valid.Location, Is.EqualTo("ValidLocation"));
-        
+
         Assert.That(() => _valid.Location = " ", Throws.TypeOf<InvalidAttributeException>());
         Assert.That(_valid.Location, Is.EqualTo("ValidLocation"));
     }
@@ -125,7 +142,7 @@ public class PlaceTests
         var invalidUrlFormatList = new List<string> { "https://example.com/image.jpg", "invalid_url" };
         Assert.That(() => _valid.PictureUrls = invalidUrlFormatList, Throws.TypeOf<InvalidPictureUrlException>());
     }
-    
+
     [Test]
     public void Setter_ValidOpenTime_SetsCorrectValue()
     {
@@ -159,26 +176,29 @@ public class PlaceTests
         _valid.PetFriendly = newPetFriendlyValue;
         Assert.That(_valid.PetFriendly, Is.EqualTo(newPetFriendlyValue));
     }
-    
+
     [Test]
     public void Constructor_NightOpenCloseTimes_SetOpenedAtNightCorrectly()
     {
-        var place = new TestPlace("Night Cafe", ValidLocation, DateTime.Today.AddHours(21), DateTime.Today.AddHours(4), ValidPriceCategory, ValidPetFriendly);
+        var place = new TestPlace(Owners, "Night Cafe", ValidLocation, DateTime.Today.AddHours(21),
+            DateTime.Today.AddHours(4), ValidPriceCategory, ValidPetFriendly);
         Assert.That(place.OpenedAtNight, Is.True);
     }
 
     [Test]
     public void Constructor_DayOpenCloseTimes_SetOpenedAtNightCorrectly()
     {
-        var place = new TestPlace("Day Cafe", ValidLocation, DateTime.Today.AddHours(8), DateTime.Today.AddHours(18), ValidPriceCategory, ValidPetFriendly);
+        var place = new TestPlace(Owners, "Day Cafe", ValidLocation, DateTime.Today.AddHours(8),
+            DateTime.Today.AddHours(18), ValidPriceCategory, ValidPetFriendly);
         Assert.That(place.OpenedAtNight, Is.False);
     }
-    
+
     [Test]
     public void AddInstanceToExtent_OnCreation_IncreasesExtentCount()
     {
         int initialCount = Place.GetExtentCopy().Count;
-        var newPlace = new TestPlace(ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, ValidPriceCategory, ValidPetFriendly);
+        var newPlace = new TestPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime,
+            ValidPriceCategory, ValidPetFriendly);
 
         Assert.That(Place.GetExtentCopy().Count, Is.EqualTo(initialCount + 1));
     }

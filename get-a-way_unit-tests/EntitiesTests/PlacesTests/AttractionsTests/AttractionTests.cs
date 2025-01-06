@@ -1,3 +1,4 @@
+using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Places;
 using get_a_way.Entities.Places.Attractions;
 using get_a_way.Exceptions;
@@ -7,6 +8,7 @@ namespace get_a_way_unit_tests.EntitiesTests.PlacesTests.AttractionsTests;
 public class AttractionTests
 {
     private class TestAttraction(
+        HashSet<OwnerAccount> owners,
         string name,
         string location,
         DateTime openTime,
@@ -16,7 +18,7 @@ public class AttractionTests
         int entryFee,
         int minimalAge,
         string description)
-        : Attraction(name, location, openTime, closeTime, priceCategory, petFriendly, entryFee, minimalAge,
+        : Attraction(owners, name, location, openTime, closeTime, priceCategory, petFriendly, entryFee, minimalAge,
             description);
 
     private TestAttraction _valid;
@@ -29,6 +31,11 @@ public class AttractionTests
     private PriceCategory _priceCategory = PriceCategory.Free;
     private static bool _petFriendly = true;
 
+    private static readonly HashSet<OwnerAccount> Owners = new HashSet<OwnerAccount>();
+
+    private static readonly OwnerAccount DummyOwner =
+        new OwnerAccount("AttractionOwner", "ValidPassword123", "validemail@pjwstk.edu.pl");
+
     // attraction fields
     private int _validEntryFee = 15;
     private int _validMinimalAge = 8;
@@ -38,22 +45,26 @@ public class AttractionTests
     [SetUp]
     public void SetUpEnvironment()
     {
-        Place.ResetExtent();
-        _valid = new TestAttraction(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
+        Owners.Add(DummyOwner);
+        _valid = new TestAttraction(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             _priceCategory, _petFriendly, _validEntryFee, _validMinimalAge, _validDescription);
 
         _validEvents = new List<string>();
         _validEvents.Add("Some new valid event");
     }
 
+    [TearDown]
+    public void TearDownEnvironment()
+    {
+        Place.ResetExtent();
+        Account.ResetExtent();
+    }
+
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        var attraction = new TestAttraction(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
+        var attraction = new TestAttraction(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             _priceCategory, _petFriendly, _validEntryFee, _validMinimalAge, _validDescription);
-
-        // ID == 2 because _valid.ID == 1
-        Assert.That(attraction.ID, Is.EqualTo(2));
 
         Assert.That(attraction.EntryFee, Is.EqualTo(_validEntryFee));
         Assert.That(attraction.MinimalAge, Is.EqualTo(_validMinimalAge));

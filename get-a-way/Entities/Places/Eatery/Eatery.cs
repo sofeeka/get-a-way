@@ -1,4 +1,5 @@
-﻿using get_a_way.Exceptions;
+﻿using get_a_way.Entities.Accounts;
+using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Places.Eatery;
 
@@ -45,9 +46,9 @@ public class Eatery : Place
     {
     }
 
-    public Eatery(string name, string location, DateTime openTime, DateTime closeTime, PriceCategory priceCategory,
-        bool petFriendly, EateryType type, Cuisine cuisine, bool reservationRequired)
-        : base(name, location, openTime, closeTime, priceCategory, petFriendly)
+    public Eatery(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly, EateryType type, Cuisine cuisine, bool reservationRequired,
+        bool isDummy = false) : base(owners, name, location, openTime, closeTime, priceCategory, petFriendly, isDummy)
     {
         Type = type;
         Cuisine = cuisine;

@@ -1,4 +1,5 @@
-﻿using get_a_way.Exceptions;
+﻿using get_a_way.Entities.Accounts;
+using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Places.Shop;
 
@@ -31,9 +32,9 @@ public class Shop : Place
     {
     }
 
-    public Shop(string name, string location, DateTime openTime, DateTime closeTime, PriceCategory priceCategory,
-        bool petFriendly, ShopType type, bool onlineOrderAvailability)
-        : base(name, location, openTime, closeTime, priceCategory, petFriendly)
+    public Shop(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly, ShopType type, bool onlineOrderAvailability,
+        bool isDummy = false) : base(owners, name, location, openTime, closeTime, priceCategory, petFriendly, isDummy)
     {
         Type = type;
         OnlineOrderAvailability = onlineOrderAvailability;

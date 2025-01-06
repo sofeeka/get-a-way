@@ -14,12 +14,12 @@ public class Trip : IExtent<Trip>
 
     private static long IdCounter = 0;
     private long _id;
-    private Account _account;
     private DateTime _date;
     private TripType _tripType;
     private List<String> _pictureUrls; // todo addPicture() and validate
     private String _description;
 
+    private TravelerAccount _traveler; 
     private HashSet<Place> _places;
 
     public long ID
@@ -28,12 +28,7 @@ public class Trip : IExtent<Trip>
         set => _id = value;
     }
 
-    [XmlIgnore]
-    public Account Account
-    {
-        get => _account;
-        set => _account = value;
-    }
+    [XmlIgnore] public TravelerAccount Traveler => _traveler;
 
     public DateTime Date
     {
@@ -61,21 +56,25 @@ public class Trip : IExtent<Trip>
 
     [XmlArray("Places")]
     [XmlArrayItem("Place")]
-    public HashSet<Place> Places => new HashSet<Place>(_places);
+    public HashSet<Place> Places => new HashSet<Place>(_places); // todo test that returns a copy
 
     public Trip()
     {
         _places = new HashSet<Place>();
     }
 
-    public Trip(Account account, DateTime date, TripType tripType, string description) : this()
+    public Trip(TravelerAccount traveler, HashSet<Place> places, DateTime date, TripType tripType, string description) : this()
     {
         ID = ++IdCounter;
-        Account = account;
         Date = date;
         TripType = tripType;
         PictureUrls = new List<string>();
         Description = description;
+
+        AddPlaces(places);
+        
+        _traveler = traveler ?? throw new ArgumentNullException(nameof(traveler));
+        _traveler.AddTrip(this); // composition (reverse connection)
 
         AddInstanceToExtent(this);
     }
@@ -116,10 +115,37 @@ public class Trip : IExtent<Trip>
         return description;
     }
 
+    private HashSet<Place> ValidatePlaces(HashSet<Place> places)
+    {
+        if (places == null)
+            throw new ArgumentNullException(nameof(places), "Places list cannot be null.");
+
+        if (places.Count == 0)
+            throw new InvalidAttributeException("At least 1 place must be added to a trip.");
+        
+        foreach (Place place in places)
+            if(place == null)
+                throw new ArgumentNullException(nameof(place), "Place cannot be null.");
+
+        return places;
+    }
+
+    public void AddPlaces(HashSet<Place> places)
+    {
+        if (places == null)
+            throw new ArgumentNullException(nameof(places), "Places list added to a trip cannot be null.");
+
+        if (places.Count < 1)
+            throw new InvalidAttributeException("Trip must consist of at least one place.");
+        
+        foreach(Place place in places)
+            AddPlace(place);
+    }
+
     public void AddPlace(Place place)
     {
         if (place == null)
-            throw new InvalidAttributeException("Place added to a trip cannot be null");
+            throw new ArgumentNullException(nameof(place), "Place added to a trip cannot be null.");
 
         if (_places.Add(place)) // check if not already present
             place.AddTrip(this); // reverse connection
@@ -132,6 +158,11 @@ public class Trip : IExtent<Trip>
 
         if (_places.Remove(place)) // check if present
             place.RemoveTrip(this); // reverse connection
+    }
+
+    public void RemoveTraveler(TravelerAccount account)
+    {
+        _traveler = null;
     }
 
     public static List<Trip> GetExtentCopy()

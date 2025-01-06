@@ -26,6 +26,7 @@ public abstract class Place : IExtent<Place>
     private PriceCategory _priceCategory;
     private bool _petFriendly;
     private bool _openedAtNight;
+    private bool _isDummy;
 
     private HashSet<OwnerAccount> _owners;
     private HashSet<Trip.Trip> _trips;
@@ -92,9 +93,15 @@ public abstract class Place : IExtent<Place>
         set => _openedAtNight = value;
     }
 
+    public bool IsDummy
+    {
+        get => _isDummy;
+        set => _isDummy = value;
+    }
+
     public bool Active => _owners.Count > 0;
 
-    public HashSet<OwnerAccount> Owners => _owners;
+    public HashSet<OwnerAccount> Owners => new HashSet<OwnerAccount>(_owners);
 
     [XmlArray("Reviews")]
     [XmlArrayItem("Review")]
@@ -110,8 +117,8 @@ public abstract class Place : IExtent<Place>
         _owners = new HashSet<OwnerAccount>();
     }
 
-    protected Place(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory, bool petFriendly) : this()
+    protected Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly, bool isDummy = false) : this()
     {
         ID = ++IdCounter;
         Name = name;
@@ -124,6 +131,7 @@ public abstract class Place : IExtent<Place>
         SetOpenedAtNight();
         //dummy owner
 
+        AddOwners(owners);
         AddInstanceToExtent(this);
     }
 
@@ -182,18 +190,35 @@ public abstract class Place : IExtent<Place>
         return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
     }
 
-    public void AssignOwner(OwnerAccount owner)
+    private void AddOwners(HashSet<OwnerAccount> owners)
+    {
+        if (owners == null)
+            throw new ArgumentNullException(nameof(owners), "Owners list cannot be null.");
+
+        foreach (OwnerAccount owner in owners)
+            if (owner == null)
+                throw new ArgumentNullException(nameof(owner), "Owner cannot be null.");
+
+        foreach (OwnerAccount owner in owners)
+            AddOwner(owner);
+    }
+
+    public void AddOwner(OwnerAccount owner)
     {
         if (owner == null)
             throw new ArgumentNullException(nameof(owner), "Cannot add null owner to place.");
-        Owners.Add(owner);
+
+        if(_owners.Add(owner))
+            owner.AddPlace(this);
     }
 
     public void RemoveOwner(OwnerAccount owner)
     {
         if (owner == null)
             throw new ArgumentNullException(nameof(owner), "Cannot remove null owner from place.");
-        Owners.Remove(owner);
+
+        if (_owners.Remove(owner))
+            owner.RemovePlace(this);
     }
 
     private void RemoveOwners()

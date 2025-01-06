@@ -1,3 +1,4 @@
+using get_a_way;
 using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Places;
 using get_a_way.Entities.Places.Shop;
@@ -7,14 +8,30 @@ namespace get_a_way_unit_tests.EntitiesTests.AccountsTests;
 
 public class OwnerAccountTests
 {
-    private OwnerAccount _validOwnerAccount = new OwnerAccount(ValidUserName, ValidPassword, ValidEmail);
+    private readonly OwnerAccount _validOwnerAccount = new OwnerAccount(ValidUserName, ValidPassword, ValidEmail);
+    private static readonly HashSet<OwnerAccount> Owners = new HashSet<OwnerAccount>();
 
-    private static readonly Place ValidPlace = new Shop("ValidName", "ValidLocation", DateTime.Today.AddHours(8),
-        DateTime.Today.AddHours(21), PriceCategory.Moderate, true, ShopType.Supermarket, true);
+    private static Place _validPlace;
+    private static Place _otherValidPlace;
 
     private const string ValidUserName = "ValidUserName";
     private const string ValidPassword = "ValidPassword123";
     private const string ValidEmail = "validemail@pjwstk.edu.pl";
+
+    [SetUp]
+    public void SetUpEnvironment()
+    {
+        Owners.Add(_validOwnerAccount);
+        _validPlace = new Shop(Owners, "ValidName", "ValidLocation",
+            DateTime.Today.AddHours(8), DateTime.Today.AddHours(21), PriceCategory.Moderate, true,
+            ShopType.Supermarket, true);
+    }
+
+    [TearDown]
+    public void TearDownEnvironment()
+    {
+        Database.Reset();
+    }
 
     [Test]
     public void SetTax_ValidValue_SetsTax()
@@ -33,14 +50,15 @@ public class OwnerAccountTests
     [Test]
     public void AddPlace_ValidPlace_AddsPlaceAndReverseReference()
     {
-        _validOwnerAccount.AddPlace(ValidPlace);
-
-        Assert.That(() => _validOwnerAccount.Places.Contains(ValidPlace)); // place added to places owned by owner
-        Assert.That(() => ValidPlace.Owners.Contains(_validOwnerAccount)); // owner added to owners of place
+        // owner is added in constructor of place
+        _otherValidPlace = new Shop(Owners, "OtherValidName", "ValidLocation", DateTime.Today.AddHours(8),
+            DateTime.Today.AddHours(21), PriceCategory.Moderate, true, ShopType.Supermarket, true);
+        Assert.That(() => _validOwnerAccount.Places.Contains(_otherValidPlace)); // place added to places owned by owner
+        Assert.That(() => _otherValidPlace.Owners.Contains(_validOwnerAccount)); // owner added to owners of place
     }
 
     [Test]
-    public void AddPlace_NullPlace_AddsPlaceAndReverseReference()
+    public void AddPlace_NullPlace_ThrowsArgumentNullException()
     {
         Assert.That(() => _validOwnerAccount.AddPlace(null), Throws.TypeOf<ArgumentNullException>());
     }
@@ -48,27 +66,23 @@ public class OwnerAccountTests
     [Test]
     public void AddPlace_DuplicatePlace_DoesNothing()
     {
-        _validOwnerAccount.AddPlace(ValidPlace);
         int count = _validOwnerAccount.Places.Count;
-
-        _validOwnerAccount.AddPlace(ValidPlace);
+        _validOwnerAccount.AddPlace(_validPlace);
         Assert.That(() => count == _validOwnerAccount.Places.Count);
     }
 
     [Test]
     public void RemovePlace_ValidPlace_RemovesPlaceAndReverseReference()
     {
-        _validOwnerAccount.AddPlace(ValidPlace);
-
-        Place otherValidPlace = new Shop("ValidName", "ValidLocation", DateTime.Today.AddHours(8),
+        Place otherValidPlace = new Shop(Owners, "ValidName", "ValidLocation", DateTime.Today.AddHours(8),
             DateTime.Today.AddHours(21), PriceCategory.Moderate, true, ShopType.Supermarket, true);
-        _validOwnerAccount.AddPlace(otherValidPlace);
+        Assert.That(_validOwnerAccount.Places, Does.Contain(otherValidPlace)); // was added after creation
+        Assert.That(otherValidPlace.Owners, Does.Contain(_validOwnerAccount)); // reverse connection too
 
         _validOwnerAccount.RemovePlace(otherValidPlace);
 
-        Assert.True(_validOwnerAccount.Places.Count == 1); // only ValidPlace
-        Assert.False(_validOwnerAccount.Places.Contains(otherValidPlace)); // place removed from places owned by owner
-        Assert.False(otherValidPlace.Owners.Contains(_validOwnerAccount)); // owner removed from owners of place
+        Assert.That(_validOwnerAccount.Places, Does.Not.Contain(otherValidPlace)); // removed from places owned by owner
+        Assert.That(otherValidPlace.Owners, Does.Not.Contain(_validOwnerAccount)); // removed from owners of place
     }
 
     [Test]

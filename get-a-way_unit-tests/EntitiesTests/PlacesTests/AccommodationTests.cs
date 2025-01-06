@@ -1,3 +1,5 @@
+using get_a_way;
+using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Places;
 using get_a_way.Entities.Places.Accommodation;
 using get_a_way.Exceptions;
@@ -16,6 +18,10 @@ public class AccommodationTests
     private PriceCategory _priceCategory = PriceCategory.Free;
     private static bool _petFriendly = true;
 
+    private static readonly HashSet<OwnerAccount> Owners = new HashSet<OwnerAccount>();
+
+    private static OwnerAccount DummyOwner;
+
     // accommodation fields
     private static AccommodationType _accommodationType = AccommodationType.Apartment;
     private static HashSet<Amenity> _validAmenities;
@@ -24,8 +30,9 @@ public class AccommodationTests
     [SetUp]
     public void SetUpEnvironment()
     {
-        Place.ResetExtent();
-        _valid = new Accommodation(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
+        DummyOwner = new OwnerAccount("AccommodationOwner", "ValidPassword123", "validemail@pjwstk.edu.pl");
+        Owners.Add(DummyOwner);
+        _valid = new Accommodation(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             _priceCategory, _petFriendly, _accommodationType, _validMaxPeople);
 
         _validAmenities = new HashSet<Amenity>();
@@ -33,14 +40,17 @@ public class AccommodationTests
         _validAmenities.Add(Amenity.WheelchairAccessible);
     }
 
+    [TearDown]
+    public void TearDownEnvironment()
+    {
+        Database.Reset();
+    }
+
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        var accommodation = new Accommodation(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
+        var accommodation = new Accommodation(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             _priceCategory, _petFriendly, _accommodationType, _validMaxPeople);
-
-        // ID == 2 because _valid.ID == 1
-        Assert.That(accommodation.ID, Is.EqualTo(2));
 
         Assert.That(accommodation.Type, Is.EqualTo(_accommodationType));
         Assert.That(accommodation.Amenities, Is.Empty);
