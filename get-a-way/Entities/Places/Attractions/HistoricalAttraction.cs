@@ -1,4 +1,5 @@
-﻿using get_a_way.Exceptions;
+﻿using get_a_way.Entities.Accounts;
+using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Places.Attractions;
 
@@ -17,10 +18,10 @@ public class HistoricalAttraction : Attraction
     {
     }
 
-    public HistoricalAttraction(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory, bool petFriendly, int entryFee, int minimalAge, string description,
-        string culturalPeriod) : base(name, location, openTime, closeTime, priceCategory, petFriendly, entryFee,
-        minimalAge, description)
+    public HistoricalAttraction(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime,
+        DateTime closeTime, PriceCategory priceCategory, bool petFriendly, int entryFee, int minimalAge,
+        string description, string culturalPeriod, bool isDummy = false) : base(owners, name, location, openTime,
+        closeTime, priceCategory, petFriendly, entryFee, minimalAge, description, isDummy)
     {
         CulturalPeriod = culturalPeriod;
     }

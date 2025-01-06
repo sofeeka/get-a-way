@@ -1,3 +1,4 @@
+using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Places;
 using get_a_way.Entities.Places.Attractions;
 using get_a_way.Exceptions;
@@ -16,6 +17,11 @@ public class HistoricalAttractionTests
     private PriceCategory _priceCategory = PriceCategory.Free;
     private static bool _petFriendly = true;
 
+    private static readonly HashSet<OwnerAccount> Owners = new HashSet<OwnerAccount>();
+
+    private static readonly OwnerAccount DummyOwner =
+        new OwnerAccount("HistoricalAttractionOwner", "ValidPassword123", "validemail@pjwstk.edu.pl");
+
     // attraction fields
     private int _validEntryFee = 15;
     private int _validMinimalAge = 8;
@@ -28,12 +34,19 @@ public class HistoricalAttractionTests
     [SetUp]
     public void SetUpEnvironment()
     {
-        Place.ResetExtent();
-        _valid = new HistoricalAttraction(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
+        Owners.Add(DummyOwner);
+        _valid = new HistoricalAttraction(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             _priceCategory, _petFriendly, _validEntryFee, _validMinimalAge, _validDescription, _validCulturalPeriod);
 
         _validEvents = new List<string>();
         _validEvents.Add("Some new valid event");
+    }
+
+    [TearDown]
+    public void TearDownEnvironment()
+    {
+        Place.ResetExtent();
+        Account.ResetExtent();
     }
 
     [Test]

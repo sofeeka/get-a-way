@@ -1,4 +1,6 @@
-﻿namespace get_a_way.Entities.Places;
+﻿using get_a_way.Entities.Accounts;
+
+namespace get_a_way.Entities.Places;
 
 [Serializable]
 public class InternationalPlace : Place
@@ -7,9 +9,9 @@ public class InternationalPlace : Place
     {
     }
 
-    public InternationalPlace(string name, string location, DateTime openTime, DateTime closeTime,
+    public InternationalPlace(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
         PriceCategory priceCategory, bool petFriendly)
-        : base(name, location, openTime, closeTime, priceCategory, petFriendly)
+        : base(owners, name, location, openTime, closeTime, priceCategory, petFriendly)
     {
     }
 

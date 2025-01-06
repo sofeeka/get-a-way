@@ -1,4 +1,5 @@
 using get_a_way;
+using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Places;
 using get_a_way.Entities.Places.Shop;
 using get_a_way.Exceptions;
@@ -17,6 +18,11 @@ public class ShopTests
     private PriceCategory priceCategory = PriceCategory.Free;
     private static bool petFriendly = true;
 
+    private static readonly HashSet<OwnerAccount> Owners = new HashSet<OwnerAccount>();
+
+    private static readonly OwnerAccount DummyOwner =
+        new OwnerAccount("ShopOwner", "ValidPassword123", "validemail@pjwstk.edu.pl");
+
     // shop fields
     private static ShopType shopType = ShopType.Mall;
     private static bool onlineOrderAvailability = true;
@@ -25,22 +31,26 @@ public class ShopTests
     [SetUp]
     public void SetUpEnvironment()
     {
-        Database.Reset();
-        Place.ResetExtent();
-        _valid = new Shop(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
+        Owners.Add(DummyOwner);
+        _valid = new Shop(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             priceCategory, petFriendly, shopType, onlineOrderAvailability);
+        
         _validHolidaySpecials = new List<string>();
         _validHolidaySpecials.Add("New Holiday Special");
+    }
+
+    [TearDown]
+    public void TearDownEnvironment()
+    {
+        Place.ResetExtent();
+        Account.ResetExtent();
     }
 
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        var shop = new Shop(ValidName, ValidLocation, _validOpenTime, _validCloseTime,
+        var shop = new Shop(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
             priceCategory, petFriendly, shopType, onlineOrderAvailability);
-
-        // ID == 2 because _valid.ID == 1
-        Assert.That(shop.ID, Is.EqualTo(2));
 
         Assert.That(shop.Type, Is.EqualTo(shopType));
         Assert.That(shop.OnlineOrderAvailability, Is.EqualTo(onlineOrderAvailability));

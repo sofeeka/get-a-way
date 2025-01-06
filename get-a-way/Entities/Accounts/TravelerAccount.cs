@@ -15,11 +15,6 @@ public class TravelerAccount : Account
     {
     }
 
-    public TravelerAccount(TravelerAccount traveler)
-        : this(traveler.Username, traveler.Password, traveler.Email)
-    {
-    }
-
     public TravelerAccount(string username, string password, string email)
         : base(username, password, email)
     {

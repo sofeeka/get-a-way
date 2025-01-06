@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using get_a_way.Entities.Accounts;
 using get_a_way.Exceptions;
 
 namespace get_a_way.Entities.Places.Accommodation;
@@ -39,9 +40,9 @@ public class Accommodation : Place
     {
     }
 
-    public Accommodation(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory, bool petFriendly, AccommodationType type, int maxPeople)
-        : base(name, location, openTime, closeTime, priceCategory, petFriendly)
+    public Accommodation(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly, AccommodationType type, int maxPeople, bool isDummy=false)
+        : base(owners, name, location, openTime, closeTime, priceCategory, petFriendly, isDummy)
     {
         Type = type;
         Amenities = new HashSet<Amenity>();
