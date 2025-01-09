@@ -112,7 +112,8 @@ public class ChatRoom : IExtent<ChatRoom>
 
     public void RemoveMember(Account account)
     {
-        _members.Remove(account);
+        if (_members.Remove(account))
+            account.LeaveChatroom(this);
     }
     
     public void AddMessage(Message message)
@@ -151,8 +152,12 @@ public class ChatRoom : IExtent<ChatRoom>
 
         foreach (var message in instance._messages)
             Message.RemoveInstanceFromExtent(message); //messages are deleted on deletion of chatroom
+        
+        foreach (var member in instance._members)
+            member.LeaveChatroom(instance);
 
         instance._messages.Clear();
+        instance._members.Clear();
         _extent.Remove(instance);
     }
 
@@ -168,8 +173,13 @@ public class ChatRoom : IExtent<ChatRoom>
             //remove all messages from Message extent
             foreach (var message in chatRoom._messages)
                 Message.RemoveInstanceFromExtent(message);
+            
+            foreach (var member in chatRoom._members)
+                member.LeaveChatroom(chatRoom);
 
             chatRoom._messages.Clear(); //clear messages list
+            chatRoom._members.Clear();
+
         }
         
         _extent.Clear();
