@@ -68,7 +68,6 @@ public class Message : IExtent<Message>
 
     public Message(string text, Account sender, ChatRoom chatroom)
     {
-        _id = ++IdCounter;
         Sender = sender ?? throw new ArgumentNullException(nameof(sender), "Sender cannot be null");
         ChatRoom = chatroom ?? throw new ArgumentNullException(nameof(chatroom), "ChatRoom cannot be null");
         
@@ -79,6 +78,7 @@ public class Message : IExtent<Message>
         sender.AddMessage(this); // aggregation (reverse connection)
         chatroom.AddMessage(this); // composition (reverse connection)
 
+        ID = ++IdCounter;
         AddInstanceToExtent(this);
     }
     

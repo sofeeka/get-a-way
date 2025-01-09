@@ -121,7 +121,6 @@ public abstract class Place : IExtent<Place>
     protected Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
         PriceCategory priceCategory, bool petFriendly, bool isDummy = false) : this()
     {
-        ID = ++IdCounter;
         Name = name;
         Location = location;
         OpenTime = openTime;
@@ -129,9 +128,10 @@ public abstract class Place : IExtent<Place>
         PriceCategory = priceCategory;
         PetFriendly = petFriendly;
         SetOpenedAtNight();
-        //dummy owner
 
         AddOwners(owners);
+
+        ID = ++IdCounter;
         AddInstanceToExtent(this);
     }
 

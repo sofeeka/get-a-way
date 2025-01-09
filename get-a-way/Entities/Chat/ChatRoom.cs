@@ -59,10 +59,10 @@ public class ChatRoom : IExtent<ChatRoom>
 
     public ChatRoom(string name, string photoUrl) : this()
     {
-        ID = ++IdCounter;
         Name = name;
         PhotoUrl = photoUrl;
 
+        ID = ++IdCounter;
         AddInstanceToExtent(this);
     }
 

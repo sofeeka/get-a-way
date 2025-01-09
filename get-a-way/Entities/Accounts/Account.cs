@@ -109,8 +109,6 @@ public abstract class Account : IExtent<Account>
 
     protected Account(string username, string password, string email) : this()
     {
-        ID = ++IdCounter;
-
         Username = username;
         Password = password;
         Email = email;
@@ -119,6 +117,7 @@ public abstract class Account : IExtent<Account>
         Verified = false;
         Rating = 10.0;
 
+        ID = ++IdCounter;
         AddInstanceToExtent(this);
     }
 

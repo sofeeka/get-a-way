@@ -65,7 +65,6 @@ public class Trip : IExtent<Trip>
 
     public Trip(TravelerAccount traveler, HashSet<Place> places, DateTime date, TripType tripType, string description) : this()
     {
-        ID = ++IdCounter;
         Date = date;
         TripType = tripType;
         PictureUrls = new List<string>();
@@ -76,6 +75,7 @@ public class Trip : IExtent<Trip>
         _traveler = traveler ?? throw new ArgumentNullException(nameof(traveler));
         _traveler.AddTrip(this); // composition (reverse connection)
 
+        ID = ++IdCounter;
         AddInstanceToExtent(this);
     }
 
