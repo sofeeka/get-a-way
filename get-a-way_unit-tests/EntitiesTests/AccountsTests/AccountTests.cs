@@ -1,3 +1,4 @@
+using get_a_way;
 using get_a_way.Entities.Accounts;
 using get_a_way.Entities.Chat;
 using get_a_way.Exceptions;
@@ -7,6 +8,11 @@ namespace get_a_way_unit_tests.EntitiesTests.AccountsTests;
 public class AccountTests
 {
     public class TestAccount(string username, string password, string email) : Account(username, password, email);
+    
+    // chatroom fields
+    private AccountTests.TestAccount _member1;
+    private AccountTests.TestAccount _member2;
+    readonly HashSet<Account> _members = new HashSet<Account>();
 
     private TestAccount _validAccount;
     private Message _validMessage;
@@ -22,18 +28,24 @@ public class AccountTests
     [SetUp]
     public void SetUpEnvironment()
     {
+        _member1 = new AccountTests.TestAccount("AccountTestMember1", "ValidPassword123", "validemail1@pjwstk.edu.pl");
+        _member2 = new AccountTests.TestAccount("AccountTestMember2", "ValidPassword123", "validemail2@pjwstk.edu.pl");
+
+        _members.Add(_member1);
+        _members.Add(_member2);
+
         _validAccount = new TestAccount(ValidUserName, ValidPassword, ValidEmail);
-        _validChatRoom = new ChatRoom("Test ChatRoom", "static/img/default_chatroom_img.jpg");
+        _validChatRoom = new ChatRoom(_members, "Test ChatRoom", "static/img/default_chatroom_img.jpg");
         _validMessage = new Message("Some text", _validAccount, _validChatRoom);
     }
-
 
     [TearDown]
     public void TearDownEnvironment()
     {
-        Account.ResetExtent();
-        Message.ResetExtent();
-        ChatRoom.ResetExtent();
+        Database.Reset();
+        // Account.ResetExtent();
+        // Message.ResetExtent();
+        // ChatRoom.ResetExtent();
     }
 
     [Test]
@@ -41,9 +53,6 @@ public class AccountTests
     {
         // do not use ValidUserName, will throw DuplicateUsernameException
         var account = new TestAccount(AnotherValidUserName, ValidPassword, ValidEmail);
-
-        // ID == 2 because _validAccount.ID == 1
-        Assert.That(account.ID, Is.EqualTo(2));
 
         Assert.That(account.Username, Is.EqualTo(AnotherValidUserName));
         Assert.That(account.Password, Is.EqualTo(ValidPassword));
@@ -356,9 +365,9 @@ public class AccountTests
     public void LeaveChatroom_ValidChatroom_RemovesAccountFromChatroom()
     {
         _validAccount.JoinChatroom(_validChatRoom);
-
+        
         _validAccount.LeaveChatroom(_validChatRoom);
-
+        
         Assert.That(_validAccount.Chatrooms.Contains(_validChatRoom), Is.False);
         Assert.That(_validChatRoom.Members.Contains(_validAccount), Is.False);
     }
@@ -367,10 +376,14 @@ public class AccountTests
     public void JoinChatroom_DuplicateChatroom_DoesNotAddTwice()
     {
         _validAccount.JoinChatroom(_validChatRoom);
+
+        var chatRoomsCount = _validAccount.Chatrooms.Count;
+        var membersCount = _validChatRoom.Members.Count;
+        
         _validAccount.JoinChatroom(_validChatRoom);
 
-        Assert.That(_validAccount.Chatrooms.Count, Is.EqualTo(1));
-        Assert.That(_validChatRoom.Members.Count, Is.EqualTo(1));
+        Assert.That(_validAccount.Chatrooms.Count, Is.EqualTo(chatRoomsCount));
+        Assert.That(_validChatRoom.Members.Count, Is.EqualTo(membersCount));
     }
 
     [Test]

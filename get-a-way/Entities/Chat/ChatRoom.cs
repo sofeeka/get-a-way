@@ -57,10 +57,12 @@ public class ChatRoom : IExtent<ChatRoom>
         _messages = new List<Message>();
     }
 
-    public ChatRoom(string name, string photoUrl) : this()
+    public ChatRoom(HashSet<Account> members, string name, string photoUrl) : this()
     {
         Name = name;
         PhotoUrl = photoUrl;
+
+        AddMembers(members);
 
         ID = ++IdCounter;
         AddInstanceToExtent(this);
@@ -88,6 +90,18 @@ public class ChatRoom : IExtent<ChatRoom>
         return value;
     }
     
+    private void AddMembers(HashSet<Account> members)
+    {
+        if (members == null)
+            throw new ArgumentNullException(nameof(members), "Cannot create chatroom with null members.");
+
+        if (members.Count < 2)
+            throw new InvalidOperationException("Cannot create chatroom with less than 2 members.");
+            
+        foreach(Account member in members)
+            AddMember(member);
+    }
+
     public void AddMember(Account account)
     {
         if (account == null)
@@ -115,9 +129,7 @@ public class ChatRoom : IExtent<ChatRoom>
             throw new ArgumentNullException(nameof(message), "Message cannot be null");
 
         if (_messages.Remove(message))
-        {
             Message.RemoveInstanceFromExtent(message); //message does not exists outside of chatroom
-        }
     }
 
     public static List<ChatRoom> GetExtentCopy()
@@ -138,9 +150,7 @@ public class ChatRoom : IExtent<ChatRoom>
             throw new ArgumentNullException(nameof(instance), "ChatRoom instance cannot be null");
 
         foreach (var message in instance._messages)
-        {
             Message.RemoveInstanceFromExtent(message); //messages are deleted on deletion of chatroom
-        }
 
         instance._messages.Clear();
         _extent.Remove(instance);
@@ -157,9 +167,7 @@ public class ChatRoom : IExtent<ChatRoom>
         {
             //remove all messages from Message extent
             foreach (var message in chatRoom._messages)
-            {
                 Message.RemoveInstanceFromExtent(message);
-            }
 
             chatRoom._messages.Clear(); //clear messages list
         }

@@ -7,30 +7,41 @@ namespace get_a_way_unit_tests.EntitiesTests.ChatTests;
 
 public class MessageTests
 {
-    private Message _validMessage;
-    private AccountTests.TestAccount _validSender;
-    private ChatRoom _validChatRoom;
+    private AccountTests.TestAccount _member1;
+    private AccountTests.TestAccount _member2;
+    readonly HashSet<Account> _members = new HashSet<Account>();
 
+    private Message _validMessage;
+    private ChatRoom _validChatRoom;
 
     private const string ValidText = "Valid text of a message.";
 
     [SetUp]
     public void SetUpEnvironment()
     {
+        _member1 = new AccountTests.TestAccount("MessageTestMember1", "ValidPassword123", "validemail@pjwstk.edu.pl");
+        _member2 = new AccountTests.TestAccount("MessageTestMember2", "ValidPassword123", "validemail@pjwstk.edu.pl");
+
+        _members.Add(_member1);
+        _members.Add(_member2);
+        
+        _validChatRoom = new ChatRoom(_members, "Test ChatRoom", "static/img/default_chatroom_img.jpg");
+        _validMessage = new Message(ValidText, _member1, _validChatRoom);
+    }
+
+    [TearDown]
+    public void TearDownEnvironment()
+    {
         Message.ResetExtent();
         Account.ResetExtent();
         ChatRoom.ResetExtent();
-        
-        _validSender = new AccountTests.TestAccount("ValidUserName", "ValidPassword123", "validemail@pjwstk.edu.pl");
-        _validChatRoom = new ChatRoom("Test ChatRoom", "static/img/default_chatroom_img.jpg");
-        _validMessage = new Message(ValidText, _validSender, _validChatRoom);
     }
 
     [Test]
     public void Constructor_NewInstanceCreation_IncrementsId()
     {
-        var message1 = new Message(ValidText, _validSender, _validChatRoom);
-        var message2 = new Message(ValidText, _validSender, _validChatRoom);
+        var message1 = new Message(ValidText, _member1, _validChatRoom);
+        var message2 = new Message(ValidText, _member1, _validChatRoom);
 
         Assert.That(message2.ID - message1.ID, Is.EqualTo(1));
     }
@@ -38,9 +49,9 @@ public class MessageTests
     [Test]
     public void Constructor_AssignsCorrectValuesToAssociations()
     {
-        Assert.That(_validMessage.Sender, Is.EqualTo(_validSender));
+        Assert.That(_validMessage.Sender, Is.EqualTo(_member1));
         Assert.That(_validMessage.ChatRoom, Is.EqualTo(_validChatRoom));
-        Assert.That(_validSender.Messages.Contains(_validMessage));
+        Assert.That(_member1.Messages.Contains(_validMessage));
         Assert.That(_validChatRoom.Messages.Contains(_validMessage));
     }
 
@@ -123,7 +134,7 @@ public class MessageTests
     {
         int count = Message.GetExtentCopy().Count;
         // AddInstanceToExtent is called in constructor
-        var newTestInstance = new Message(ValidText, _validSender, _validChatRoom);
+        var newTestInstance = new Message(ValidText, _member1, _validChatRoom);
         Assert.That(Message.GetExtentCopy().Count, Is.EqualTo(count + 1));
     }
 
