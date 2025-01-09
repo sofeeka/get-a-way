@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using get_a_way.Entities.Places;
 using get_a_way.Exceptions;
 using System.Xml.Serialization;
@@ -10,12 +11,18 @@ public class TravelerAccount : Account
     private Dictionary<String, Place> _accessiblePlacesByLocation;
 
     private HashSet<Trip.Trip> _trips = new HashSet<Trip.Trip>();
+    private HashSet<Review.Review> _reviews = new HashSet<Review.Review>();
 
-    public Dictionary<String, Place> AccessiblePlacesByLocation => new Dictionary<string, Place>(_accessiblePlacesByLocation);
+    public Dictionary<String, Place> AccessiblePlacesByLocation =>
+        new Dictionary<string, Place>(_accessiblePlacesByLocation);
 
     [XmlArray("Trips")]
     [XmlArrayItem("Trip")]
     public HashSet<Trip.Trip> Trips => new HashSet<Trip.Trip>(_trips);
+
+    [XmlArray("Reviews")]
+    [XmlArrayItem("Review")]
+    public HashSet<Review.Review> Reviews => new HashSet<Review.Review>(_reviews);
 
     public TravelerAccount()
     {
@@ -26,7 +33,7 @@ public class TravelerAccount : Account
     {
         _accessiblePlacesByLocation = new Dictionary<string, Place>();
     }
-    
+
     public void AddPlace(string location, Place place)
     {
         if (string.IsNullOrWhiteSpace(location))
@@ -79,6 +86,20 @@ public class TravelerAccount : Account
             throw new ArgumentNullException(nameof(trip), "Null trip cannot be removed from traveller account.");
         _trips.Remove(trip);
         trip.RemoveTraveler(this); // reverse connection
+    }
+
+    public void AddReview(Review.Review review)
+    {
+        if (review == null)
+            throw new ArgumentNullException(nameof(review), "Cannot add null review.");
+        _reviews.Add(review);
+    }
+
+    public void RemoveReview(Review.Review review)
+    {
+        if (review == null)
+            throw new ArgumentNullException(nameof(review), "Cannot remove null review.");
+        _reviews.Remove(review);
     }
 
     public override string ToString()

@@ -30,6 +30,7 @@ public abstract class Place : IExtent<Place>
 
     private HashSet<OwnerAccount> _owners;
     private HashSet<Trip.Trip> _trips;
+    private HashSet<Review.Review> _reviews;
 
     public long ID
     {
@@ -105,7 +106,7 @@ public abstract class Place : IExtent<Place>
 
     [XmlArray("Reviews")]
     [XmlArrayItem("Review")]
-    public List<Review.Review> Reviews { get; set; }
+    public List<Review.Review> Reviews => new List<Review.Review>(_reviews);
 
     [XmlArray("Trips")]
     [XmlArrayItem("Trip")]
@@ -127,7 +128,6 @@ public abstract class Place : IExtent<Place>
         CloseTime = closeTime;
         PriceCategory = priceCategory;
         PetFriendly = petFriendly;
-        Reviews = new List<Review.Review>();
         SetOpenedAtNight();
         //dummy owner
 
@@ -136,7 +136,7 @@ public abstract class Place : IExtent<Place>
     }
 
     protected Place(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory, bool petFriendly, OwnerAccount account) 
+        PriceCategory priceCategory, bool petFriendly, OwnerAccount account)
     {
         //add owner
     }
@@ -208,7 +208,7 @@ public abstract class Place : IExtent<Place>
         if (owner == null)
             throw new ArgumentNullException(nameof(owner), "Cannot add null owner to place.");
 
-        if(_owners.Add(owner))
+        if (_owners.Add(owner))
             owner.AddPlace(this);
     }
 
@@ -244,6 +244,20 @@ public abstract class Place : IExtent<Place>
         if (trip == null)
             throw new InvalidAttributeException("Place cannot be removed from a null trip. Trip cannot be null");
         _trips.Remove(trip);
+    }
+
+    public void AddReview(Review.Review review)
+    {
+        if (review == null)
+            throw new ArgumentNullException(nameof(review), "Cannot add null review.");
+        _reviews.Add(review);
+    }
+
+    public void RemoveReview(Review.Review review)
+    {
+        if (review == null)
+            throw new ArgumentNullException(nameof(review), "Cannot remove null review.");
+        _reviews.Remove(review);
     }
 
     public static List<Place> GetExtentCopy()

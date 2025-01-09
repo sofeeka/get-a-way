@@ -1,4 +1,6 @@
-﻿using get_a_way.Exceptions;
+﻿using get_a_way.Entities.Accounts;
+using get_a_way.Entities.Places;
+using get_a_way.Exceptions;
 using get_a_way.Services;
 
 namespace get_a_way.Entities.Review;
@@ -14,6 +16,9 @@ public class Review : IExtent<Review>
 
     private double _rating;
     private string _comment;
+
+    private TravelerAccount _traveler;
+    private Place _place;
 
     public long ID
     {
@@ -33,17 +38,34 @@ public class Review : IExtent<Review>
         set => _comment = ValidateComment(value);
     }
 
+    public TravelerAccount Traveler => _traveler;
+    public Place Place => _place;
+
     public Review()
     {
     }
 
-    public Review(double rating, string comment)
+    public Review(TravelerAccount traveler, Place place, double rating, string comment)
     {
         ID = ++IdCounter;
+
+        _place = place ?? throw new ArgumentNullException(nameof(place), "Cannot leave review to a null place.");
+        _traveler = traveler ??
+                    throw new ArgumentNullException(nameof(traveler), "Null traveler cannot leave review to a place.");
+
         Rating = rating;
         Comment = comment;
 
         AddInstanceToExtent(this);
+
+        _place.AddReview(this); // reverse connection traveler leaves review
+        _traveler.AddReview(this); // reverse connection review of a place
+    }
+
+    ~Review()
+    {
+        _traveler.RemoveReview(this);
+        _place.RemoveReview(this);
     }
 
     private double ValidateRating(double value)
