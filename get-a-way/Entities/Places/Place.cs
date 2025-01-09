@@ -116,6 +116,7 @@ public abstract class Place : IExtent<Place>
     {
         _trips = new HashSet<Trip.Trip>();
         _owners = new HashSet<OwnerAccount>();
+        _reviews = new HashSet<Review.Review>();
     }
 
     protected Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
