@@ -42,10 +42,9 @@ public class AccountTests
     [TearDown]
     public void TearDownEnvironment()
     {
-        Database.Reset();
-        // Account.ResetExtent();
-        // Message.ResetExtent();
-        // ChatRoom.ResetExtent();
+        Account.ResetExtent();
+        Message.ResetExtent();
+        ChatRoom.ResetExtent();
     }
 
     [Test]
