@@ -78,9 +78,6 @@ public class OwnerAccount : Account
             throw new ArgumentNullException(nameof(place),
                 "Place cannot be null when trying to add place to owned places.");
 
-        if (place.IsDummy)
-            throw new InvalidOperationException("Cannot add dummy place.");
-        
         if (_places.Add(place))
             place.AddOwner(this);
     }

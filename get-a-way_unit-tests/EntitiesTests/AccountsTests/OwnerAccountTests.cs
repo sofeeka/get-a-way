@@ -25,12 +25,46 @@ public class OwnerAccountTests
         _validPlace = new Shop(Owners, "ValidName", "ValidLocation",
             DateTime.Today.AddHours(8), DateTime.Today.AddHours(21), PriceCategory.Moderate, true,
             ShopType.Supermarket, true);
+        _otherValidPlace = new Shop(Owners, "OtherValidName", "ValidLocation", DateTime.Today.AddHours(8),
+            DateTime.Today.AddHours(21), PriceCategory.Moderate, true, ShopType.Supermarket, true);
     }
 
     [TearDown]
     public void TearDownEnvironment()
     {
         Database.Reset();
+    }
+
+    [Test]
+    public void Constructor_AddsDummyPlace()
+    {
+        var owner = new OwnerAccount("DummyOwner", ValidPassword, ValidEmail);
+        var places = new List<Place>(owner.Places);
+        Assert.That(places[0].IsDummy, Is.True);
+    }
+
+    [Test]
+    public void AddPlace_FirstValidPlace_DeletesDummyPlace()
+    {
+        var owner = new OwnerAccount("DummyOwner", ValidPassword, ValidEmail);
+        var places = new List<Place>(owner.Places);
+        var dummyPlace = places[0];
+        
+        owner.AddPlace(_validPlace);
+        Assert.That(owner.Places, Does.Not.Contain(dummyPlace));
+        Assert.That(owner.Places, Does.Contain(_validPlace));
+    }
+
+    [Test]
+    public void AddPlace_SecondValidPlace_DoesNotDeleteFirstPlace()
+    {
+        var owner = new OwnerAccount("DummyOwner", ValidPassword, ValidEmail);
+        
+        owner.AddPlace(_validPlace);
+        owner.AddPlace(_otherValidPlace);
+
+        Assert.That(owner.Places, Does.Contain(_validPlace));
+        Assert.That(owner.Places, Does.Contain(_otherValidPlace));
     }
 
     [Test]

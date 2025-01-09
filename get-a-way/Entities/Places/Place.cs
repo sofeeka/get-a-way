@@ -128,18 +128,13 @@ public abstract class Place : IExtent<Place>
         CloseTime = closeTime;
         PriceCategory = priceCategory;
         PetFriendly = petFriendly;
+        IsDummy = isDummy;
         SetOpenedAtNight();
 
         AddOwners(owners);
 
         ID = ++IdCounter;
         AddInstanceToExtent(this);
-    }
-
-    protected Place(string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory, bool petFriendly, OwnerAccount account)
-    {
-        //add owner
     }
 
     private void SetOpenedAtNight()
