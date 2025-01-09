@@ -48,6 +48,12 @@ public class OwnerAccount : Account
         _places = ValidatePlaces(places);
     }
 
+    ~OwnerAccount()
+    {
+        foreach(var place in _places)
+            place.Archive();
+    }
+
     private HashSet<Place> ValidatePlaces(HashSet<Place> places)
     {
         if (places == null)
