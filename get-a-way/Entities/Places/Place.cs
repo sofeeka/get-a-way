@@ -152,8 +152,8 @@ public abstract class Place : IExtent<Place>
     }
 
     protected Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory, bool petFriendly, bool isDummy = false, List<Currency>? currencies = null,
-        List<Language>? languages = null, Country country = Places.Country.None) : this(owners, name, location,
+        PriceCategory priceCategory, bool petFriendly, List<Currency>? currencies, List<Language>? languages,
+        Country country, bool isDummy = false) : this(owners, name, location,
         openTime, closeTime,
         priceCategory, petFriendly, isDummy)
     {
@@ -164,7 +164,7 @@ public abstract class Place : IExtent<Place>
     }
 
     protected Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
-        PriceCategory priceCategory, bool petFriendly, bool isDummy = false, bool localLanguageOnly = true) : this(
+        PriceCategory priceCategory, bool petFriendly, bool localLanguageOnly, bool isDummy = false) : this(
         owners, name, location, openTime, closeTime,
         priceCategory, petFriendly, isDummy)
     {
@@ -172,7 +172,7 @@ public abstract class Place : IExtent<Place>
         _localLanguageOnly = localLanguageOnly;
     }
 
-    protected Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
+    public Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
         PriceCategory priceCategory, bool petFriendly, bool isDummy = false) : this()
     {
         Name = name;
