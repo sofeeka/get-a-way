@@ -34,9 +34,11 @@ public abstract class Place : IExtent<Place>
 
     // role-specific attributes
     private MultiAspectType _multiAspectType;
+    // internation place attributes
     private HashSet<Currency>? _currencies;
     private HashSet<Language>? _languages;
     private Country? _country;
+    // local place attributes
     private bool _localLanguageOnly;
     private static Currency? _currency = Places.Currency.LOCAL;
 
@@ -114,23 +116,10 @@ public abstract class Place : IExtent<Place>
         set => _localLanguageOnly = value;
     }
 
-    public HashSet<Currency>? Currencies
-    {
-        get => _currencies;
-        set => _currencies = ValidateCurrencies(value);
-    }
-
-    public HashSet<Language>? Languages
-    {
-        get => _languages;
-        set => _languages = ValidateLanguages(value);
-    }
-
-    public Country? Country
-    {
-        get => _country;
-        set => _country = ValidateCountry(value ?? Places.Country.None);
-    }
+    public HashSet<Currency>? Currencies => _currencies;
+    public HashSet<Language>? Languages => _languages;
+    public Country? Country => _country;
+    public MultiAspectType MultiAspectType => _multiAspectType;
 
     public bool Active => _owners.Count > 0;
 
@@ -157,9 +146,9 @@ public abstract class Place : IExtent<Place>
         petFriendly, isDummy)
     {
         _multiAspectType = MultiAspectType.International;
-        Currencies = currencies;
-        Languages = languages;
-        Country = country;
+        _currencies = ValidateCurrencies(currencies);
+        _languages = ValidateLanguages(languages);
+        _country = ValidateCountry(country);
     }
 
     protected Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,

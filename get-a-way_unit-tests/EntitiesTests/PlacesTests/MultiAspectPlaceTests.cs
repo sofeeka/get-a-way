@@ -73,6 +73,7 @@ public class MultiAspectPlaceTests
         LocalPlace local = new LocalPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, ValidPriceCategory,
             ValidPetFriendly, localLanguageOnly: true);
 
+        Assert.That(local.MultiAspectType, Is.EqualTo(MultiAspectType.Local));
         Assert.That(local.LocalLanguageOnly, Is.True);
         Assert.That(local.Languages, Is.EqualTo(null));
         Assert.That(local.Currencies, Is.EqualTo(null));
@@ -85,6 +86,7 @@ public class MultiAspectPlaceTests
         InternationalPlace international = new InternationalPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, ValidPriceCategory,
             ValidPetFriendly, currencies, languages, Country.Argentina);
 
+        Assert.That(international.MultiAspectType, Is.EqualTo(MultiAspectType.International));
         Assert.That(international.Languages, Is.EqualTo(languages));
         Assert.That(international.Currencies, Is.EqualTo(currencies));
         Assert.That(international.Country, Is.EqualTo(Country.Argentina));
@@ -93,31 +95,43 @@ public class MultiAspectPlaceTests
     [Test]
     public void Setter_InvalidCurrencies_Null_ThrowsNullReferenceException()
     {
-        Assert.That(() => _internationalPlace.Currencies = null, Throws.TypeOf<NullReferenceException>());
-        Assert.That(() => _internationalPlace.Currencies, Is.EqualTo(currencies));
+        Assert.That(() =>
+        {
+            InternationalPlace international = new InternationalPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, ValidPriceCategory,
+                ValidPetFriendly, null, languages, Country.Argentina);
+        }, Throws.TypeOf<NullReferenceException>());
     }
 
     [Test]
     public void Setter_InvalidCurrencies_Empty_ThrowsInvalidOperationException()
     {
         HashSet<Currency> temp = new HashSet<Currency>();
-        Assert.That(() => _internationalPlace.Currencies = temp, Throws.TypeOf<InvalidOperationException>());
-        Assert.That(() => _internationalPlace.Currencies, Is.EqualTo(currencies));
+        Assert.That(() =>
+        {
+            InternationalPlace international = new InternationalPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, ValidPriceCategory,
+                ValidPetFriendly, temp, languages, Country.Argentina);
+        }, Throws.TypeOf<InvalidOperationException>());
     }
 
     [Test]
     public void Setter_InvalidLanguages_Null_ThrowsNullReferenceException()
     {
-        Assert.That(() => _internationalPlace.Languages = null, Throws.TypeOf<NullReferenceException>());
-        Assert.That(() => _internationalPlace.Languages, Is.EqualTo(languages));
+        Assert.That(() =>
+        {
+            InternationalPlace international = new InternationalPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, ValidPriceCategory,
+                ValidPetFriendly, currencies, null, Country.Argentina);
+        }, Throws.TypeOf<NullReferenceException>());
     }
 
     [Test]
     public void Setter_InvalidLanguages_Empty_ThrowsInvalidOperationException()
     {
         HashSet<Language> temp = new HashSet<Language>();
-        Assert.That(() => _internationalPlace.Languages = temp, Throws.TypeOf<InvalidOperationException>());
-        Assert.That(() => _internationalPlace.Languages, Is.EqualTo(languages));
+        Assert.That(() =>
+        {
+            InternationalPlace international = new InternationalPlace(Owners, ValidName, ValidLocation, ValidOpenTime, ValidCloseTime, ValidPriceCategory,
+                ValidPetFriendly, currencies, temp, Country.Argentina);
+        }, Throws.TypeOf<InvalidOperationException>());
     }
 
 }
