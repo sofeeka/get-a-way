@@ -7,169 +7,239 @@ namespace get_a_way_unit_tests.EntitiesTests.PlacesTests.AttractionsTests;
 
 public class AttractionTests
 {
-    private class TestAttraction(
-        HashSet<OwnerAccount> owners,
-        string name,
-        string location,
-        DateTime openTime,
-        DateTime closeTime,
-        PriceCategory priceCategory,
-        bool petFriendly,
-        int entryFee,
-        int minimalAge,
-        string description)
-        : Attraction(owners, name, location, openTime, closeTime, priceCategory, petFriendly, entryFee, minimalAge,
-            description);
+    private Attraction _valid;
 
-    private TestAttraction _valid;
-
-    // place fields
-    private const string ValidName = "ValidName";
+    private const string ValidName = "ValidAttraction";
     private const string ValidLocation = "Some Location";
-    private static DateTime _validOpenTime = new DateTime();
-    private static DateTime _validCloseTime = new DateTime();
-    private PriceCategory _priceCategory = PriceCategory.Free;
-    private static bool _petFriendly = true;
+    private static readonly DateTime ValidOpenTime = new DateTime(2025, 1, 1, 9, 0, 0);
+    private static readonly DateTime ValidCloseTime = new DateTime(2025, 1, 1, 17, 0, 0);
+    private const PriceCategory ValidPriceCategory = PriceCategory.Budget;
+    private const bool PetFriendly = true;
+    private static readonly HashSet<OwnerAccount> Owners = new() { new OwnerAccount("Owner", "ValidPass123", "owner@valid.com") };
 
-    private static readonly HashSet<OwnerAccount> Owners = new HashSet<OwnerAccount>();
+    private const int ValidEntryFee = 20;
+    private const int ValidMinimalAge = 18;
+    private const string ValidDescription = "A valid attraction description.";
 
-    private static readonly OwnerAccount DummyOwner =
-        new OwnerAccount("AttractionOwner", "ValidPassword123", "validemail@pjwstk.edu.pl");
-
-    // attraction fields
-    private int _validEntryFee = 15;
-    private int _validMinimalAge = 8;
-    private List<string> _validEvents;
-    private string _validDescription = "Some description";
+    private const string ValidActivityType = "Outdoor Adventure";
+    private const string ValidCulturalPeriod = "Medieval Era";
+    private const string ValidDressCode = "All black";
 
     [SetUp]
     public void SetUpEnvironment()
     {
-        Owners.Add(DummyOwner);
-        _valid = new TestAttraction(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
-            _priceCategory, _petFriendly, _validEntryFee, _validMinimalAge, _validDescription);
+        Place.ResetExtent();
 
-        _validEvents = new List<string>();
-        _validEvents.Add("Some new valid event");
+        _valid = Attraction.CreateAttraction(
+            Owners,
+            ValidName,
+            ValidLocation,
+            ValidOpenTime,
+            ValidCloseTime,
+            ValidPriceCategory,
+            PetFriendly,
+            ValidEntryFee,
+            ValidMinimalAge,
+            ValidDescription,
+            isActiveAttraction: true,
+            activityType: ValidActivityType,
+            isHistoricalAttraction: true,
+            culturalPeriod: ValidCulturalPeriod,
+            isNightLifeAttraction: true,
+            dressCode: ValidDressCode
+        );
     }
 
     [TearDown]
     public void TearDownEnvironment()
     {
         Place.ResetExtent();
-        Account.ResetExtent();
     }
 
     [Test]
     public void Constructor_ValidAttributes_AssignsCorrectValues()
     {
-        var attraction = new TestAttraction(Owners, ValidName, ValidLocation, _validOpenTime, _validCloseTime,
-            _priceCategory, _petFriendly, _validEntryFee, _validMinimalAge, _validDescription);
+        Assert.That(_valid.EntryFee, Is.EqualTo(ValidEntryFee));
+        Assert.That(_valid.MinimalAge, Is.EqualTo(ValidMinimalAge));
+        Assert.That(_valid.Events, Is.Empty);
+        Assert.That(_valid.Description, Is.EqualTo(ValidDescription));
 
-        Assert.That(attraction.EntryFee, Is.EqualTo(_validEntryFee));
-        Assert.That(attraction.MinimalAge, Is.EqualTo(_validMinimalAge));
-        Assert.That(attraction.Events, Is.Empty);
-        Assert.That(attraction.Description, Is.EqualTo(_validDescription));
+        Assert.That(_valid.IsActiveAttraction, Is.True);
+        Assert.That(_valid.ActivityType, Is.EqualTo(ValidActivityType));
+
+        Assert.That(_valid.IsHistoricalAttraction, Is.True);
+        Assert.That(_valid.CulturalPeriod, Is.EqualTo(ValidCulturalPeriod));
+
+        Assert.That(_valid.IsNightLifeAttraction, Is.True);
+        Assert.That(_valid.DressCode, Is.EqualTo(ValidDressCode));
     }
 
     [Test]
-    public void Setter_ValidEntryFee_SetsEntryFee()
+    public void Constructor_InvalidRoles_ThrowsArgumentException()
     {
-        _valid.EntryFee = _validEntryFee;
-        Assert.That(_valid.EntryFee, Is.EqualTo(_validEntryFee));
-
-        _valid.EntryFee = 0;
-        Assert.That(_valid.EntryFee, Is.EqualTo(0));
+        Assert.That(() =>
+            Attraction.CreateAttraction(
+                Owners,
+                ValidName,
+                ValidLocation,
+                ValidOpenTime,
+                ValidCloseTime,
+                ValidPriceCategory,
+                PetFriendly,
+                ValidEntryFee,
+                ValidMinimalAge,
+                ValidDescription
+            ), Throws.TypeOf<ArgumentException>());
     }
 
     [Test]
-    public void Setter_InvalidEntryFee_ThrowsInvalidAttributeException()
+    public void Constructor_InvalidRoleAttributes_ThrowsArgumentException()
     {
-        Assert.That(() => _valid.EntryFee = -1, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.EntryFee, Is.EqualTo(_validEntryFee));
+        Assert.That(() =>
+            Attraction.CreateAttraction(
+                Owners,
+                ValidName,
+                ValidLocation,
+                ValidOpenTime,
+                ValidCloseTime,
+                ValidPriceCategory,
+                PetFriendly,
+                ValidEntryFee,
+                ValidMinimalAge,
+                ValidDescription,
+                isActiveAttraction: true
+                // no activityType
+            ), Throws.TypeOf<ArgumentException>());
+
+        Assert.That(() =>
+            Attraction.CreateAttraction(
+                Owners,
+                ValidName,
+                ValidLocation,
+                ValidOpenTime,
+                ValidCloseTime,
+                ValidPriceCategory,
+                PetFriendly,
+                ValidEntryFee,
+                ValidMinimalAge,
+                ValidDescription,
+                isHistoricalAttraction: true
+                // no culturalPeriod
+            ), Throws.TypeOf<ArgumentException>());
+
+        Assert.That(() =>
+            Attraction.CreateAttraction(
+                Owners,
+                ValidName,
+                ValidLocation,
+                ValidOpenTime,
+                ValidCloseTime,
+                ValidPriceCategory,
+                PetFriendly,
+                ValidEntryFee,
+                ValidMinimalAge,
+                ValidDescription,
+                isNightLifeAttraction: true
+                // no dressCode
+            ), Throws.TypeOf<ArgumentException>());
     }
 
     [Test]
-    public void Setter_ValidMinimalAge_SetsMinimalAge()
+    public void Constructor_InvalidAttributes_ThrowsInvalidAttributeException()
     {
-        _valid.MinimalAge = _validMinimalAge;
-        Assert.That(_valid.MinimalAge, Is.EqualTo(_validMinimalAge));
+        Assert.That(() =>
+            Attraction.CreateAttraction(
+                Owners,
+                "",
+                ValidLocation,
+                ValidOpenTime,
+                ValidCloseTime,
+                ValidPriceCategory,
+                PetFriendly,
+                ValidEntryFee,
+                ValidMinimalAge,
+                ValidDescription,
+                isActiveAttraction: true,
+                activityType: ValidActivityType
+            ), Throws.TypeOf<InvalidAttributeException>());
 
-        _valid.MinimalAge = 0;
-        Assert.That(_valid.MinimalAge, Is.EqualTo(0));
+        Assert.That(() =>
+            Attraction.CreateAttraction(
+                Owners,
+                ValidName,
+                ValidLocation,
+                ValidOpenTime,
+                ValidCloseTime,
+                ValidPriceCategory,
+                PetFriendly,
+                -1, // invalid entry fee
+                ValidMinimalAge,
+                ValidDescription,
+                isActiveAttraction: true,
+                activityType: ValidActivityType
+            ), Throws.TypeOf<InvalidAttributeException>());
+
+        Assert.That(() =>
+            Attraction.CreateAttraction(
+                Owners,
+                ValidName,
+                ValidLocation,
+                ValidOpenTime,
+                ValidCloseTime,
+                ValidPriceCategory,
+                PetFriendly,
+                ValidEntryFee,
+                -1, // invalid minimal age
+                ValidDescription,
+                isActiveAttraction: true,
+                activityType: ValidActivityType
+            ), Throws.TypeOf<InvalidAttributeException>());
     }
 
     [Test]
-    public void Setter_InvalidMinimalAge_ThrowsInvalidAttributeException()
+    public void RoleAttributes_AccessingUnavailableRoles_ThrowsInvalidOperationException()
     {
-        Assert.That(() => _valid.MinimalAge = -1, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.MinimalAge, Is.EqualTo(_validMinimalAge));
+        var attraction = Attraction.CreateAttraction(
+            Owners,
+            ValidName,
+            ValidLocation,
+            ValidOpenTime,
+            ValidCloseTime,
+            ValidPriceCategory,
+            PetFriendly,
+            ValidEntryFee,
+            ValidMinimalAge,
+            ValidDescription,
+            isActiveAttraction: true,
+            activityType: ValidActivityType
+        );
 
-        Assert.That(() => _valid.MinimalAge = 125, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.MinimalAge, Is.EqualTo(_validMinimalAge));
+        Assert.That(() => attraction.CulturalPeriod, Throws.TypeOf<InvalidOperationException>());
+        Assert.That(() => attraction.DressCode, Throws.TypeOf<InvalidOperationException>());
     }
 
     [Test]
-    public void Setter_ValidEvents_SetsEvents()
+    public void RoleFlags_ImmutableAfterCreation()
     {
-        _valid.Events = _validEvents;
-        Assert.That(_valid.Events, Is.EqualTo(_validEvents));
+        Assert.That(_valid.IsActiveAttraction, Is.True);
+        Assert.That(_valid.IsHistoricalAttraction, Is.True);
+        Assert.That(_valid.IsNightLifeAttraction, Is.True);
+
+        // direct modification should not be possible
+        Assert.Throws<NotSupportedException>(() => _valid.IsActiveAttraction = false);
     }
 
     [Test]
-    public void Setter_InvalidEvents_ThrowsInvalidAttributeException()
+    public void Events_AddingValidEvent_AddsSuccessfully()
     {
-        _valid.Events = _validEvents;
-
-        Assert.That(() => _valid.Events = null, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Events, Is.EqualTo(_validEvents));
+        _valid.Events.Add("New Event");
+        Assert.That(_valid.Events.Contains("New Event"));
     }
 
     [Test]
-    public void Setter_InvalidEventsItem_ThrowsInvalidEventsItemException()
+    public void Events_AddingInvalidEvent_ThrowsInvalidEventException()
     {
-        _valid.Events = _validEvents;
-
-        List<string> events = new List<string>();
-        events.Add(null);
-        Assert.That(() => _valid.Events = events, Throws.TypeOf<InvalidEventException>());
-        Assert.That(() => _valid.Events, Is.EqualTo(_validEvents));
-
-        events.Clear();
-        events.Add("");
-        Assert.That(() => _valid.Events = events, Throws.TypeOf<InvalidEventException>());
-        Assert.That(() => _valid.Events, Is.EqualTo(_validEvents));
-
-        events.Clear();
-        events.Add(" ");
-        Assert.That(() => _valid.Events = events, Throws.TypeOf<InvalidEventException>());
-        Assert.That(() => _valid.Events, Is.EqualTo(_validEvents));
-    }
-
-    [Test]
-    public void Setter_ValidDescription_SetsDescription()
-    {
-        _valid.Description = _validDescription;
-        Assert.That(_valid.Description, Is.EqualTo(_validDescription));
-    }
-
-    [Test]
-    public void Setter_InvalidDescription_ThrowsInvalidAttributeException()
-    {
-        Assert.That(() => _valid.Description = null, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(_validDescription));
-
-        Assert.That(() => _valid.Description = "", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(_validDescription));
-
-        Assert.That(() => _valid.Description = " ", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(_validDescription));
-
-        Assert.That(() => _valid.Description = "short", Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(_validDescription));
-
-        var tooLong = new string('a', 1001);
-        Assert.That(() => _valid.Description = tooLong, Throws.TypeOf<InvalidAttributeException>());
-        Assert.That(() => _valid.Description, Is.EqualTo(_validDescription));
+        Assert.That(() => _valid.Events.Add(null), Throws.TypeOf<InvalidEventException>());
+        Assert.That(() => _valid.Events.Add(""), Throws.TypeOf<InvalidEventException>());
     }
 }
