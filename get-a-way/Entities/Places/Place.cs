@@ -32,6 +32,14 @@ public abstract class Place : IExtent<Place>
     private HashSet<Trip.Trip> _trips;
     private HashSet<Review.Review> _reviews;
 
+    // role-specific attributes
+    private MultiAspectType _multiAspectType;
+    private HashSet<Currency>? _currencies;
+    private HashSet<Language>? _languages;
+    private Country? _country;
+    private bool _localLanguageOnly;
+    private static Currency? _currency = Places.Currency.LOCAL;
+
     public long ID
     {
         get => _id;
@@ -100,6 +108,30 @@ public abstract class Place : IExtent<Place>
         set => _isDummy = value;
     }
 
+    public bool LocalLanguageOnly
+    {
+        get => _localLanguageOnly;
+        set => _localLanguageOnly = value;
+    }
+
+    public HashSet<Currency>? Currencies
+    {
+        get => _currencies;
+        set => _currencies = ValidateCurrencies(value);
+    }
+
+    public HashSet<Language>? Languages
+    {
+        get => _languages;
+        set => _languages = ValidateLanguages(value);
+    }
+
+    public Country? Country
+    {
+        get => _country;
+        set => _country = ValidateCountry(value ?? Places.Country.None);
+    }
+
     public bool Active => _owners.Count > 0;
 
     public HashSet<OwnerAccount> Owners => new HashSet<OwnerAccount>(_owners);
@@ -120,6 +152,25 @@ public abstract class Place : IExtent<Place>
     }
 
     protected Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly, HashSet<Currency> currencies, HashSet<Language> languages,
+        Country country, bool isDummy = false) : this(owners, name, location, openTime, closeTime, priceCategory,
+        petFriendly, isDummy)
+    {
+        _multiAspectType = MultiAspectType.International;
+        Currencies = currencies;
+        Languages = languages;
+        Country = country;
+    }
+
+    protected Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
+        PriceCategory priceCategory, bool petFriendly, bool localLanguageOnly, bool isDummy = false) : this(
+        owners, name, location, openTime, closeTime, priceCategory, petFriendly, isDummy)
+    {
+        _multiAspectType = MultiAspectType.Local;
+        _localLanguageOnly = localLanguageOnly;
+    }
+
+    public Place(HashSet<OwnerAccount> owners, string name, string location, DateTime openTime, DateTime closeTime,
         PriceCategory priceCategory, bool petFriendly, bool isDummy = false) : this()
     {
         Name = name;
@@ -178,6 +229,35 @@ public abstract class Place : IExtent<Place>
             throw new InvalidPictureUrlException();
 
         return urls;
+    }
+
+    private HashSet<Language>? ValidateLanguages(HashSet<Language> languages)
+    {
+        if (languages == null)
+            throw new NullReferenceException(nameof(languages));
+
+        if (languages.Count == 0)
+            throw new InvalidOperationException("Languages count must be greater than 0.");
+
+        return languages;
+    }
+
+    private HashSet<Currency> ValidateCurrencies(HashSet<Currency> currencies)
+    {
+        if (currencies == null)
+            throw new NullReferenceException(nameof(currencies));
+
+        if (currencies.Count == 0)
+            throw new InvalidOperationException("Countries count must be greater than 0.");
+
+        return currencies;
+    }
+
+    private Country ValidateCountry(Country country)
+    {
+        if (country == Places.Country.None)
+            throw new NullReferenceException("Country cannot be null");
+        return country;
     }
 
     private bool IsValidImageUrl(string url)
